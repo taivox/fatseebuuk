@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Profile from "./../images/profile.webp"
+import Profile from "./../../images/profile.webp"
 
 function Header() {
   return (

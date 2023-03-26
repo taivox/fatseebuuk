@@ -2,9 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import App from './App';
-import Feed from './components/Feed';
-import Friends from './components/Friends';
-import Groups from './components/Groups';
+import Feed from './components/main/Feed';
+import Friends from './components/main/Friends';
+import Group from './components/Group';
+import Groups from './components/main/Groups';
+import Profile from './components/Profile';
 
 const router = createBrowserRouter([
   {
@@ -20,8 +22,16 @@ const router = createBrowserRouter([
         path:"/groups",
         element:<Groups/>,
       },
+      {
+        path:"/groups/:id",
+        element:<Group/>,
+      },
     ]
-  }
+  },
+  {
+    path:"/profile/:id",
+    element:<Profile/>,
+  },
 ])
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

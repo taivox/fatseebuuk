@@ -24,7 +24,7 @@ function Groups(){
           </div>
           <div className="list-group">
           {groups.map(g => (
-            <Link key={g.id} to={`/group/${g.id}`} className="list-group-item list-group-item-action d-flex align-items-center">
+            <Link key={g.id} to={`/groups/${g.id}`} className="list-group-item list-group-item-action d-flex align-items-center">
               <img
                 src={g.image}
                 style={{

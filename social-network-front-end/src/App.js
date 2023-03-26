@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import Chats from "./components/Chats";
-import Footer from "./components/Footer";
-import Header from "./components/Header";
-import Menu from "./components/Menu";
+import Chats from "./components/main/Chats";
+import Footer from "./components/common/Footer";
+import Header from "./components/common/Header";
+import Menu from "./components/main/Menu";
 
 function App() {
   return (
