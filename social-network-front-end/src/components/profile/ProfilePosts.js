@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import TextArea from "../form/TextArea";
 import PostImagePopup from "../main/PostImagePopup";
 
 function ProfilePosts() {
@@ -104,12 +105,13 @@ function ProfilePosts() {
                 }}
               />
               <form class="flex-grow-1">
-                <textarea
-                  class="form-control flex-grow-1 mr-2 m-2"
-                  id="post-content"
-                  rows="3"
-                  placeholder="What's on your mind?"
-                ></textarea>
+              <TextArea
+            title={""}
+            name={""}
+            value={""}
+            rows={"3"}
+            placeholder={"What's on your mind?"}
+          />
                 <div class="form-group m-2">
                   <label for="post-image" class="btn btn-ligth mb-0">
                   <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Picture
