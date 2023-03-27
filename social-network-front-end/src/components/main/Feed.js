@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import PostImagePopup from "./PostImagePopup";
 
 function Feed() {
@@ -89,6 +90,7 @@ function Feed() {
           <div className="card-body">
             <div className="media ">
               <div className="d-flex align-items-center m-2">
+                <Link to={`/profile/${p.id}`}>
                 <img
                   src={p.profileImage}
                   className="mr-3 rounded-circle"
@@ -96,13 +98,17 @@ function Feed() {
                     height: "60px",
                     width: "60px",
                     objectFit: "cover",
+                    cursor: "pointer"
                   }}
                   alt="..."
                 />
+                </Link>
                 <div key={p.posterID} className="m-3">
-                  <h5 className="mt-0">
+                  <h5 className="mt-0" style={{cursor:"pointer"}}>
+                <Link className="Link" to={`/profile/${p.id}`}>
                     {p.poster}{" "}
                     <box-icon color="grey" name={p.global ? "globe" : "user"} />
+                </Link>
                   </h5>
                   <small className="text-muted">{p.postedAt}</small>
                 </div>
@@ -132,6 +138,7 @@ function Feed() {
                     height: "300px",
                     width: "600px",
                     objectFit: "cover",
+                    cursor: "pointer"
                   }}
                   alt="..."
                   onClick={() => handleImageClick(p)}
