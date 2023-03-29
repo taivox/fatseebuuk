@@ -3,7 +3,7 @@ import Profile from "./../../images/profile.webp"
 
 function Header() {
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
       <div className="container">
         <Link to="/" className="navbar-brand">
           Fatseebuuk

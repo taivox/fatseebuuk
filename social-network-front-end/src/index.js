@@ -7,6 +7,8 @@ import Friends from './components/main/Friends';
 import Group from './components/Group';
 import Groups from './components/main/Groups';
 import Profile from './components/Profile';
+import GroupEvents from './components/group/GroupEvents';
+import GroupPosts from './components/group/GroupPosts';
 
 const router = createBrowserRouter([
   {
@@ -22,15 +24,25 @@ const router = createBrowserRouter([
         path:"/groups",
         element:<Groups/>,
       },
-      {
-        path:"/groups/:id",
-        element:<Group/>,
-      },
     ]
   },
   {
     path:"/profile/:id",
     element:<Profile/>,
+  },
+  {
+    path:"/groups/:id",
+    element:<Group/>,
+    children: [
+      {
+        path:"events",
+        element:<GroupEvents/>,
+      },
+      {
+        path:"",
+        element:<GroupPosts/>,
+      },
+    ]
   },
 ])
 
