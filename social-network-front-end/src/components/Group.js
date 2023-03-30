@@ -3,7 +3,6 @@ import Footer from "./common/Footer";
 import Header from "./common/Header";
 import GroupHeader from "./group/GroupHeader";
 import GroupMenu from "./group/GroupMenu";
-import GroupPosts from "./group/GroupPosts";
 import Chats from "./main/Chats";
 
 function Group(){
@@ -18,7 +17,6 @@ function Group(){
               <GroupMenu />
               <div className="col-md-6">
                 <Outlet />
-                {/* <GroupPosts/> */}
               </div>
               <Chats />
             </div>

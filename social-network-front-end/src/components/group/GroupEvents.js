@@ -2,18 +2,19 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import TextArea from "../form/TextArea";
 import PostImagePopup from "../main/PostImagePopup";
+import CreateEventPopup from "./CreateEventPopup";
 
 function GroupEvents() {
   const [posts, setPosts] = useState([]);
   const [showFullText, setShowFullText] = useState({});
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [createModalShowing, setCreateModalShowing] = useState(false);
 
-  const handleImageClick = (post) => {
-    setSelectedPost(post);
+  const handleCreateEventClick = () => {
+    setCreateModalShowing(true)
   };
 
-  const handlePostImagePopupClose = () => {
-    setSelectedPost(null);
+  const handleCreateEventClose = () => {
+    setCreateModalShowing(false);
   };
 
   const [text, setText] =
@@ -90,7 +91,7 @@ function GroupEvents() {
         <div class="card-body">
           <div className="card-title d-flex justify-content-between align-items-center">
             <h5>Upcoming Events</h5>
-            <button className="btn btn-primary ml-2">Create Event</button>
+            <button onClick={handleCreateEventClick} className="btn btn-primary ml-2">Create Event</button>
           </div>
           <div className="list-group m-2">
             <div className="d-flex align-items-center">
@@ -177,6 +178,11 @@ function GroupEvents() {
           </div>
         </div>
       </div>
+      {createModalShowing && (
+        <CreateEventPopup
+          onClose={handleCreateEventClose}
+        />
+      )}
     </div>
   );
 }

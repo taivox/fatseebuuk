@@ -101,7 +101,6 @@ function GroupPosts() {
                   width: "80px",
                   borderRadius: "100%",
                   objectFit: "cover",
-                  zIndex: "99999",
                 }}
               />
               <form class="flex-grow-1">
@@ -110,7 +109,7 @@ function GroupPosts() {
             name={""}
             value={""}
             rows={"3"}
-            placeholder={"What's on your mind?"}
+            placeholder={"Write something..."}
           />
                 <div class="form-group m-2">
                   <label for="post-image" class="btn btn-ligth mb-0">

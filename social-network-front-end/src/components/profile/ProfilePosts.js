@@ -101,7 +101,6 @@ function ProfilePosts() {
                   width: "80px",
                   borderRadius: "100%",
                   objectFit: "cover",
-                  zIndex: "99999",
                 }}
               />
               <form class="flex-grow-1">
