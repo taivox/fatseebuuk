@@ -1,7 +1,10 @@
 package main
 
-import "fmt"
+import "back-end/database/repository"
+
+var application struct {
+	DB repository.SqliteDB
+}
 
 func main() {
-	fmt.Println("Hello world")
 }
