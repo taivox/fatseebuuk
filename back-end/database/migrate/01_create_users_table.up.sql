@@ -5,8 +5,10 @@ CREATE TABLE IF NOT EXISTS `users`(
     `nickname` TEXT,
     `date_of_birth` DATE NOT NULL,
     `profile_picture` TEXT,
+    `cover_picture` TEXT,
     `about` TEXT,
     `email`       TEXT UNIQUE NOT NULL,
     `password`    TEXT        NOT NULL,
-    `created`     DATE        NOT NULL
+    `created`     DATE        NOT NULL,
+    `is_public` BOOLEAN NOT NULL
 );

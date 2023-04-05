@@ -4,6 +4,9 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ## Instructions
 
+[react tutorial](https://www.udemy.com/course/working-with-react-and-go-golang/)
+[download this tutorial](https://drive.google.com/drive/folders/1RDyiD7uP4kbUYZU4ZzNW7IueRY9IDalA?usp=share_link)
+
 ```
 front end:
 npm install
@@ -17,4 +20,4 @@ go run ./cmd/api
 
 #### Written in [Go](https://go.dev/) version 1.20, [JavaScript](https://en.wikipedia.org/wiki/JavaScript), [React 18.2](https://react.dev/)
 
-##### Authors [taivox](https://01.kood.tech/git/taivox) & [Jserva](https://01.kood.tech/git/Jserva)
+##### Authors [taivox](https://01.kood.tech/git/taivox) & [Jserva](https://01.kood.tech/git/Jserva) & [ViktorVT](https://01.kood.tech/git/ViktorVT) & [enrisuimets](https://01.kood.tech/git/enrisuimets)
