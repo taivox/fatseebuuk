@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS `events`(
     `description` TEXT NOT NULL, 
     `image` TEXT,
     `event_date` DATETIME NOT NULL,
-    `created_at` DATETIME NOT NULL,
+    `created` DATETIME DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (user_id) REFERENCES users (user_id)
     ON DELETE CASCADE
 );

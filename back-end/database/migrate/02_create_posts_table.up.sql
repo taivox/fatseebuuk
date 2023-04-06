@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `posts`(
     `content` TEXT NOT NULL,
     `image` TEXT,
     `is_public` BOOLEAN NOT NULL,
-    `created` DATE NOT NULL,
+    `created` DATETIME DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (user_id) REFERENCES users (user_id)
     ON DELETE CASCADE
 );

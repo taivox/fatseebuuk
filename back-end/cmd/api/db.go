@@ -2,7 +2,9 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"os"
+	"strings"
 
 	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/mattn/go-sqlite3"
@@ -29,14 +31,26 @@ func openDB() (*sql.DB, error) {
 	}
 
 	if !exists {
-		// pre := "./data/"
-		// paths := []string{pre + "tables.sql", pre + "users.sql", pre + "subforums.sql", pre + "threads.sql", pre + "comments.sql", pre + "messages.sql"}
-		// for _, path := range paths {
-		// 	readFile, err := os.ReadFile(path)
-		// 	fileStr := string(readFile)
-		// 	_, err = DB.Conn.Exec(fileStr)
+		path := "./database/migrate/"
+		fileNames, err := os.ReadDir(path)
+		if err != nil {
+			return nil, err
+		}
+		for _, name := range fileNames {
+			fileName := name.Name()
+			if !strings.Contains(fileName, ".down") {
+				fmt.Println(path + fileName)
+				readFile, err := os.ReadFile(path + fileName)
+				if err != nil {
+					return nil, err
+				}
+				_, err = db.Exec(string(readFile))
+				if err != nil {
+					return nil, err
+				}
+			}
+		}
 
-		// }
 	}
 
 	return db, nil

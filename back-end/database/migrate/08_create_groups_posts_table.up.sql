@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS `groups_posts`(
     `group_id` INTEGER NOT NULL,
     `content` TEXT NOT NULL, 
     `image` TEXT,
-    `created_at` DATETIME NOT NULL,
+    `created` DATETIME DEFAULT CURRENT_TIMESTAMP, 
     FOREIGN KEY (user_id) REFERENCES users (user_id)
     ON DELETE CASCADE
 );
