@@ -2,13 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 // import { BiMessageAdd, BiUserPlus } from "react-icons/bi";
 
-const ProfileHeader = () => {
+const ProfileHeader = ({props}) => {
+  console.log(props);
+
   return (
     <div className="container">
       <div className="cover-container">
         <img
           className="cover-photo"
-          src="/cover/mustache.jpg"
+          src={`/cover/${props.cover_picture}`}
           alt="cover"
           style={{
             height: "400px",
@@ -23,7 +25,7 @@ const ProfileHeader = () => {
             <div className="profile-pic-wrapper">
               <img
                 className="profile-pic m-3"
-                src="/profile/chad.jpg"
+                src={`/profile/${props.profile_picture}`}
                 style={{
                   height: "155px",
                   width: "155px",
@@ -37,7 +39,7 @@ const ProfileHeader = () => {
           </div>
           <div></div>
           <div className="profile-info">
-            <h1>John Doe</h1>
+            <h1>{`${props.first_name} ${props.last_name}`} {props.nickname && `(${props.nickname})`}</h1>
             <div className="friend-info">
               <div className="friend-count">100 friends</div>
               <div className="friend-list">

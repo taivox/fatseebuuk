@@ -4,8 +4,8 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ## Instructions
 
-[react tutorial](https://www.udemy.com/course/working-with-react-and-go-golang/)
-[download this tutorial](https://drive.google.com/drive/folders/1RDyiD7uP4kbUYZU4ZzNW7IueRY9IDalA?usp=share_link)
+[one of ze best react tutorial](https://www.udemy.com/course/working-with-react-and-go-golang/) <br>
+[click here download this awesome much wow pirate virus tutorial](https://drive.google.com/drive/folders/1RDyiD7uP4kbUYZU4ZzNW7IueRY9IDalA?usp=share_link)
 
 ```
 front end:

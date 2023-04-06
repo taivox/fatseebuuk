@@ -1,8 +1,8 @@
 INSERT INTO `users` (`first_name`, `last_name`, `nickname`, `date_of_birth`, `profile_picture`, `cover_picture`, `about`, `email`, `password`, `is_public`)
 VALUES 
-('Alice', 'Smith', 'alice_s', '1990-01-01', 'https://example.com/alice_profile_pic.jpg', 'https://example.com/alice_cover_pic.jpg', 'I am a software engineer.', 'alice@example.com', 'password123', 1),
-('Bob', 'Johnson', NULL, '1985-05-15', 'https://example.com/bob_profile_pic.jpg', NULL, 'I love to travel and try new foods.', 'bob@example.com', 'secret456', 0),
-('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'https://example.com/charlie_cover_pic.jpg', NULL, 'charlie@example.com', 'qwerty789', 1);
+('Alice', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'alice@example.com', 'password123', 1),
+('Bob', 'Johnson', NULL, '1985-05-15', NULL, NULL, 'I love to travel and try new foods.', 'bob@example.com', 'secret456', 0),
+('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', 'qwerty789', 1);
 
 INSERT INTO `posts` (`user_id`, `content`, `image`, `is_public`)
 VALUES 

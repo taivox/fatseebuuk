@@ -12,5 +12,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/", app.Home)
 	mux.HandleFunc("/user/", app.User)
 
-	return mux
+	// add middleware
+	handler := app.enableCORS(mux)
+
+	return handler
 }

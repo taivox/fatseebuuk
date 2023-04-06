@@ -24,9 +24,9 @@ func (m *SqliteDB) GetUserByID(id int) (*models.User, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
-	query := `SELECT user_id, first_name, last_name, nickname, date_of_birth,
-			COALESCE(profile_picture,'default_profile.jpeg'), COALESCE(cover_picture, 'default_cover.jpeg'),
-			about, is_public FROM users WHERE user_id = ?`
+	query := `SELECT user_id, first_name, last_name, COALESCE(nickname,''), date_of_birth,
+			COALESCE(profile_picture,'default_profile_picture.png'), COALESCE(cover_picture, 'default_cover_picture.png'),
+			COALESCE(about,''), is_public FROM users WHERE user_id = ?`
 
 	row := m.DB.QueryRowContext(ctx, query, id)
 

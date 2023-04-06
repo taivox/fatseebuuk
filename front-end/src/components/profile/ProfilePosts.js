@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import TextArea from "../form/TextArea";
 import PostImagePopup from "../main/PostImagePopup";
 
-function ProfilePosts() {
+function ProfilePosts({props}) {
 
     const [posts, setPosts] = useState([]);
   const [showFullText, setShowFullText] = useState({});
@@ -93,7 +93,7 @@ function ProfilePosts() {
           <div class="media mb-3">
             <div class="media-body d-flex">
               <img
-                src="/profile/chad.jpg"
+                src={props.profile_picture}
                 class="mr-3 m-2"
                 alt="Your Profile Picture"
                 style={{

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 
-function ProfileLeft() {
+
+
+function ProfileLeft({props}) {
   return (
     <div className="col-md-6">
       <div className="card mt-3">
@@ -10,14 +12,7 @@ function ProfileLeft() {
         <div className="container">
           <div className="m-3">
             <p className="card-text">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-              consectetur erat justo, sed interdum est feugiat sit amet. Sed
-              quis feugiat velit. Sed malesuada lacus dolor, eget commodo mi
-              euismod non. Integer sodales, ipsum a venenatis rutrum, nisi
-              lectus sollicitudin velit, at scelerisque urna lorem vel odio.
-              Vestibulum eu est ac orci semper fermentum ut quis libero. Sed nec
-              sodales lacus. Vestibulum id varius nunc. Nam suscipit nunc eu
-              diam tristique, nec laoreet nisi rutrum.
+            {props.about}
             </p>
           </div>
         </div>
