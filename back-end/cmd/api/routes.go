@@ -10,6 +10,7 @@ func (app *application) routes() http.Handler {
 
 	// mux.HandleFunc("/ws", WebsocketHandler) //TODO: implement websocket handler for chat
 	mux.HandleFunc("/", app.Home)
+	mux.HandleFunc("/user/", app.User)
 
 	return mux
 }

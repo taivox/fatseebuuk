@@ -12,7 +12,7 @@ import (
 
 func openDB() (*sql.DB, error) {
 	var err error
-	dbPath := "./database/social-network.db"
+	dbPath := "./database/social_network.db"
 	exists := true
 
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {
@@ -23,7 +23,6 @@ func openDB() (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer db.Close()
 
 	err = db.Ping()
 	if err != nil {
