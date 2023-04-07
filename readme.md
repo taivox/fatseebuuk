@@ -9,10 +9,12 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ```
 front end:
+cd front-end
 npm install
 npm start
 
 back end:
+cd back-end
 go run ./cmd/api
 ```
 
