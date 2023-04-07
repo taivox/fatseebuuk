@@ -6,12 +6,12 @@ VALUES
 
 INSERT INTO `posts` (`user_id`, `content`, `image`, `is_public`)
 VALUES 
-(1, 'This is my first post!', 'https://example.com/post_image_1.jpg', 1),
-(1, 'Just hanging out with friends. #goodtimes', 'https://example.com/post_image_2.jpg', 1),
+(1, 'This is my first post!', NULL, 1),
+(1, 'Just hanging out with friends. #goodtimes', NULL, 1),
 (2, 'Trying out this new recipe I found. #yum', NULL, 0),
-(2, 'I cant believe its already fall! 🍂', 'https://example.com/post_image_3.jpg', 1),
+(2, 'I cant believe its already fall! 🍂', NULL, 1),
 (3, 'Excited to start my new job!', NULL, 1),
-(3, 'Weekend getaway with the family. #familytime', 'https://example.com/post_image_4.jpg', 1);
+(3, 'Weekend getaway with the family. #familytime', NULL, 1);
 
 
 INSERT INTO `friends` (`user_id`, `friend_id`, `request_pending`)
@@ -72,9 +72,9 @@ INSERT INTO `comment_likes` (`comment_id`, `user_id`) VALUES
 
 
 INSERT INTO groups (title, description, user_id, image) VALUES
-('Sports Fans', 'A group for sports enthusiasts', 1, 'https://example.com/sports.jpg'),
-('Book Club', 'A group for book lovers', 2, 'https://example.com/books.jpg'),
-('Travel Lovers', 'A group for travel enthusiasts', 3, 'https://example.com/travel.jpg');
+('Sports Fans', 'A group for sports enthusiasts', 1, NULL),
+('Book Club', 'A group for book lovers', 2, NULL),
+('Travel Lovers', 'A group for travel enthusiasts', 3, NULL);
 
 INSERT INTO groups_posts (user_id, group_id, content, image, created)
 VALUES

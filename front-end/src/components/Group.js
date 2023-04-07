@@ -1,29 +1,52 @@
 import { Outlet, useParams } from "react-router-dom"
-import Footer from "./common/Footer";
-import Header from "./common/Header";
-import GroupHeader from "./group/GroupHeader";
-import GroupMenu from "./group/GroupMenu";
-import Chats from "./main/Chats";
+import Footer from "./common/Footer"
+import Header from "./common/Header"
+import GroupHeader from "./group/GroupHeader"
+import GroupMenu from "./group/GroupMenu"
+import Chats from "./main/Chats"
+import { useEffect, useState } from "react"
 
-function Group(){
-    // let {id} = useParams()
+function Group() {
+  const [group, setGroup] = useState({})
+  let { id } = useParams()
 
-    return (
-        <div>
-          <Header />
-          <GroupHeader/>
-          <div className="container">
-            <div className="row">
-              <GroupMenu />
-              <div className="col-md-6">
-                <Outlet />
-              </div>
-              <Chats />
-            </div>
+  useEffect(() => {
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+
+    const requestOptions = {
+      method: "GET",
+      headers: headers,
+    }
+
+    fetch(`${process.env.REACT_APP_BACKEND}/groups/${id}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data)
+        setGroup(data)
+      })
+      .catch((error) => {
+        console.log("seeerror", error)
+      })
+
+  }, [id])
+
+  return (
+    <div>
+      <Header />
+      <GroupHeader />
+      <div className="container">
+        <div className="row">
+          <GroupMenu />
+          <div className="col-md-6">
+            <Outlet />
           </div>
-          <Footer />
+          <Chats />
         </div>
-      );
+      </div>
+      <Footer />
+    </div>
+  )
 }
 
 export default Group
