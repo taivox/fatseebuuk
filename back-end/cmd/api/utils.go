@@ -5,6 +5,8 @@ import (
 	"errors"
 	"io"
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 type JSONResponse struct {
@@ -68,4 +70,9 @@ func (app *application) errorJSON(w http.ResponseWriter, err error, status ...in
 	payload.Message = err.Error()
 
 	return app.writeJSON(w, statusCode, payload)
+}
+
+func getID(str, prefix, suffix string) (int, error) {
+	id := strings.TrimSuffix(strings.TrimPrefix(str, prefix), suffix)
+	return strconv.Atoi(id)
 }

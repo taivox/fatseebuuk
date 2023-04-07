@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 )
 
@@ -39,16 +38,14 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := strings.TrimPrefix(r.URL.Path, "/user/")
-	userID, err := strconv.Atoi(id)
+	userID, err := getID(r.URL.Path, "/user/", "/")
 	if err != nil {
-		app.errorJSON(w, fmt.Errorf("user not found"), http.StatusNotFound)
+		app.errorJSON(w, fmt.Errorf("user not found: invalid id"), http.StatusNotFound)
 		return
 	}
 
 	switch r.Method {
 	case "GET":
-
 		user, err := app.DB.GetUserByID(userID)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
@@ -91,8 +88,7 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	id := strings.TrimPrefix(r.URL.Path, "/groups/")
-	groupID, err := strconv.Atoi(id)
+	groupID, err := getID(r.URL.Path, "/groups/", "/")
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
 		return
@@ -103,11 +99,39 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 
 		group, err := app.DB.GetGroupByID(groupID)
 		if err != nil {
-			fmt.Println(err)
 			app.errorJSON(w, fmt.Errorf("error getting group from database"), http.StatusNotFound)
 			return
 		}
 		_ = app.writeJSON(w, http.StatusOK, group)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+// Events page
+func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
+	if !strings.HasPrefix(r.URL.Path, "/groups/") || !strings.HasSuffix(r.URL.Path, "/events") {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	groupID, err := getID(r.URL.Path, "/groups/", "/events")
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+
+		groupEvents, err := app.DB.GetGroupEvents(groupID)
+		if err != nil {
+			fmt.Println(err)
+			app.errorJSON(w, fmt.Errorf("error getting group events from database"), http.StatusNotFound)
+			return
+		}
+		_ = app.writeJSON(w, http.StatusOK, groupEvents)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import TextArea from "../form/TextArea";
-import PostImagePopup from "../main/PostImagePopup";
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
+import TextArea from "../form/TextArea"
+import PostImagePopup from "../main/PostImagePopup"
 
 function GroupPosts() {
 
-    const [posts, setPosts] = useState([]);
-  const [showFullText, setShowFullText] = useState({});
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [posts, setPosts] = useState([])
+  const [showFullText, setShowFullText] = useState({})
+  const [selectedPost, setSelectedPost] = useState(null)
 
   const handleImageClick = (post) => {
-    setSelectedPost(post);
-  };
+    setSelectedPost(post)
+  }
 
   const handlePostImagePopupClose = () => {
-    setSelectedPost(null);
-  };
+    setSelectedPost(null)
+  }
 
   const [text, setText] =
     useState(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
@@ -28,8 +28,8 @@ function GroupPosts() {
     mauris a augue. Sed at sapien nunc. Suspendisse potenti. Aenean
     hendrerit mi ut turpis maximus, vel imperdiet augue bibendum.
     Donec ut consequat enim. Duis pharetra euismod ex sed dignissim.
-    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`);
-  const textLimit = 100;
+    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`)
+  const textLimit = 100
 
   useEffect(() => {
     const dummyPosts = [
@@ -73,17 +73,17 @@ function GroupPosts() {
         postContent: text,
         postImage: "/post/nagutaivo.png",
       },
-    ];
+    ]
 
-    setPosts(dummyPosts);
-  }, [text]);
+    setPosts(dummyPosts)
+  }, [text])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,
       [postId]: !prevShowFullText[postId],
-    }));
-  };
+    }))
+  }
 
 
   return (
@@ -104,16 +104,16 @@ function GroupPosts() {
                 }}
               />
               <form class="flex-grow-1">
-              <TextArea
-            title={""}
-            name={""}
-            value={""}
-            rows={"3"}
-            placeholder={"Write something..."}
-          />
+                <TextArea
+                  title={""}
+                  name={""}
+                  value={""}
+                  rows={"3"}
+                  placeholder={"Write something..."}
+                />
                 <div class="form-group m-2">
                   <label for="post-image" class="btn btn-ligth mb-0">
-                  <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Picture
+                    <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Picture
                   </label>
                   <input
                     type="file"
@@ -121,7 +121,7 @@ function GroupPosts() {
                     id="post-image"
                   />
                   <button type="submit" class="btn btn-ligth ml-2">
-                  <box-icon name='envelope' type='solid' color='blue' ></box-icon>
+                    <box-icon name='envelope' type='solid' color='blue' ></box-icon>
                     Post
                   </button>
                 </div>
@@ -137,24 +137,24 @@ function GroupPosts() {
             <div className="media ">
               <div className="d-flex align-items-center m-2">
                 <Link to={`/profile/${p.id}`}>
-                <img
-                  src={p.profileImage}
-                  className="mr-3 rounded-circle"
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    objectFit: "cover",
-                    cursor: "pointer"
-                  }}
-                  alt="..."
-                />
+                  <img
+                    src={p.profileImage}
+                    className="mr-3 rounded-circle"
+                    style={{
+                      height: "60px",
+                      width: "60px",
+                      objectFit: "cover",
+                      cursor: "pointer"
+                    }}
+                    alt="..."
+                  />
                 </Link>
                 <div key={p.posterID} className="m-3">
-                  <h5 className="mt-0" style={{cursor:"pointer"}}>
-                <Link className="Link" to={`/profile/${p.id}`}>
-                    {p.poster}{" "}
-                    <box-icon color="grey" name={p.global ? "globe" : "user"} />
-                </Link>
+                  <h5 className="mt-0" style={{ cursor: "pointer" }}>
+                    <Link className="Link" to={`/profile/${p.id}`}>
+                      {p.poster}{" "}
+                      <box-icon color="grey" name={p.global ? "globe" : "user"} />
+                    </Link>
                   </h5>
                   <small className="text-muted">{p.postedAt}</small>
                 </div>
@@ -224,7 +224,7 @@ function GroupPosts() {
         />
       )}
     </div>
-  );
+  )
 }
 
-export default GroupPosts;
+export default GroupPosts
