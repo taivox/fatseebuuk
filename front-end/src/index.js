@@ -10,6 +10,8 @@ import Profile from './components/Profile'
 import GroupEvents from './components/group/GroupEvents'
 import GroupEvent from './components/group/GroupEvent'
 import GroupPosts from './components/group/GroupPosts'
+import Login from './components/Login'
+import Register from './components/Register'
 
 
 const router = createBrowserRouter([
@@ -49,6 +51,14 @@ const router = createBrowserRouter([
         element: <GroupEvent />
       }
     ]
+  },
+  {
+    path: "/login",
+    element: <Login />,
+  },
+  {
+    path: "/register",
+    element: <Register />,
   },
 ])
 
