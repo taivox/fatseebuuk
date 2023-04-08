@@ -78,20 +78,20 @@ INSERT INTO groups (title, description, user_id, image) VALUES
 
 INSERT INTO groups_posts (user_id, group_id, content, image, created)
 VALUES
-(1, 1, "Hello group 1 from user 1!", NULL, '2022-04-15 09:00:00'),
-(2, 1, "Hey everyone in group 1, user 2 here!", NULL, '2022-03-15 09:00:00'),
+(1, 1, "Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!Hello group 1 from user 1!", 'seepic.png', '2022-04-15 09:00:00'),
+(2, 1, "Hey everyone in group 1, user 2 here!", 'js.jpg', '2022-03-15 09:00:00'),
 (1, 2, "Welcome to group 2!", NULL, '2022-01-15 09:00:00'),
-(3, 2, "User 3 joining group 2", NULL, '2022-02-15 09:00:00'),
-(2, 3, "Greetings from user 2 in group 3", NULL, '2022-05-15 09:00:00'),
+(3, 2, "User 3 joining group 2", 'js.jpg', '2022-02-15 09:00:00'),
+(2, 3, "Greetings from user 2 in group 3", 'seepic.png', '2022-05-15 09:00:00'),
 (3, 3, "User 3 saying hi from group 3", NULL, '2022-06-15 09:00:00'),
-(1, 1, "Another post from user 1 in group 1", NULL, '2022-07-15 09:00:00'),
-(2, 2, "A post from user 2 in group 2", NULL, '2022-08-15 09:00:00'),
-(3, 1, "User 3 posting in group 1", NULL, '2022-09-15 09:00:00'),
+(1, 1, "Another post from user 1 in group 1", 'js.jpg', '2022-07-15 09:00:00'),
+(2, 2, "A post from user 2 in group 2", 'seepic.png', '2022-08-15 09:00:00'),
+(3, 1, "User 3 posting in group 1", 'js.jpg', '2022-09-15 09:00:00'),
 (1, 3, "User 1 posting in group 3", NULL, '2022-10-15 09:00:00');
 
 INSERT INTO groups_comments (user_id, post_id, content, created) VALUES
 (1, 1, "Great post, thanks for sharing!", '2022-10-15 09:00:00'),
-(2, 1, "I totally agree with your points.", '2022-10-15 09:00:00'),
+(2, 1, "I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.I totally agree with your points.", '2022-10-15 09:00:00'),
 (3, 2, "This is really helpful, thanks for posting!", '2022-10-15 09:00:00'),
 (1, 2, "I had a similar experience, thanks for sharing your story.", '2022-10-15 09:00:00'),
 (2, 3, "This is a really interesting topic. I'd love to hear more about it.", '2022-10-15 09:00:00'),

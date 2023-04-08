@@ -95,7 +95,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 	defer cancel()
 
 	//Get group
-	query := `SELECT group_id, title, description, created, user_id, COALESCE(image, 'default_group_image') FROM groups WHERE group_id = ?`
+	query := `SELECT group_id, title, description, created, user_id, COALESCE(image, 'default_group_image.png') FROM groups WHERE group_id = ?`
 
 	row := m.DB.QueryRowContext(ctx, query, id)
 	var group models.Group
@@ -114,7 +114,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 
 	//Get group posts
 	query = `SELECT
-				post_id, user_id, group_id, content, COALESCE(image, 'default_group_image'), created
+				post_id, user_id, group_id, content, COALESCE(image, ''), created
 			FROM
 				groups_posts
 			WHERE

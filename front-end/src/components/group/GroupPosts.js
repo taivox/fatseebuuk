@@ -136,13 +136,13 @@ function GroupPosts(props) {
 
 
       {posts !== [] ? posts.map((p) => (
-        <div key={p.id} className="card">
+        <div key={p.post_id} className="card">
           <div className="card-body">
             <div className="media ">
               <div className="d-flex align-items-center m-2">
-                <Link to={`/profile/${p.user_id}`}>
+                <Link to={`/profile/${p.poster.user_id}`}>
                   <img
-                    src={p.profile_picture}
+                    src={`/profile/${p.poster.profile_picture}`}
                     className="mr-3 rounded-circle"
                     style={{
                       height: "60px",
@@ -153,11 +153,10 @@ function GroupPosts(props) {
                     alt="..."
                   />
                 </Link>
-                <div key={p.user_id} className="m-3">
+                <div key={p.poster.user_id} className="m-3">
                   <h5 className="mt-0" style={{ cursor: "pointer" }}>
-                    <Link className="Link" to={`/profile/${p.user_id}`}>
-                      {p.poster}{" "}
-                      <box-icon color="grey" name={p.is_public ? "globe" : "user"} />
+                    <Link className="Link" to={`/profile/${p.poster.user_id}`}>
+                      {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
                     </Link>
                   </h5>
                   <small className="text-muted">{p.created}</small>
@@ -165,24 +164,24 @@ function GroupPosts(props) {
               </div>
               <div className="media-body">
                 <p className="card-text">
-                  {showFullText[p.user_id]
+                  {showFullText[p.poster.user_id]
                     ? p.content
                     : p.content.slice(0, textLimit)}
-                  {p.content.length > textLimit && !showFullText[p.user_id] && (
+                  {p.content.length > textLimit && !showFullText[p.poster.user_id] && (
                     <span>
                       ...{" "}
                       <p
                         className="show-more-link"
                         href="#!"
-                        onClick={() => toggleText(p.user_id)}
+                        onClick={() => toggleText(p.poster.user_id)}
                       >
                         See more
                       </p>
                     </span>
                   )}
                 </p>
-                <img
-                  src={`/profile/${p.profile_picture}`}
+                {p.image !== "" && <img
+                  src={`/post/${p.image}`}
                   className="img-fluid mb-2"
                   style={{
                     height: "300px",
@@ -192,7 +191,7 @@ function GroupPosts(props) {
                   }}
                   alt="..."
                   onClick={() => handleImageClick(p)}
-                />
+                />}
                 <div className="d-flex justify-content-between align-items-center">
                   <button className="btn">
                     <box-icon name="like" /> 23
