@@ -9,7 +9,7 @@ function GroupEvents() {
   const [pastEvents, setPastEvents] = useState([])
   const [upcomingEvents, setUpcomingEvents] = useState([])
   const [createModalShowing, setCreateModalShowing] = useState(false)
-  const { id } = useParams()
+  const { group_id } = useParams()
 
   const handleCreateEventClick = () => {
     setCreateModalShowing(true)
@@ -27,7 +27,7 @@ function GroupEvents() {
       method: "GET",
       headers: headers,
     }
-    fetch(`${process.env.REACT_APP_BACKEND}/groups/1/events`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setPastEvents(data.past_events)
@@ -49,10 +49,9 @@ function GroupEvents() {
           </div>
 
           {upcomingEvents.map((event) => (
-            <div className="list-group m-2">
+            <div key={event.event_id} className="list-group m-2">
               <div className="d-flex align-items-center">
                 <Link
-                  key={event.event_id}
                   to={`${event.event_id}`}
                 >
                   <img
@@ -90,10 +89,9 @@ function GroupEvents() {
 
 
           {pastEvents.map((event) => (
-            <div className="list-group m-2">
+            <div key={event.event_id} className="list-group m-2">
               <div className="d-flex align-items-center">
                 <Link
-                  key={event.event_id}
                   to={`${event.event_id}`}
                 >
                   <img

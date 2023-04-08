@@ -232,3 +232,42 @@ func (m *SqliteDB) GetGroupEvents(id int) (*models.Events, error) {
 	}
 	return &events, nil
 }
+
+func (m *SqliteDB) GetEventByID(id int) (*models.Event, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	defer cancel()
+
+	query := `SELECT 
+				event_id, user_id, group_id, title, description,
+				COALESCE(image, 'default_event_image.png'), event_date, created
+			FROM
+				events
+			WHERE
+				event_id = ?`
+
+	row := m.DB.QueryRowContext(ctx, query, id)
+	var event models.Event
+	var userID int
+
+	err := row.Scan(
+		&event.EventID,
+		&userID,
+		&event.GroupID,
+		&event.Title,
+		&event.Description,
+		&event.Image,
+		&event.EventDate,
+		&event.Created,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	user, err := m.GetUserByID(userID)
+	if err != nil {
+		return nil, err
+	}
+	event.Poster = *user
+
+	return &event, nil
+}

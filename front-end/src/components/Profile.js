@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom"
 
 function Profile() {
   const [profile, setProfile] = useState({})
-  let { id } = useParams()
+  let { user_id } = useParams()
 
   useEffect(() => {
     const headers = new Headers()
@@ -19,7 +19,7 @@ function Profile() {
       headers: headers,
     }
 
-    fetch(`${process.env.REACT_APP_BACKEND}/user/${id}`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND}/user/${user_id}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setProfile(data)
@@ -28,7 +28,7 @@ function Profile() {
         console.log(error)
       })
 
-  }, [id])
+  }, [])
 
   return (
 

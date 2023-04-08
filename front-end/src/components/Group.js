@@ -9,7 +9,7 @@ import { useEffect, useState } from "react"
 function Group() {
   const [group, setGroup] = useState({})
   const [groupPosts, setGroupPosts] = useState([])
-  let { id } = useParams()
+  let { group_id } = useParams()
 
   useEffect(() => {
     const headers = new Headers()
@@ -19,7 +19,7 @@ function Group() {
       method: "GET",
       headers: headers,
     }
-    fetch(`${process.env.REACT_APP_BACKEND}/groups/${id}`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         setGroup(data)
@@ -30,7 +30,7 @@ function Group() {
       })
 
 
-  }, [id])
+  }, [])
 
   return (
     <div>

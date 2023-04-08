@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"net/http"
+	"regexp"
 	"strconv"
-	"strings"
 )
 
 type JSONResponse struct {
@@ -72,7 +73,20 @@ func (app *application) errorJSON(w http.ResponseWriter, err error, status ...in
 	return app.writeJSON(w, statusCode, payload)
 }
 
-func getID(str, prefix, suffix string) (int, error) {
-	id := strings.TrimSuffix(strings.TrimPrefix(str, prefix), suffix)
-	return strconv.Atoi(id)
+// func getID(str, prefix, suffix string) (int, error) {
+// 	id := strings.TrimSuffix(strings.TrimPrefix(str, prefix), suffix)
+// 	return strconv.Atoi(id)
+// }
+
+func getID(str, regexStr string) (int, error) {
+	re := regexp.MustCompile(regexStr)
+	matches := re.FindAllString(str, -1)
+
+	if len(matches) > 0 {
+		lastMatch := matches[len(matches)-1]
+
+		return strconv.Atoi(lastMatch)
+	}
+
+	return 0, fmt.Errorf("invalid id")
 }

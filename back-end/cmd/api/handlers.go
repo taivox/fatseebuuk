@@ -3,15 +3,10 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 )
 
 // Home displays the status of the api, as JSON.
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/" {
-		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
-		return
-	}
 
 	switch r.Method {
 	case "GET":
@@ -33,12 +28,8 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 
 // User page
 func (app *application) User(w http.ResponseWriter, r *http.Request) {
-	if !strings.HasPrefix(r.URL.Path, "/user/") {
-		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
-		return
-	}
 
-	userID, err := getID(r.URL.Path, "/user/", "/")
+	userID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("user not found: invalid id"), http.StatusNotFound)
 		return
@@ -60,10 +51,6 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 
 // All groups page
 func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Path != "/groups" {
-		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
-		return
-	}
 
 	switch r.Method {
 	case "GET":
@@ -83,12 +70,8 @@ func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
 
 // Group page
 func (app *application) Group(w http.ResponseWriter, r *http.Request) {
-	if !strings.HasPrefix(r.URL.Path, "/groups/") {
-		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
-		return
-	}
 
-	groupID, err := getID(r.URL.Path, "/groups/", "/")
+	groupID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
 		return
@@ -111,12 +94,8 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 
 // Events page
 func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
-	if !strings.HasPrefix(r.URL.Path, "/groups/") || !strings.HasSuffix(r.URL.Path, "/events") {
-		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
-		return
-	}
 
-	groupID, err := getID(r.URL.Path, "/groups/", "/events")
+	groupID, err := getID(r.URL.Path, `\d+`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
 		return
@@ -127,11 +106,35 @@ func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 
 		groupEvents, err := app.DB.GetGroupEvents(groupID)
 		if err != nil {
-			fmt.Println(err)
 			app.errorJSON(w, fmt.Errorf("error getting group events from database"), http.StatusNotFound)
 			return
 		}
 		_ = app.writeJSON(w, http.StatusOK, groupEvents)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+// Event page
+func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
+
+	eventID, err := getID(r.URL.Path, `\d+$`)
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+
+		event, err := app.DB.GetEventByID(eventID)
+		if err != nil {
+			fmt.Println(err)
+			app.errorJSON(w, fmt.Errorf("error getting event from database"), http.StatusNotFound)
+			return
+		}
+		_ = app.writeJSON(w, http.StatusOK, event)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

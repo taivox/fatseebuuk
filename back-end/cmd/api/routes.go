@@ -2,7 +2,7 @@ package main
 
 import (
 	"net/http"
-	"strings"
+	"regexp"
 )
 
 func (app *application) routes() http.Handler {
@@ -17,8 +17,13 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/groups", app.AllGroups)
 
 	mux.HandleFunc("/groups/", func(w http.ResponseWriter, r *http.Request) {
+		//Handler for events. Example: /groups/1/events/1
+		if regexp.MustCompile(`/groups/\d+/events/\d+$`).MatchString(r.URL.Path) {
+			app.GroupEvent(w, r)
+			return
+		}
 		//Handler for events. Example: /groups/1/events
-		if strings.HasPrefix(r.URL.Path, "/groups/") && strings.HasSuffix(r.URL.Path, "/events") {
+		if regexp.MustCompile(`/groups/\d+/events$`).MatchString(r.URL.Path) {
 			app.GroupEvents(w, r)
 			return
 		}
