@@ -1,19 +1,27 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 
 function Menu() {
-  const [groups, setGroups] = useState([]);
+  const [groups, setGroups] = useState([])
 
   useEffect(() => {
-    const groups = [
-      { id: 1, title: "Web Developers Anonymous" },
-      { id: 2, title: "UI/UX Designers" },
-      { id: 3, title: "Product Managers" },
-      { id: 4, title: "Data Scientists" },
-    ];
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
 
-    setGroups(groups);
-  }, []);
+    const requestOptions = {
+      method: "GET",
+      headers: headers,
+    }
+
+    fetch(`${process.env.REACT_APP_BACKEND}/groups`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        setGroups(data)
+      })
+      .catch((error) => {
+        console.log("seeerror", error)
+      })
+  }, [])
   return (
     <div className="col-md-3">
       <nav>
@@ -33,15 +41,15 @@ function Menu() {
             </Link>
 
             <ul className="list-group list-group-flush">
-              {groups.map((g) => (
-                <Link to={`/groups/${g.id}`} key={g.id} className="list-group-item">{g.title}</Link>
+              {groups.map((group) => (
+                <Link to={`/groups/${group.group_id}`} key={group.group_id} className="list-group-item">{group.title}</Link>
               ))}
             </ul>
           </div>
         </div>
       </nav>
     </div>
-  );
+  )
 }
 
-export default Menu;
+export default Menu

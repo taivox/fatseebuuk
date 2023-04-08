@@ -12,8 +12,6 @@ function PostImagePopup({ post, onClose }) {
     onClose()
   }
 
-  console.log(post)
-
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,

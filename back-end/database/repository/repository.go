@@ -180,7 +180,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 	return &group, nil
 }
 
-func (m *SqliteDB) GetGroupEvents(id int) ([]*models.Event, error) {
+func (m *SqliteDB) GetGroupEvents(id int) (*models.Events, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
 	defer cancel()
 
@@ -190,7 +190,7 @@ func (m *SqliteDB) GetGroupEvents(id int) ([]*models.Event, error) {
 			FROM
 				events
 			WHERE
-				event_id = ?`
+				group_id = ?`
 
 	rows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil {
@@ -198,8 +198,10 @@ func (m *SqliteDB) GetGroupEvents(id int) ([]*models.Event, error) {
 	}
 	defer rows.Close()
 
-	var events []*models.Event
+	var events models.Events
+
 	var userID int
+	now := time.Now()
 
 	for rows.Next() {
 		var event models.Event
@@ -222,8 +224,11 @@ func (m *SqliteDB) GetGroupEvents(id int) ([]*models.Event, error) {
 		}
 		event.Poster = *p
 
-		events = append(events, &event)
+		if event.EventDate.Before(now) {
+			events.PastEvents = append(events.PastEvents, event)
+		} else {
+			events.UpcomingEvents = append(events.UpcomingEvents, event)
+		}
 	}
-
-	return events, nil
+	return &events, nil
 }

@@ -35,7 +35,7 @@ function Group() {
   return (
     <div>
       <Header />
-      <GroupHeader />
+      {group && <GroupHeader group={group} />}
       <div className="container">
         <div className="row">
           <GroupMenu />

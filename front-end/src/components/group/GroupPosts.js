@@ -19,65 +19,9 @@ function GroupPosts(props) {
     setSelectedPost(null)
   }
 
-  const [text, setText] =
-    useState(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
-    est id elit consectetur sollicitudin. Nam vel turpis eget ipsum
-    bibendum dictum at in lectus. Mauris a semper urna, ac facilisis
-    nulla. Pellentesque habitant morbi tristique senectus et netus
-    et malesuada fames ac turpis egestas. Praesent congue nulla nec
-    ipsum bibendum, vel finibus turpis luctus. Sed ornare, lorem vel
-    varius tristique, est massa dictum est, vitae euismod massa
-    mauris a augue. Sed at sapien nunc. Suspendisse potenti. Aenean
-    hendrerit mi ut turpis maximus, vel imperdiet augue bibendum.
-    Donec ut consequat enim. Duis pharetra euismod ex sed dignissim.
-    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`)
   const textLimit = 100
-  console.log(groupPosts, "need on grouppostis")
 
   useEffect(() => {
-    const dummyPosts = [
-      {
-        id: 1,
-        posterID: 1,
-        poster: "John Doe",
-        profileImage: "/profile/chad.jpg",
-        global: true,
-        postedAt: "Posted 1 day ago",
-        postContent: text,
-        postImage: "/post/chadpost.png",
-      },
-      {
-        id: 2,
-        posterID: 2,
-        poster: "Dora Explorer",
-        profileImage: "/profile/dota.jpg",
-        global: false,
-        postedAt: "Posted 2 hours ago",
-        postContent: text,
-        postImage: "/post/js.jpg",
-      },
-      {
-        id: 3,
-        posterID: 3,
-        poster: "Peppa Pug",
-        profileImage: "/profile/peppa.jpg",
-        global: false,
-        postedAt: "Posted 5 days ago",
-        postContent: text,
-        postImage: "/post/oldprogrammers.webp",
-      },
-      {
-        id: 4,
-        posterID: 4,
-        poster: "Steve Scumbag",
-        profileImage: "/profile/scumbag.jpg",
-        global: true,
-        postedAt: "Posted 12 days ago",
-        postContent: text,
-        postImage: "/post/nagutaivo.png",
-      },
-    ]
-
     setPosts(groupPosts)
   }, [groupPosts])
 

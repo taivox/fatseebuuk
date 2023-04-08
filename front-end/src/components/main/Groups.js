@@ -16,11 +16,10 @@ function Groups() {
     fetch(`${process.env.REACT_APP_BACKEND}/groups`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         setGroups(data)
       })
       .catch((error) => {
-        console.log("seeerror", error)
+        console.log(error)
       })
   }, [])
 

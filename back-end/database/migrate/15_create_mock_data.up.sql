@@ -114,12 +114,12 @@ INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pendi
 (3, 4, false, true);
 
 INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES 
-(1, 1, 'Charity Run', 'A charity run for local organizations', 'charity_run.jpg', '2023-04-15 09:00:00'),
-(1, 2, 'Concert', 'A concert featuring local musicians', 'concert.jpg', '2023-05-01 20:00:00'),
-(2, 1, 'Community Cleanup', 'A cleanup event for the local community', 'cleanup.jpg', '2023-05-15 10:00:00'),
-(2, 2, 'Art Exhibition', 'An art exhibition featuring local artists', 'art_exhibition.jpg', '2023-06-01 18:00:00'),
-(3, 1, 'Bake Sale', 'A bake sale to raise funds for charity', 'bake_sale.jpg', '2023-06-15 12:00:00'),
-(3, 2, 'Movie Night', 'A movie night featuring classic films', 'movie_night.jpg', '2023-07-01 19:00:00');
+(1, 1, 'Charity Run', 'A charity run for local organizations', NULL, '2022-04-15 09:00:00'),
+(1, 1, 'Concert', 'A concert featuring local musicians', 'flowers.jpg', '2022-05-01 20:00:00'),
+(2, 1, 'Community Cleanup', 'A cleanup event for the local community', 'guys.webp', '2022-05-15 10:00:00'),
+(2, 1, 'Art Exhibition', 'An art exhibition featuring local artists', NULL, '2023-06-01 18:00:00'),
+(3, 1, 'Bake Sale', 'A bake sale to raise funds for charity', 'guys.webp', '2023-06-15 12:00:00'),
+(3, 1, 'Movie Night', 'A movie night featuring classic films', 'flowers.jpg', '2023-07-01 19:00:00');
 
 INSERT INTO events_attendance (event_id, user_id, is_going) VALUES
 (1, 1, true),

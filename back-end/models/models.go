@@ -77,6 +77,11 @@ type Event struct {
 	Created     time.Time `json:"created"`
 }
 
+type Events struct {
+	UpcomingEvents []Event `json:"upcoming_events"`
+	PastEvents     []Event `json:"past_events"`
+}
+
 type Message struct {
 	MessageID int       `json:"message_id"`
 	FromUser  User      `json:"from_user"`
