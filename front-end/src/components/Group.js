@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 
 function Group() {
   const [group, setGroup] = useState({})
+  const [groupPosts, setGroupPosts] = useState([])
   let { id } = useParams()
 
   useEffect(() => {
@@ -18,16 +19,17 @@ function Group() {
       method: "GET",
       headers: headers,
     }
-
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${id}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         console.log(data)
         setGroup(data)
+        setGroupPosts(data.posts)
       })
       .catch((error) => {
         console.log("seeerror", error)
       })
+
 
   }, [id])
 
@@ -39,7 +41,7 @@ function Group() {
         <div className="row">
           <GroupMenu />
           <div className="col-md-6">
-            <Outlet />
+            {groupPosts.length > 0 && <Outlet context={{ groupPosts }} />}
           </div>
           <Chats />
         </div>

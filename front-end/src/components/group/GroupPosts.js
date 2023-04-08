@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useOutletContext } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 
-function GroupPosts() {
+function GroupPosts(props) {
+
+  const { groupPosts } = useOutletContext()
 
   const [posts, setPosts] = useState([])
   const [showFullText, setShowFullText] = useState({})
@@ -30,6 +32,7 @@ function GroupPosts() {
     Donec ut consequat enim. Duis pharetra euismod ex sed dignissim.
     Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`)
   const textLimit = 100
+  console.log(groupPosts, "need on grouppostis")
 
   useEffect(() => {
     const dummyPosts = [
@@ -75,8 +78,8 @@ function GroupPosts() {
       },
     ]
 
-    setPosts(dummyPosts)
-  }, [text])
+    setPosts(groupPosts)
+  }, [groupPosts])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
@@ -131,14 +134,15 @@ function GroupPosts() {
         </div>
       </div>
 
-      {posts.map((p) => (
+
+      {posts !== [] ? posts.map((p) => (
         <div key={p.id} className="card">
           <div className="card-body">
             <div className="media ">
               <div className="d-flex align-items-center m-2">
-                <Link to={`/profile/${p.id}`}>
+                <Link to={`/profile/${p.user_id}`}>
                   <img
-                    src={p.profileImage}
+                    src={p.profile_picture}
                     className="mr-3 rounded-circle"
                     style={{
                       height: "60px",
@@ -149,28 +153,28 @@ function GroupPosts() {
                     alt="..."
                   />
                 </Link>
-                <div key={p.posterID} className="m-3">
+                <div key={p.user_id} className="m-3">
                   <h5 className="mt-0" style={{ cursor: "pointer" }}>
-                    <Link className="Link" to={`/profile/${p.id}`}>
+                    <Link className="Link" to={`/profile/${p.user_id}`}>
                       {p.poster}{" "}
-                      <box-icon color="grey" name={p.global ? "globe" : "user"} />
+                      <box-icon color="grey" name={p.is_public ? "globe" : "user"} />
                     </Link>
                   </h5>
-                  <small className="text-muted">{p.postedAt}</small>
+                  <small className="text-muted">{p.created}</small>
                 </div>
               </div>
               <div className="media-body">
                 <p className="card-text">
-                  {showFullText[p.id]
-                    ? p.postContent
-                    : p.postContent.slice(0, textLimit)}
-                  {p.postContent.length > textLimit && !showFullText[p.id] && (
+                  {showFullText[p.user_id]
+                    ? p.content
+                    : p.content.slice(0, textLimit)}
+                  {p.content.length > textLimit && !showFullText[p.user_id] && (
                     <span>
                       ...{" "}
                       <p
                         className="show-more-link"
                         href="#!"
-                        onClick={() => toggleText(p.id)}
+                        onClick={() => toggleText(p.user_id)}
                       >
                         See more
                       </p>
@@ -178,7 +182,7 @@ function GroupPosts() {
                   )}
                 </p>
                 <img
-                  src={p.postImage}
+                  src={`/profile/${p.profile_picture}`}
                   className="img-fluid mb-2"
                   style={{
                     height: "300px",
@@ -216,7 +220,9 @@ function GroupPosts() {
             </div>
           </div>
         </div>
-      ))}
+      )) : <div>No Posts yet!</div>}
+
+
       {selectedPost && (
         <PostImagePopup
           post={selectedPost}

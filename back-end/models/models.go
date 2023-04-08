@@ -28,43 +28,47 @@ type Group struct {
 
 type GroupPost struct {
 	PostID   int            `json:"post_id"`
-	UserID   int            `json:"user_id"`
+	Poster   User           `json:"poster"`
 	GroupID  int            `json:"group_id"`
 	Content  string         `json:"content"`
 	Image    string         `json:"image"`
 	Created  time.Time      `json:"created"`
 	Comments []GroupComment `json:"comments"`
+	Likes    int            `json:"likes"`
 }
 
 type GroupComment struct {
 	CommentID int       `json:"comment_id"`
-	UserID    int       `json:"user_id"`
+	Poster    User      `json:"poster"`
 	PostID    int       `json:"post_id"`
 	Content   string    `json:"content"`
 	Created   time.Time `json:"created"`
+	Likes     int       `json:"likes"`
 }
 
 type Post struct {
 	PostID   int       `json:"post_id"`
-	UserID   int       `json:"user_id"`
+	Poster   User      `json:"poster"`
 	Content  string    `json:"content"`
 	Image    string    `json:"image"`
 	IsPublic bool      `json:"is_public"`
 	Created  time.Time `json:"created"`
 	Comments []Comment `json:"comments"`
+	Likes    int       `json:"likes"`
 }
 
 type Comment struct {
 	CommentID int       `json:"comment_id"`
-	UserID    int       `json:"user_id"`
+	Poster    User      `json:"poster"`
 	PostID    int       `json:"post_id"`
 	Content   string    `json:"content"`
 	Created   time.Time `json:"created"`
+	Likes     int       `json:"likes"`
 }
 
 type Event struct {
 	EventID     int       `json:"event_id"`
-	UserID      int       `json:"user_id"`
+	Poster      User      `json:"poster"`
 	GroupID     int       `json:"group_id"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
@@ -75,8 +79,8 @@ type Event struct {
 
 type Message struct {
 	MessageID int       `json:"message_id"`
-	FromID    int       `json:"from_id"`
-	ToID      int       `json:"to_id"`
+	FromUser  User      `json:"from_user"`
+	ToUser    User      `json:"to_user"`
 	Content   string    `json:"content"`
 	IsSeen    bool      `json:"is_seen"`
 	Created   time.Time `json:"created"`

@@ -127,9 +127,10 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 
 	for pRows.Next() {
 		var post models.GroupPost
+		var userID int
 		err := pRows.Scan(
 			&post.PostID,
-			&post.UserID,
+			&userID,
 			&post.GroupID,
 			&post.Content,
 			&post.Image,
@@ -138,6 +139,12 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 		if err != nil {
 			return nil, err
 		}
+
+		p, err := m.GetUserByID(userID)
+		if err != nil {
+			return nil, err
+		}
+		post.Poster = *p
 
 		//Get post comments
 		query = `SELECT * FROM groups_comments WHERE post_id = ?`
@@ -151,7 +158,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 		for cRows.Next() {
 			err := cRows.Scan(
 				&comment.CommentID,
-				&comment.UserID,
+				&userID,
 				&comment.PostID,
 				&comment.Content,
 				&comment.Created,
@@ -159,6 +166,13 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			p, err = m.GetUserByID(userID)
+			if err != nil {
+				return nil, err
+			}
+			comment.Poster = *p
+
 			post.Comments = append(post.Comments, comment)
 		}
 		group.Posts = append(group.Posts, post)
@@ -185,12 +199,13 @@ func (m *SqliteDB) GetGroupEvents(id int) ([]*models.Event, error) {
 	defer rows.Close()
 
 	var events []*models.Event
+	var userID int
 
 	for rows.Next() {
 		var event models.Event
 		err := rows.Scan(
 			&event.EventID,
-			&event.UserID,
+			&userID,
 			&event.GroupID,
 			&event.Title,
 			&event.Description,
@@ -201,6 +216,12 @@ func (m *SqliteDB) GetGroupEvents(id int) ([]*models.Event, error) {
 		if err != nil {
 			return nil, err
 		}
+		p, err := m.GetUserByID(userID)
+		if err != nil {
+			return nil, err
+		}
+		event.Poster = *p
+
 		events = append(events, &event)
 	}
 
