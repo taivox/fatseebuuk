@@ -68,32 +68,32 @@ function PostImagePopup({ post, onClose }) {
 
         {post.comments.length === 0 ? <div>No comments yet!</div> : post.comments.map((comment) => (
           <div>
-            <div class="d-flex align-items-center media mb-3">
+            <div className="d-flex align-items-center media mb-3">
               <Link to={`/profile/${comment.poster.user_id}`}>
                 <img
-                  class="rounded-circle mr-3"
+                  className="rounded-circle mr-3"
                   src={`/profile/${comment.poster.profile_picture}`}
                   style={{ width: "80px", height: "80px", objectFit: "cover" }}
                   alt=""
                 />
               </Link>
-              <div class="media-body bg-light rounded p-2">
+              <div className="media-body bg-light rounded p-2">
                 <Link className="Link" to={`/profile/${comment.poster.user_id}`}>
-                  <h6 class="mt-0">{`${comment.poster.first_name} ${comment.poster.last_name}`}</h6>
+                  <h6 className="mt-0">{`${comment.poster.first_name} ${comment.poster.last_name}`}</h6>
                 </Link>
                 <p>
                   {comment.content}
                 </p>
               </div>
             </div>
-            <div class="d-flex align-items-center">
-              <button type="button" class="btn btn-outline-ligth btn-sm m-1">
+            <div className="d-flex align-items-center">
+              <button type="button" className="btn btn-outline-ligth btn-sm m-1">
                 Like
               </button>
-              <button type="button" class="btn btn-outline-ligth btn-sm m-1">
+              <button type="button" className="btn btn-outline-ligth btn-sm m-1">
                 Reply
               </button>
-              <span class="text-muted mr-3">{comment.created}</span>
+              <span className="text-muted mr-3">{comment.created}</span>
             </div>
           </div>
         ))}

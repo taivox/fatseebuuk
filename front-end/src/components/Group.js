@@ -22,12 +22,11 @@ function Group() {
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${id}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         setGroup(data)
         setGroupPosts(data.posts)
       })
       .catch((error) => {
-        console.log("seeerror", error)
+        console.log(error)
       })
 
 

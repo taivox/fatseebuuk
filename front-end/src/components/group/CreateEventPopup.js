@@ -40,11 +40,11 @@ function CreateEventPopup({ post, onClose }) {
             </div>
           </div>
           <div>
-          <label for="post-image" class="btn btn-ligth mb-0" style={{height:'80px',width:'250px'}}>
+          <label for="post-image" className="btn btn-ligth mb-0" style={{height:'80px',width:'250px'}}>
             <box-icon name="photo-album" type="solid" color="green"></box-icon>{" "} <br/>
             Add Picture
           </label>
-          <input type="file" class="form-control-file d-none" id="post-image" />
+          <input type="file" className="form-control-file d-none" id="post-image" />
           </div>
         </div>
         <form>

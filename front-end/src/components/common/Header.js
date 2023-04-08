@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link } from "react-router-dom"
 import Profile from "./../../images/profile.webp"
 
 function Header() {
@@ -9,16 +9,16 @@ function Header() {
           Fatseebuuk
         </Link>
         <form className="d-flex mt-3" role="search">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-primary" type="submit">
-                Search
-              </button>
-            </form>
+          <input
+            className="form-control me-2"
+            type="search"
+            placeholder="Search"
+            aria-label="Search"
+          />
+          <button className="btn btn-primary" type="submit">
+            Search
+          </button>
+        </form>
         <button
           className="navbar-toggler"
           type="button"
@@ -31,7 +31,7 @@ function Header() {
         </button>
         <div
           className="offcanvas offcanvas-end text-bg-dark"
-          tabindex="-1"
+          tabIndex="-1"
           id="offcanvasDarkNavbar"
           aria-labelledby="offcanvasDarkNavbarLabel"
         >
@@ -59,23 +59,23 @@ function Header() {
                 </a>
               </li>
               <li className="nav-item">
-                    <a className="nav-link" href="#!!">
-                      <box-icon
-                        color="white"
-                        type="regular"
-                        name="chat"
-                      ></box-icon>
-                    </a>
-                  </li>
-                  <li className="nav-item">
-                    <a className="nav-link" href="#!!">
-                      <box-icon
-                        color="white"
-                        type="regular"
-                        name="bell"
-                      ></box-icon>
-                    </a>
-                  </li>
+                <a className="nav-link" href="#!!">
+                  <box-icon
+                    color="white"
+                    type="regular"
+                    name="chat"
+                  ></box-icon>
+                </a>
+              </li>
+              <li className="nav-item">
+                <a className="nav-link" href="#!!">
+                  <box-icon
+                    color="white"
+                    type="regular"
+                    name="bell"
+                  ></box-icon>
+                </a>
+              </li>
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -84,7 +84,7 @@ function Header() {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <img src={Profile} style={{height:'30px',borderRadius:'50%',objectFit:'cover'}} alt="profile pic" />
+                  <img src={Profile} style={{ height: '30px', borderRadius: '50%', objectFit: 'cover' }} alt="profile pic" />
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark">
                   <li>
@@ -105,16 +105,16 @@ function Header() {
                       Something else here
                     </a>
                   </li>
-                  
+
                 </ul>
               </li>
             </ul>
-            
+
           </div>
         </div>
       </div>
     </nav>
-  );
+  )
 }
 
-export default Header;
+export default Header

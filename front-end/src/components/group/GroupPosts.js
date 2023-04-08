@@ -91,13 +91,13 @@ function GroupPosts(props) {
 
   return (
     <div className="col-md-12">
-      <div class="card mt-3">
-        <div class="card-body">
-          <div class="media mb-3">
-            <div class="media-body d-flex">
+      <div className="card mt-3">
+        <div className="card-body">
+          <div className="media mb-3">
+            <div className="media-body d-flex">
               <img
                 src="/profile/chad.jpg"
-                class="mr-3 m-2"
+                className="mr-3 m-2"
                 alt="Your Profile Picture"
                 style={{
                   height: "80px",
@@ -106,7 +106,7 @@ function GroupPosts(props) {
                   objectFit: "cover",
                 }}
               />
-              <form class="flex-grow-1">
+              <form className="flex-grow-1">
                 <TextArea
                   title={""}
                   name={""}
@@ -114,16 +114,16 @@ function GroupPosts(props) {
                   rows={"3"}
                   placeholder={"Write something..."}
                 />
-                <div class="form-group m-2">
-                  <label for="post-image" class="btn btn-ligth mb-0">
+                <div className="form-group m-2">
+                  <label for="post-image" className="btn btn-ligth mb-0">
                     <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Picture
                   </label>
                   <input
                     type="file"
-                    class="form-control-file d-none"
+                    className="form-control-file d-none"
                     id="post-image"
                   />
-                  <button type="submit" class="btn btn-ligth ml-2">
+                  <button type="submit" className="btn btn-ligth ml-2">
                     <box-icon name='envelope' type='solid' color='blue' ></box-icon>
                     Post
                   </button>
