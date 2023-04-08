@@ -12,12 +12,14 @@ import GroupEvent from './components/group/GroupEvent'
 import GroupPosts from './components/group/GroupPosts'
 import Login from './components/Login'
 import Register from './components/Register'
+import ErrorPage from './components/common/ErrorPage'
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
+    errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Feed /> },
       {
@@ -32,10 +34,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/profile/:user_id",
+    errorElement: <ErrorPage />,
     element: <Profile />,
   },
   {
     path: "/groups/:group_id",
+    errorElement: <ErrorPage />,
     element: <Group />,
     children: [
       {
@@ -54,10 +58,12 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
+    errorElement: <ErrorPage />,
     element: <Login />,
   },
   {
     path: "/register",
+    errorElement: <ErrorPage />,
     element: <Register />,
   },
 ])
