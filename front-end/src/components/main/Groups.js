@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
+import CreateGroupPopup from "../group/CreateGroupPopup"
 
 function Groups() {
   const [groups, setGroups] = useState([])
+  const [createModalShowing, setCreateModalShowing] = useState(false)
+
+  const handleCreateGroupClick = () => {
+    setCreateModalShowing(true)
+  }
+
+  const handleCreateGroupClose = () => {
+    setCreateModalShowing(false)
+  }
 
   useEffect(() => {
     const headers = new Headers()
@@ -26,8 +36,9 @@ function Groups() {
   return (
     <>
       <div className="card">
-        <div className="card-header">
+        <div className="card-header d-flex justify-content-between align-items-center">
           <h5 className="card-title">Groups</h5>
+          <button onClick={handleCreateGroupClick} className="btn btn-primary m-2"><box-icon name='plus' color="white" /> Create Group</button>
         </div>
         <div className="list-group">
           {groups.map(g => (
@@ -50,6 +61,12 @@ function Groups() {
           ))}
         </div>
       </div>
+      {createModalShowing && (
+        <CreateGroupPopup
+          onClose={handleCreateGroupClose}
+        />
+      )}
+
     </>
   )
 }
