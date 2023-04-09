@@ -26,7 +26,7 @@ func (m *SqliteDB) GetUserByID(id int) (*models.User, error) {
 	query := `
 			SELECT
 				user_id, first_name, last_name, COALESCE(nickname,''), date_of_birth,
-				COALESCE(profile_picture,'default_profile_picture.png'), COALESCE(cover_picture, 'default_cover_picture.png'),
+				COALESCE(profile_image,'default_profile_image.png'), COALESCE(cover_image, 'default_cover_image.png'),
 				COALESCE(about,''), is_public
 			FROM
 				users 
@@ -41,8 +41,8 @@ func (m *SqliteDB) GetUserByID(id int) (*models.User, error) {
 		&user.LastName,
 		&user.Nickname,
 		&user.DateOfBirth,
-		&user.ProfilePicture,
-		&user.CoverPicture,
+		&user.ProfileImage,
+		&user.CoverImage,
 		&user.About,
 		&user.IsPublic,
 	)

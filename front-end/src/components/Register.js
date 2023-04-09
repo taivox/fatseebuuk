@@ -1,6 +1,6 @@
-import Footer from "./common/Footer";
-import Input from "./form/Input";
-import TextArea from "./form/TextArea";
+import Footer from "./common/Footer"
+import Input from "./form/Input"
+import TextArea from "./form/TextArea"
 
 function Register() {
   return (
@@ -130,7 +130,7 @@ function Register() {
                         width: "85%",
                       }}
                       className="col-md-12"
-                      src={`/profile/default_profile_picture.png`}
+                      src={`/profile/default_profile_image.png`}
                     />
                     <br />
                     <p className="m-2">Add Image</p>
@@ -178,7 +178,7 @@ function Register() {
       </div>
       <Footer />
     </div>
-  );
+  )
 }
 
-export default Register;
+export default Register

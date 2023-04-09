@@ -93,9 +93,9 @@ function ProfilePosts({ props }) {
           <div className="media mb-3">
             <div className="media-body d-flex">
               <img
-                src={props.profile_picture}
+                src={props.profile_image}
                 className="mr-3 m-2"
-                alt="Your Profile Picture"
+                alt="Your Profile Image"
                 style={{
                   height: "80px",
                   width: "80px",
@@ -113,7 +113,7 @@ function ProfilePosts({ props }) {
                 />
                 <div className="form-group m-2">
                   <label for="post-image" className="btn btn-ligth mb-0">
-                    <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Picture
+                    <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Image
                   </label>
                   <input
                     type="file"

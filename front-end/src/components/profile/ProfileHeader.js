@@ -1,16 +1,16 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from "react"
+import { Link } from "react-router-dom"
 // import { BiMessageAdd, BiUserPlus } from "react-icons/bi";
 
-const ProfileHeader = ({props}) => {
-  console.log(props);
+const ProfileHeader = ({ props }) => {
+  console.log(props)
 
   return (
     <div className="container">
       <div className="cover-container">
         <img
           className="cover-photo"
-          src={`/cover/${props.cover_picture}`}
+          src={`/cover/${props.cover_image}`}
           alt="cover"
           style={{
             height: "400px",
@@ -25,13 +25,13 @@ const ProfileHeader = ({props}) => {
             <div className="profile-pic-wrapper">
               <img
                 className="profile-pic m-3"
-                src={`/profile/${props.profile_picture}`}
+                src={`/profile/${props.profile_image}`}
                 style={{
                   height: "155px",
                   width: "155px",
                   borderRadius: "100%",
                   objectFit: "cover",
-                  zIndex:"99999",
+                  zIndex: "99999",
                 }}
                 alt="profile"
               />
@@ -43,79 +43,79 @@ const ProfileHeader = ({props}) => {
             <div className="friend-info">
               <div className="friend-count">100 friends</div>
               <div className="friend-list">
-              <img
-                className="friend-pic"
-                src="/profile/chad.jpg"
-                style={{
-                  height: "55px",
-                  width: "55px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                  zIndex:"99999",
-                }}
-                alt="profile"
-              />
-              <img
-                className="friend-pic"
-                src="/profile/chad.jpg"
-                style={{
-                  height: "55px",
-                  width: "55px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                  zIndex:"99999",
-                }}
-                alt="profile"
-              />
-              <img
-                className="friend-pic"
-                src="/profile/chad.jpg"
-                style={{
-                  height: "55px",
-                  width: "55px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                  zIndex:"99999",
-                }}
-                alt="profile"
-              />
-              <img
-                className="friend-pic"
-                src="/profile/chad.jpg"
-                style={{
-                  height: "55px",
-                  width: "55px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                  zIndex:"99999",
-                }}
-                alt="profile"
-              />
-              <img
-                className="friend-pic"
-                src="/profile/chad.jpg"
-                style={{
-                  height: "55px",
-                  width: "55px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                  zIndex:"99999",
-                }}
-                alt="profile"
-              />
-              <img
-                className="friend-pic"
-                src="/profile/chad.jpg"
-                style={{
-                  height: "55px",
-                  width: "55px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                  zIndex:"99999",
-                }}
-                alt="profile"
-              />
-              
+                <img
+                  className="friend-pic"
+                  src="/profile/chad.jpg"
+                  style={{
+                    height: "55px",
+                    width: "55px",
+                    borderRadius: "100%",
+                    objectFit: "cover",
+                    zIndex: "99999",
+                  }}
+                  alt="profile"
+                />
+                <img
+                  className="friend-pic"
+                  src="/profile/chad.jpg"
+                  style={{
+                    height: "55px",
+                    width: "55px",
+                    borderRadius: "100%",
+                    objectFit: "cover",
+                    zIndex: "99999",
+                  }}
+                  alt="profile"
+                />
+                <img
+                  className="friend-pic"
+                  src="/profile/chad.jpg"
+                  style={{
+                    height: "55px",
+                    width: "55px",
+                    borderRadius: "100%",
+                    objectFit: "cover",
+                    zIndex: "99999",
+                  }}
+                  alt="profile"
+                />
+                <img
+                  className="friend-pic"
+                  src="/profile/chad.jpg"
+                  style={{
+                    height: "55px",
+                    width: "55px",
+                    borderRadius: "100%",
+                    objectFit: "cover",
+                    zIndex: "99999",
+                  }}
+                  alt="profile"
+                />
+                <img
+                  className="friend-pic"
+                  src="/profile/chad.jpg"
+                  style={{
+                    height: "55px",
+                    width: "55px",
+                    borderRadius: "100%",
+                    objectFit: "cover",
+                    zIndex: "99999",
+                  }}
+                  alt="profile"
+                />
+                <img
+                  className="friend-pic"
+                  src="/profile/chad.jpg"
+                  style={{
+                    height: "55px",
+                    width: "55px",
+                    borderRadius: "100%",
+                    objectFit: "cover",
+                    zIndex: "99999",
+                  }}
+                  alt="profile"
+                />
+
               </div>
             </div>
           </div>
@@ -131,31 +131,31 @@ const ProfileHeader = ({props}) => {
           </button>
         </div>
       </div>
-      <hr/>
+      <hr />
       <div className="d-flex align-content-between align-items-center">
         <Link
           className="list-group-item p-2"
         >
-            Posts 
+          Posts
         </Link>
         <Link
           className="list-group-item p-2"
         >
-            About 
+          About
         </Link>
         <Link
           className="list-group-item p-2"
         >
-            Friends 
+          Friends
         </Link>
         <Link
           className="list-group-item p-2"
         >
-            Photos 
+          Photos
         </Link>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProfileHeader;
+export default ProfileHeader

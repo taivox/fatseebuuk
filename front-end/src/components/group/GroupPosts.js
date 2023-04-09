@@ -42,7 +42,7 @@ function GroupPosts(props) {
               <img
                 src="/profile/chad.jpg"
                 className="mr-3 m-2"
-                alt="Your Profile Picture"
+                alt="Your Profile Image"
                 style={{
                   height: "80px",
                   width: "80px",
@@ -60,7 +60,7 @@ function GroupPosts(props) {
                 />
                 <div className="form-group m-2">
                   <label for="post-image" className="btn btn-ligth mb-0">
-                    <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Picture
+                    <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Image
                   </label>
                   <input
                     type="file"
@@ -86,7 +86,7 @@ function GroupPosts(props) {
               <div className="d-flex align-items-center m-2">
                 <Link to={`/profile/${p.poster.user_id}`}>
                   <img
-                    src={`/profile/${p.poster.profile_picture}`}
+                    src={`/profile/${p.poster.profile_image}`}
                     className="mr-3 rounded-circle"
                     style={{
                       height: "60px",

@@ -70,7 +70,7 @@ function PostImagePopup({ post, onClose }) {
               <Link to={`/profile/${comment.poster.user_id}`}>
                 <img
                   className="rounded-circle mr-3"
-                  src={`/profile/${comment.poster.profile_picture}`}
+                  src={`/profile/${comment.poster.profile_image}`}
                   style={{ width: "80px", height: "80px", objectFit: "cover" }}
                   alt=""
                 />

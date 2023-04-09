@@ -1,4 +1,4 @@
-INSERT INTO `users` (`first_name`, `last_name`, `nickname`, `date_of_birth`, `profile_picture`, `cover_picture`, `about`, `email`, `password`, `is_public`)
+INSERT INTO `users` (`first_name`, `last_name`, `nickname`, `date_of_birth`, `profile_image`, `cover_image`, `about`, `email`, `password`, `is_public`)
 VALUES 
 ('Alice', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'alice@example.com', 'password123', 1),
 ('Bob', 'Johnson', NULL, '1985-05-15', NULL, NULL, 'I love to travel and try new foods.', 'bob@example.com', 'secret456', 0),

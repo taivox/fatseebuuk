@@ -59,7 +59,7 @@ function GroupEvent() {
                             <p>Created by: </p>
                             <Link to={`/profile/${poster.user_id}`}>
                                 <img
-                                    src={`/profile/${poster.profile_picture}`}
+                                    src={`/profile/${poster.profile_image}`}
                                     className="mr-3 rounded-circle"
                                     style={{
                                         height: "40px",

@@ -1,18 +1,18 @@
-import { useState } from "react";
-import { Col, Container, Modal, Row } from "react-bootstrap";
-import { Link } from "react-router-dom";
-import Input from "../form/Input";
-import TextArea from "../form/TextArea";
+import { useState } from "react"
+import { Col, Container, Modal, Row } from "react-bootstrap"
+import { Link } from "react-router-dom"
+import Input from "../form/Input"
+import TextArea from "../form/TextArea"
 
 function CreateEventPopup({ post, onClose }) {
-  const [show, setShow] = useState(true);
+  const [show, setShow] = useState(true)
 
   const handleClose = () => {
-    setShow(false);
-    onClose();
-  };
+    setShow(false)
+    onClose()
+  }
 
-  console.log(post);
+  console.log(post)
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
@@ -40,11 +40,11 @@ function CreateEventPopup({ post, onClose }) {
             </div>
           </div>
           <div>
-          <label for="post-image" className="btn btn-ligth mb-0" style={{height:'80px',width:'250px'}}>
-            <box-icon name="photo-album" type="solid" color="green"></box-icon>{" "} <br/>
-            Add Picture
-          </label>
-          <input type="file" className="form-control-file d-none" id="post-image" />
+            <label for="post-image" className="btn btn-ligth mb-0" style={{ height: '80px', width: '250px' }}>
+              <box-icon name="photo-album" type="solid" color="green"></box-icon>{" "} <br />
+              Add Image
+            </label>
+            <input type="file" className="form-control-file d-none" id="post-image" />
           </div>
         </div>
         <form>
@@ -119,7 +119,7 @@ function CreateEventPopup({ post, onClose }) {
         </div>
       </Modal.Footer>
     </Modal>
-  );
+  )
 }
 
-export default CreateEventPopup;
+export default CreateEventPopup
