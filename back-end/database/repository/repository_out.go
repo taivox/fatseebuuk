@@ -13,14 +13,14 @@ type SqliteDB struct {
 	DB *sql.DB
 }
 
-const dbTimeout = time.Second * 3
+const DbTimeout = time.Second * 3
 
 func (m *SqliteDB) Connection() *sql.DB {
 	return m.DB
 }
 
 func (m *SqliteDB) GetUserByID(id int) (*models.User, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
 	query := `
@@ -54,7 +54,7 @@ func (m *SqliteDB) GetUserByID(id int) (*models.User, error) {
 }
 
 func (m *SqliteDB) GetAllGroups() ([]*models.Group, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
 	query := `SELECT
@@ -91,7 +91,7 @@ func (m *SqliteDB) GetAllGroups() ([]*models.Group, error) {
 }
 
 func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
 	//Get group
@@ -181,7 +181,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 }
 
 func (m *SqliteDB) GetGroupEvents(id int) (*models.Events, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
 	query := `SELECT 
@@ -234,7 +234,7 @@ func (m *SqliteDB) GetGroupEvents(id int) (*models.Events, error) {
 }
 
 func (m *SqliteDB) GetEventByID(id int) (*models.Event, error) {
-	ctx, cancel := context.WithTimeout(context.Background(), dbTimeout)
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
 	query := `SELECT 

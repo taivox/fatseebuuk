@@ -90,3 +90,15 @@ type Message struct {
 	IsSeen    bool      `json:"is_seen"`
 	Created   time.Time `json:"created"`
 }
+
+type RegisterData struct {
+	FirstName       string `json:"first_name"`
+	LastName        string `json:"last_name"`
+	Nickname        string `json:"nickname"`
+	DateOfBirth     string `json:"date_of_birth"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
+	About           string `json:"about"`
+	ProfileImage    string `json:"profile_image"`
+}

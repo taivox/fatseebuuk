@@ -1,11 +1,16 @@
 package main
 
 import (
+	"back-end/database/repository"
+	"back-end/models"
+	"context"
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
+	"net/mail"
 	"regexp"
 	"strconv"
 )
@@ -83,4 +88,42 @@ func getID(str, regexStr string) (int, error) {
 	}
 
 	return 0, fmt.Errorf("invalid id")
+}
+
+func (app *application) validateRegisterData(rd *models.RegisterData) error {
+	ctx, cancel := context.WithTimeout(context.Background(), repository.DbTimeout)
+	defer cancel()
+
+	_, err := mail.ParseAddress(rd.Email)
+	if err != nil {
+		return err
+	}
+
+	var email string
+	query := `SELECT email FROM users WHERE email = ?`
+
+	row := app.DB.DB.QueryRowContext(ctx, query, rd.Email)
+	err = row.Scan(&email)
+	if err != sql.ErrNoRows && err != nil {
+		return err
+	}
+
+	if email != "" {
+		return errors.New("email already exists")
+	}
+
+	if !HasValidName(rd.FirstName) || !HasValidName(rd.LastName) {
+		return errors.New("not a valid name")
+	}
+
+	if rd.Password != rd.ConfirmPassword {
+		return errors.New("passwords don't match")
+	}
+
+	return nil
+}
+
+func HasValidName(name string) bool {
+	regex := regexp.MustCompile("^[A-Za-z]+([' -][A-Za-z]+)*$")
+	return regex.MatchString(name)
 }

@@ -17,7 +17,7 @@ function App() {
       return
     }
   
-  },[])
+  },[navigate, jwtToken])
 
   return (
     <div>

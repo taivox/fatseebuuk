@@ -4,7 +4,6 @@ import Input from "./form/Input"
 import TextArea from "./form/TextArea"
 import Swal from "sweetalert2"
 
-
 function Register() {
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -14,10 +13,12 @@ function Register() {
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [about, setAbout] = useState("")
-  const [errors, setErrors] = useState([])
   const [passwordsNoMatch, setPasswordsNoMatch] = useState(false)
   const [imagePreview, setImagePreview] = useState(null)
   const MAX_FILE_SIZE = 10 * 1024 * 1024
+  const [errors, setErrors] = useState([])
+
+  const [error, setError] = useState(null)
 
   const hasError = (key) => {
     return errors.indexOf(key) !== -1
@@ -50,6 +51,7 @@ function Register() {
     }
     const reader = new FileReader()
     reader.readAsDataURL(file)
+
     reader.onload = () => {
       setImagePreview(reader.result)
     }
@@ -101,11 +103,32 @@ function Register() {
       return
     }
 
-    const image = localStorage.getItem("profileImage")
-    payload.image = image
+    payload.profile_image = imagePreview
     console.log(errors)
     console.log(payload) //for testing purposes
     localStorage.removeItem("profileImage")
+
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    }
+
+    fetch(`${process.env.REACT_APP_BACKEND}/register`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.log(data.message)
+        } else {
+          console.log("SUCCESS!")
+        }
+      })
+      .catch(error => {
+        setError(error)
+      })
   }
 
 

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"back-end/models"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -152,6 +153,49 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_ = app.writeJSON(w, http.StatusOK, event)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+// Event page
+func (app *application) Register(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/register" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		var rd models.RegisterData
+
+		err := app.readJSON(w, r, &rd)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		//TODO: Pilt tuleb salvesada kausta ja andmebaasi selle pildi nimi hashina. Hetkel salvestab kogu pildi andmebaasi (tekstina)
+
+		err = app.validateRegisterData(&rd)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		err = app.DB.Register(&rd)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "User registered successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

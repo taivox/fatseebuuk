@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS `users`(
     `email`       TEXT UNIQUE NOT NULL,
     `password`    TEXT        NOT NULL,
     `created` DATETIME DEFAULT CURRENT_TIMESTAMP, 
-    `is_public` BOOLEAN NOT NULL
+    `is_public` BOOLEAN DEFAULT TRUE NOT NULL
 );
