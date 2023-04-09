@@ -2,7 +2,6 @@ import React from "react"
 import { Link, useOutletContext } from "react-router-dom"
 
 function GroupHeader({ group }) {
-  console.log(group)
   return (
     <div className="container">
       <div className="cover-container">

@@ -12,7 +12,6 @@ function CreateEventPopup({ post, onClose }) {
     onClose()
   }
 
-  console.log(post)
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">

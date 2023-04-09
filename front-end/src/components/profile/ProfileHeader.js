@@ -3,7 +3,6 @@ import { Link } from "react-router-dom"
 // import { BiMessageAdd, BiUserPlus } from "react-icons/bi";
 
 const ProfileHeader = ({ props }) => {
-  console.log(props)
 
   return (
     <div className="container">

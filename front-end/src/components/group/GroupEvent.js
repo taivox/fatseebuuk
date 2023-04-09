@@ -28,8 +28,6 @@ function GroupEvent() {
         fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events/${event_id}`, requestOptions)
             .then((response) => response.json())
             .then((data) => {
-                console.log("event", data)
-                console.log("temaongiposter", data.poster)
                 setEvent(data)
                 setPoster(data.poster)
             })

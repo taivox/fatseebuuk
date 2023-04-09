@@ -64,7 +64,7 @@ function PostImagePopup({ post, onClose }) {
           </div>
         </div>
 
-        {post.comments.length === 0 ? <div>No comments yet!</div> : post.comments.map((comment) => (
+        {!post.comments ? <div>No comments yet!</div> : post.comments.map((comment) => (
           <div>
             <div className="d-flex align-items-center media mb-3">
               <Link to={`/profile/${comment.poster.user_id}`}>

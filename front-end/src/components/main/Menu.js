@@ -19,7 +19,7 @@ function Menu() {
         setGroups(data)
       })
       .catch((error) => {
-        console.log("seeerror", error)
+        console.log(error)
       })
   }, [])
   return (
