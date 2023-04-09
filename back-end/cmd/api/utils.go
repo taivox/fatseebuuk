@@ -74,8 +74,7 @@ func (app *application) errorJSON(w http.ResponseWriter, err error, status ...in
 }
 
 func getID(str, regexStr string) (int, error) {
-	re := regexp.MustCompile(regexStr)
-	matches := re.FindAllString(str, -1)
+	matches := regexp.MustCompile(regexStr).FindAllString(str, -1)
 
 	if len(matches) > 0 {
 		lastMatch := matches[len(matches)-1]
