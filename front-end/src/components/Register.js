@@ -1,8 +1,87 @@
+import { useState } from "react"
 import Footer from "./common/Footer"
 import Input from "./form/Input"
 import TextArea from "./form/TextArea"
 
+
 function Register() {
+  const [firstName, setFirstName] = useState("")
+  const [lastName, setLastName] = useState("")
+  const [nickname, setNickname] = useState("")
+  const [dateOfBirth, setDateOfBirth] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [about, setAbout] = useState("")
+  const [errors, setErrors] = useState([])
+  const [passwordsNoMatch, setPasswordsNoMatch] = useState(false)
+
+  // const [newUser, setNewUser] = useState({
+  //   first_name: "",
+  //   last_name: "",
+  //   nickname: "",
+  //   email: "",
+  //   password: "",
+  //   confirm_password: "",
+  //   about: "",
+  //   image: "",
+  // })
+  const hasError = (key) => {
+    return errors.indexOf(key) !== -1
+  }
+
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+    setPasswordsNoMatch(false)
+
+    let errors = []
+    const payload = {
+      first_name: firstName,
+      last_name: lastName,
+      nickname: nickname,
+      date_of_birth: dateOfBirth,
+      email: email,
+      password: password,
+      confirm_password: confirmPassword,
+      about: about
+    }
+
+    let required = [
+      { field: payload.first_name, name: "first_name" },
+      { field: payload.last_name, name: "last_name" },
+      { field: payload.date_of_birth, name: "date_of_birth" },
+      { field: payload.email, name: "email" },
+      { field: payload.password, name: "password" },
+      { field: payload.confirm_password, name: "confirm_password" },
+    ]
+
+
+    required.forEach((req) => {
+      if (req.field === "") {
+        errors.push(req.name)
+      }
+    })
+
+    setErrors(errors)
+
+
+    if (payload.password !== payload.confirm_password) {
+      setPasswordsNoMatch(true)
+      return
+    }
+
+    if (errors.length > 0) {
+      return
+    }
+
+
+    console.log(errors)
+    console.log(payload) //for testing purposes
+  }
+
+
+
   return (
     <div>
       <div className="container col-md-4 mt-5">
@@ -15,41 +94,38 @@ function Register() {
           </div>
         </div>
         <div className="row">
-          <form>
+          <form onSubmit={handleSubmit}>
             <div className="col-12">
               <div className="d-flex justify-content-between">
                 <Input
                   className="form-control"
                   type="text"
                   name={"first_name"}
-                  value={""}
                   placeholder={"First name"}
-                  onChange={null}
-                  errorDiv={null}
-                  errorMsg={""}
+                  onChange={(event) => setFirstName(event.target.value)}
+                  errorDiv={hasError("first_name") ? "text-danger" : "d-none"}
+                  errorMsg={"Please enter first name"}
                   style={{ height: "50px" }}
                 />
+
                 <Input
                   className="form-control"
                   type="text"
                   name={"last_name"}
-                  value={""}
                   placeholder={"Last name"}
-                  onChange={null}
-                  errorDiv={null}
-                  errorMsg={""}
+                  onChange={(event) => setLastName(event.target.value)}
+                  errorDiv={hasError("last_name") ? "text-danger" : "d-none"}
+                  errorMsg={"Please enter last name"}
                   style={{ height: "50px" }}
                 />
               </div>
+
               <Input
                 className="form-control"
                 type="text"
                 name={"nickname"}
-                value={""}
-                placeholder={"Nickname"}
-                onChange={null}
-                errorDiv={null}
-                errorMsg={""}
+                placeholder={"Nickname (Optional)"}
+                onChange={(event) => setNickname(event.target.value)}
                 style={{ height: "50px" }}
               />
 
@@ -57,11 +133,10 @@ function Register() {
                 className="form-control"
                 type="date"
                 name={"date_of_birth"}
-                value={""}
                 placeholder={"Date of Birth"}
-                onChange={null}
-                errorDiv={null}
-                errorMsg={""}
+                onChange={(event) => setDateOfBirth(event.target.value)}
+                errorDiv={hasError("date_of_birth") ? "text-danger" : "d-none"}
+                errorMsg={"Please enter date of birth"}
                 style={{ height: "50px" }}
               />
 
@@ -69,11 +144,10 @@ function Register() {
                 className="form-control"
                 type="email"
                 name={"email"}
-                value={""}
                 placeholder={"Email"}
-                onChange={null}
-                errorDiv={null}
-                errorMsg={""}
+                onChange={(event) => setEmail(event.target.value)}
+                errorDiv={hasError("email") ? "text-danger" : "d-none"}
+                errorMsg={"Please enter email"}
                 style={{ height: "50px" }}
               />
 
@@ -81,37 +155,33 @@ function Register() {
                 className="form-control"
                 type="password"
                 name={"password"}
-                value={""}
                 placeholder={"Password"}
-                onChange={null}
-                errorDiv={null}
-                errorMsg={""}
+                onChange={(event) => setPassword(event.target.value)}
+                errorDiv={hasError("password") ? "text-danger" : "d-none"}
+                errorMsg={"Please enter password"}
                 style={{ height: "50px" }}
               />
 
               <Input
                 className="form-control"
                 type="password"
-                name={"passwordCheck"}
-                value={""}
+                name={"confirm_password"}
                 placeholder={"Confirm password"}
-                onChange={null}
-                errorDiv={null}
-                errorMsg={""}
+                onChange={(event) => setConfirmPassword(event.target.value)}
+                errorDiv={hasError("confirm_password") || passwordsNoMatch ? "text-danger" : "d-none"}
+                errorMsg={passwordsNoMatch ? "Passwords don't match" : "Please confirm your password"}
                 style={{ height: "50px" }}
               />
+
 
               <div className="d-flex justify-content-between">
                 <div className="flex-grow-1 me-3">
                   <TextArea
                     className="form-control"
-                    type="password"
-                    name={"passwordCheck"}
-                    value={""}
-                    placeholder={"About me..."}
-                    onChange={null}
-                    errorDiv={null}
-                    errorMsg={""}
+                    type="text"
+                    name={"about"}
+                    placeholder={"About me... (Optional)"}
+                    onChange={(event) => setAbout(event.target.value)}
                     style={{ height: "150px", width: "100%" }}
                   />
                 </div>
@@ -133,22 +203,22 @@ function Register() {
                       src={`/profile/default_profile_image.png`}
                     />
                     <br />
-                    <p className="m-2">Add Image</p>
+                    <p className="m-2">Add Image (Optional)</p>
                   </label>
                   <input type="file" className="form-control-file d-none" id="post-image" />
                 </div>
               </div>
             </div>
+            <input
+              type="submit"
+              style={{ width: "100%", height: "60px" }}
+              className="btn btn-primary"
+              value={"Register"}
+            />
           </form>
         </div>
         <div className="justify-content-between">
           <div className="d-flex  align-items-center m-2">
-            <button
-              style={{ width: "100%", height: "60px" }}
-              className="btn btn-primary"
-            >
-              <h6>Register</h6>
-            </button>
           </div>
           <div className="d-flex  align-items-center">
             <button
@@ -180,5 +250,6 @@ function Register() {
     </div>
   )
 }
+
 
 export default Register

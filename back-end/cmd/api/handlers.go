@@ -102,7 +102,6 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 
 	groupID, err := getID(r.URL.Path, `\d+`)
-	fmt.Println(groupID)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
 		return

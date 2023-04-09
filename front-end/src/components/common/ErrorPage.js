@@ -1,7 +1,12 @@
-import { useRouteError } from "react-router-dom";
+import { useRouteError } from "react-router-dom"
 
-function ErrorPage(){
-    const error = useRouteError()
+function ErrorPage({ error }) {
+    // const error = useRouteError()
+
+    if (error === undefined) {
+        error = new Error("Not found")
+    }
+
     return (
         <div className="container">
             <div className="row">
