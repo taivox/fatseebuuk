@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useOutletContext, useParams } from "react-router-dom"
+import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import dateFormat from "../../Utils"
