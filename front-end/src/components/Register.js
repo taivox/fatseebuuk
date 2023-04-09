@@ -2,6 +2,7 @@ import { useState } from "react"
 import Footer from "./common/Footer"
 import Input from "./form/Input"
 import TextArea from "./form/TextArea"
+import Swal from "sweetalert2"
 
 
 function Register() {
@@ -15,21 +16,46 @@ function Register() {
   const [about, setAbout] = useState("")
   const [errors, setErrors] = useState([])
   const [passwordsNoMatch, setPasswordsNoMatch] = useState(false)
+  const [imagePreview, setImagePreview] = useState(null)
+  const MAX_FILE_SIZE = 10 * 1024 * 1024
 
-  // const [newUser, setNewUser] = useState({
-  //   first_name: "",
-  //   last_name: "",
-  //   nickname: "",
-  //   email: "",
-  //   password: "",
-  //   confirm_password: "",
-  //   about: "",
-  //   image: "",
-  // })
   const hasError = (key) => {
     return errors.indexOf(key) !== -1
   }
 
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0]
+    if (!file) {
+      return
+    }
+
+    if (!file.type.startsWith('image/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please select an image file',
+      })
+      return
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      localStorage.removeItem("profileImage")
+      setImagePreview(null)
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'File size exceeds the limit of 10 MB!',
+      })
+      return
+    }
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onload = () => {
+      setImagePreview(reader.result)
+    }
+
+    localStorage.setItem("profileImage", imagePreview)
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -44,7 +70,7 @@ function Register() {
       email: email,
       password: password,
       confirm_password: confirmPassword,
-      about: about
+      about: about,
     }
 
     let required = [
@@ -75,9 +101,11 @@ function Register() {
       return
     }
 
-
+    const image = localStorage.getItem("profileImage")
+    payload.image = image
     console.log(errors)
     console.log(payload) //for testing purposes
+    localStorage.removeItem("profileImage")
   }
 
 
@@ -196,16 +224,16 @@ function Register() {
                       style={{
                         borderRadius: "10px",
                         objectFit: "cover",
-                        height: "85%",
-                        width: "85%",
+                        height: "130px",
+                        width: "130px",
                       }}
                       className="col-md-12"
-                      src={`/profile/default_profile_image.png`}
+                      src={imagePreview && imagePreview}
                     />
                     <br />
                     <p className="m-2">Add Image (Optional)</p>
                   </label>
-                  <input type="file" className="form-control-file d-none" id="post-image" />
+                  <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="post-image" />
                 </div>
               </div>
             </div>

@@ -11,6 +11,7 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 front end:
 cd front-end
 npm install
+npm install sweetalert2
 npm start
 
 back end:
