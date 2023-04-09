@@ -3,10 +3,16 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"regexp"
+	"strconv"
 )
 
 // Home displays the status of the api, as JSON.
 func (app *application) Home(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
 
 	switch r.Method {
 	case "GET":
@@ -96,6 +102,7 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 
 	groupID, err := getID(r.URL.Path, `\d+`)
+	fmt.Println(groupID)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
 		return
@@ -121,7 +128,13 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 
 	eventID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
-		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
+		app.errorJSON(w, fmt.Errorf("invalid event id"), http.StatusNotFound)
+		return
+	}
+
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/events/\d+`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
 		return
 	}
 
@@ -130,10 +143,15 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 
 		event, err := app.DB.GetEventByID(eventID)
 		if err != nil {
-			fmt.Println(err)
 			app.errorJSON(w, fmt.Errorf("error getting event from database"), http.StatusNotFound)
 			return
 		}
+
+		if event.GroupID != groupID {
+			app.errorJSON(w, fmt.Errorf("event does not belong to this group"), http.StatusNotFound)
+			return
+		}
+
 		_ = app.writeJSON(w, http.StatusOK, event)
 
 	default:

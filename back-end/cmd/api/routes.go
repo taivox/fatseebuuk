@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"regexp"
 )
@@ -28,7 +29,11 @@ func (app *application) routes() http.Handler {
 			return
 		}
 		//Handler for group. Example: /groups/1
-		app.Group(w, r)
+		if regexp.MustCompile(`/groups/\d+$`).MatchString(r.URL.Path) {
+			app.Group(w, r)
+			return
+		}
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
 	})
 
 	// add middleware
