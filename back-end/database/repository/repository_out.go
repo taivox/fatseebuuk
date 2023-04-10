@@ -1,13 +1,16 @@
 package repository
 
 import (
-	"back-end/models"
 	"context"
 	"database/sql"
 	"time"
 
+	"back-end/models"
+
 	_ "github.com/mattn/go-sqlite3"
 )
+
+// Functions in this file will get data from database
 
 type SqliteDB struct {
 	DB *sql.DB
@@ -94,7 +97,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	//Get group
+	// Get group
 	query := `SELECT group_id, title, description, created, user_id, COALESCE(image, 'default_group_image.png') FROM groups WHERE group_id = ?`
 
 	row := m.DB.QueryRowContext(ctx, query, id)
@@ -112,7 +115,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 		return nil, err
 	}
 
-	//Get group posts
+	// Get group posts
 	query = `SELECT
 				post_id, user_id, group_id, content, COALESCE(image, ''), created
 			FROM
@@ -146,7 +149,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 		}
 		post.Poster = *p
 
-		//Get post comments
+		// Get post comments
 		query = `SELECT * FROM groups_comments WHERE post_id = ?`
 		cRows, err := m.DB.QueryContext(ctx, query, post.PostID)
 		if err != nil {
