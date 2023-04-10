@@ -1,7 +1,38 @@
 import Footer from "./common/Footer";
 import Input from "./form/Input";
+import { useState } from "react";
+
 
 function Login() {
+  const [formValues, setFormValues] = useState({
+    username: "",
+    password: "",
+  });
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setFormValues({ ...formValues, [name]: value });
+    console.log(formValues)
+  };
+
+  //send data to backend
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(formValues)
+    fetch(`${process.env.REACT_APP_BACKEND}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formValues),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+      });
+  };
+
+
   return (
     <div>
       <div className="container col-md-4 mt-5">
@@ -24,9 +55,9 @@ function Login() {
                     className="form-control"
                     type="text"
                     name={"username"}
-                    value={""}
                     placeholder={"Email / username"}
-                    onChange={null}
+                    value={formValues.username}
+                    onChange={handleChange}
                     errorDiv={null}
                     errorMsg={""}
                     style={{ height: "80px" }}
@@ -36,9 +67,9 @@ function Login() {
                   className="form-control"
                   type="password"
                   name={"password"}
-                  value={""}
                   placeholder={"Password"}
-                  onChange={null}
+                  value={formValues.password}
+                  onChange={handleChange}
                   errorDiv={null}
                   errorMsg={""}
                   style={{ height: "80px" }}
@@ -48,14 +79,17 @@ function Login() {
           </form>
         </div>
         <div className="justify-content-between">
-          <div className="d-flex  align-items-center m-2">
-            <button
-              style={{ width: "100%", height: "80px" }}
-              className="btn btn-primary"
-            >
-              <h6>Login</h6>
-            </button>
-          </div>
+        <form onSubmit={handleSubmit}>
+            <div className="d-flex  align-items-center m-2">
+              <button
+                type="submit"
+                style={{ width: "100%", height: "80px" }}
+                className="btn btn-primary"
+              >
+                <h6>Login</h6>
+              </button>
+            </div>
+          </form>
           <div className="d-flex  align-items-center">
             <button 
               style={{ width: "100%", height: "80px" }}
