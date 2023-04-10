@@ -1,11 +1,12 @@
 package main
 
 import (
-	"back-end/models"
 	"fmt"
 	"net/http"
 	"regexp"
 	"strconv"
+
+	"back-end/models"
 )
 
 // Home displays the status of the api, as JSON.
@@ -35,7 +36,6 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 
 // User page
 func (app *application) User(w http.ResponseWriter, r *http.Request) {
-
 	userID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("user not found: invalid id"), http.StatusNotFound)
@@ -58,7 +58,6 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 
 // All groups page
 func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
-
 	switch r.Method {
 	case "GET":
 
@@ -77,7 +76,6 @@ func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
 
 // Group page
 func (app *application) Group(w http.ResponseWriter, r *http.Request) {
-
 	groupID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
@@ -101,7 +99,6 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 
 // Events page
 func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
-
 	groupID, err := getID(r.URL.Path, `\d+`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
@@ -125,7 +122,6 @@ func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 
 // Event page
 func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
-
 	eventID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("invalid event id"), http.StatusNotFound)
@@ -176,7 +172,7 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		//TODO: Pilt tuleb salvesada kausta ja andmebaasi selle pildi nimi hashina. Hetkel salvestab kogu pildi andmebaasi (tekstina)
+		// TODO: Pilt tuleb salvesada kausta ja andmebaasi selle pildi nimi hashina. Hetkel salvestab kogu pildi andmebaasi (tekstina)
 		// func SaveFormData(w http.ResponseWriter, r *http.Request) {
 		// 	r.ParseMultipartForm(10 << 20) // max form data size of 10MB
 		// 	name := r.FormValue("name")
@@ -223,6 +219,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
 		return
 	}
+
 	switch r.Method {
 	case "POST":
 		var ld models.LoginData
@@ -231,20 +228,18 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, err)
 			return
 		}
-		validLogIn, err := app.validateLoginData(&ld)
+
+		err = app.validateLoginData(&ld)
 		if err != nil {
 			app.errorJSON(w, err)
 			return
 		}
-		if validLogIn {
-			resp := JSONResponse{
-				Error:   false,
-				Message: "User logged in successfully",
-			}
-			app.writeJSON(w, http.StatusAccepted, resp)
-		} else {
-			app.errorJSON(w, fmt.Errorf("invalid credentials"), http.StatusUnauthorized)
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "User logged in successfully",
 		}
+		app.writeJSON(w, http.StatusAccepted, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
