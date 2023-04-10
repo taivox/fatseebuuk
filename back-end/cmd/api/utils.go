@@ -134,13 +134,10 @@ func (app *application) validateLoginData(ld *models.LoginData) error {
 
 	query := `SELECT password FROM users WHERE email = ?`
 	row := app.DB.DB.QueryRow(query, ld.Email)
-	err = row.Scan(&password)
-	if err != nil {
-		return errors.New("user does not exist")
-	}
 
-	if ld.Password != password {
-		return errors.New("invalid password")
+	err = row.Scan(&password)
+	if err != nil || ld.Password != password {
+		return errors.New("invalid email or password")
 	}
 	return nil
 }

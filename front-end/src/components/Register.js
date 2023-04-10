@@ -3,6 +3,7 @@ import Footer from "./common/Footer"
 import Input from "./form/Input"
 import TextArea from "./form/TextArea"
 import Swal from "sweetalert2"
+import { useNavigate } from "react-router-dom"
 
 function Register() {
   const [firstName, setFirstName] = useState("")
@@ -17,6 +18,7 @@ function Register() {
   const [imagePreview, setImagePreview] = useState(null)
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
+  const navigate = useNavigate()
 
   const [error, setError] = useState(null)
 
@@ -122,8 +124,19 @@ function Register() {
       .then(data => {
         if (data.error) {
           console.log(data.message)
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.message,
+          })
+          return
         } else {
-          console.log("SUCCESS!")
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: "User registered successfully, please log in!",
+          })
+          navigate("/login")
         }
       })
       .catch(error => {
@@ -239,7 +252,7 @@ function Register() {
 
                 <div className="flex-shrink-0 d-flex align-items-center">
                   <label
-                    for="post-image"
+                    htmlFor="post-image"
                     className="btn btn-light col-md-12"
                     style={{ height: "180px" }}
                   >
@@ -276,23 +289,13 @@ function Register() {
               style={{ width: "100%", height: "60px" }}
               className="btn btn-primary m-2"
             >
-              <box-icon
-                type="logo"
-                size="lg"
-                color="white"
-                name="github"
-              ></box-icon>
+              <box-icon type="logo"  size="lg" color="white" name="github"  ></box-icon>
             </button>
             <button
               style={{ width: "100%", height: "60px" }}
               className="btn btn-primary m-2"
             >
-              <box-icon
-                name="google"
-                size="lg"
-                color="white"
-                type="logo"
-              ></box-icon>
+              <box-icon type='logo' size="lg" color="white"  name='google'   ></box-icon>
             </button>
           </div>
         </div>

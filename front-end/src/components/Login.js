@@ -1,6 +1,8 @@
+import Swal from "sweetalert2";
 import Footer from "./common/Footer";
 import Input from "./form/Input";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 
 function Login() {
@@ -9,6 +11,7 @@ function Login() {
 
   const [errors, setErrors] = useState([])
   const [error, setError] = useState(null) //TODO: vaatame mis sellega teeme veel
+  const navigate = useNavigate()
 
   const hasError = (key) => {
     return errors.indexOf(key) !== -1
@@ -53,8 +56,14 @@ function Login() {
       .then(data => {
         if (data.error) {
           console.log(data.message)
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.message,
+          })
+          return
         } else {
-          console.log("SUCCESS!")
+          navigate("/")
         }
       })
       .catch(error => {
@@ -130,7 +139,7 @@ function Login() {
               style={{ width: "100%", height: "80px" }}
               className="btn btn-primary m-2"
             >
-                <box-icon name='google' size="lg" color="white" type='logo'  ></box-icon>
+                <box-icon type='logo' size="lg" color="white"  name='google'   ></box-icon>
             </button>
           </div>
         </div>
