@@ -3,14 +3,18 @@ package main
 import (
 	"context"
 	"database/sql"
+	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/mail"
+	"os"
 	"regexp"
 	"strconv"
+	"strings"
+	"time"
 
 	"back-end/database/repository"
 	"back-end/models"
@@ -150,4 +154,35 @@ func hasValidName(name string) bool {
 func validateEmail(email string) error {
 	_, err := mail.ParseAddress(email)
 	return err
+}
+
+func saveImageToFile(imageBase64 string, folderName string) (string, error) {
+	data := strings.Split(imageBase64, ",")[1]
+
+	imageBytes, err := base64.StdEncoding.DecodeString(data)
+	if err != nil {
+		return "", err
+	}
+
+	fileName := fmt.Sprintf("%d", time.Now().UnixNano())
+
+	extension := strings.Split(strings.TrimPrefix(imageBase64, "data:image/"), ";")[0]
+
+	fileNameWithExtension := fmt.Sprintf("%s.%s", fileName, extension)
+
+	path := fmt.Sprintf(`../front-end/public/%s/%s`, folderName, fileNameWithExtension)
+
+	imageFile, err := os.Create(path)
+	if err != nil {
+		return "", err
+	}
+	defer imageFile.Close()
+
+	_, err = imageFile.Write(imageBytes)
+	if err != nil {
+		os.Remove(path)
+		return "", err
+	}
+
+	return fileNameWithExtension, nil
 }
