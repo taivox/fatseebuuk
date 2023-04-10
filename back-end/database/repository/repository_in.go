@@ -1,9 +1,12 @@
 package repository
 
 import (
-	"back-end/models"
 	"context"
+
+	"back-end/models"
 )
+
+// Functions in this file will insert data to database
 
 func (m *SqliteDB) Register(rd *models.RegisterData) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)

@@ -1,7 +1,15 @@
 import { Link } from "react-router-dom"
 import Profile from "./../../images/profile.webp"
+import { useState } from "react"
+import NotificationsPopup from "./NotificationsPopup"
 
 function Header() {
+  const [notificationsShowing, setNotificationsShowing] = useState(false)
+
+  const toggleNotifications = () => {
+    setNotificationsShowing(!notificationsShowing)
+  }
+
   return (
     <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
       <div className="container">
@@ -67,15 +75,7 @@ function Header() {
                   ></box-icon>
                 </a>
               </li>
-              <li className="nav-item">
-                <a className="nav-link" href="#!!">
-                  <box-icon
-                    color="white"
-                    type="regular"
-                    name="bell"
-                  ></box-icon>
-                </a>
-              </li>
+              <NotificationsPopup/>
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
