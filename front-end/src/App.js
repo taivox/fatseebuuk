@@ -5,19 +5,29 @@ import Header from "./components/common/Header";
 import Menu from "./components/main/Menu";
 import { useEffect, useState } from "react";
 
-
 function App() {
-  const [jwtToken, setJwtToken] = useState("")
-  
-  const navigate = useNavigate()
-  
-  useEffect(() =>{
-    if (jwtToken !== ""){
-      navigate("/login")
-      return
+  const [cookie, setCookie] = useState("");
+  const [cookieSet, setCookieSet] = useState(false);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    let cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      if (cookie.startsWith("session=")) {
+        setCookie(cookie.substring("session=".length))
+        break;
+      }
     }
-  
-  },[navigate, jwtToken])
+    setCookieSet(true);
+  }, []);
+
+  useEffect(() => {
+    if (cookieSet && cookie === "") {
+      navigate("/login");
+    }
+  }, [navigate, cookie, cookieSet]);
 
   return (
     <div>
@@ -26,7 +36,7 @@ function App() {
         <div className="row">
           <Menu />
           <div className="col-md-6">
-            <Outlet />
+            <Outlet context={{cookie, setCookie}}/>
           </div>
           <Chats />
         </div>

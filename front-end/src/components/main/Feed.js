@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useOutletContext } from "react-router-dom";
 import PostImagePopup from "./PostImagePopup";
 
 function Feed() {
   const [posts, setPosts] = useState([]);
   const [showFullText, setShowFullText] = useState({});
   const [selectedPost, setSelectedPost] = useState(null);
+  const {cookie} = useOutletContext()
 
   const handleImageClick = (post) => {
     setSelectedPost(post);
@@ -30,6 +31,28 @@ function Feed() {
   const textLimit = 100;
 
   useEffect(() => {
+
+    const headers = new Headers()
+    headers.append('Content-Type', 'application/json')
+    headers.append("Authorization",cookie)
+    console.log(headers)
+
+    const requestOptions = {
+      method: 'GET',
+      headers: headers
+    }
+
+    console.log(requestOptions)
+
+    fetch(`${process.env.REACT_APP_BACKEND}/`,requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log("cookie sent");
+      })
+      .catch(err => {
+        console.log(err);
+      })
+
     const dummyPosts = [
       {
         id: 1,
@@ -74,7 +97,7 @@ function Feed() {
     ];
 
     setPosts(dummyPosts);
-  }, [text]);
+  }, [text,cookie]);
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({

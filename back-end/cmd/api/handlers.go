@@ -18,6 +18,8 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	fmt.Println("NYYD ON HOME")
+
 	switch r.Method {
 	case "GET":
 		payload := struct {

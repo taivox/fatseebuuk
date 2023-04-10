@@ -12,7 +12,7 @@ func (app *application) routes() http.Handler {
 
 	// mux.HandleFunc("/ws", WebsocketHandler) //TODO: implement websocket handler for chat
 
-	//handlers for routes
+	// handlers for routes
 	mux.HandleFunc("/", app.Home)
 	mux.HandleFunc("/user/", app.User)
 	mux.HandleFunc("/groups", app.AllGroups)
@@ -20,17 +20,17 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/login", app.Login)
 
 	mux.HandleFunc("/groups/", func(w http.ResponseWriter, r *http.Request) {
-		//Handler for events. Example: /groups/1/events/1
+		// Handler for events. Example: /groups/1/events/1
 		if regexp.MustCompile(`/groups/\d+/events/\d+$`).MatchString(r.URL.Path) {
 			app.GroupEvent(w, r)
 			return
 		}
-		//Handler for events. Example: /groups/1/events
+		// Handler for events. Example: /groups/1/events
 		if regexp.MustCompile(`/groups/\d+/events$`).MatchString(r.URL.Path) {
 			app.GroupEvents(w, r)
 			return
 		}
-		//Handler for group. Example: /groups/1
+		// Handler for group. Example: /groups/1
 		if regexp.MustCompile(`/groups/\d+$`).MatchString(r.URL.Path) {
 			app.Group(w, r)
 			return
@@ -40,7 +40,8 @@ func (app *application) routes() http.Handler {
 
 	// add middleware
 	handler := app.enableCORS(mux)
-	//TODO: implement authentication middleware
+	// handler = app.Authorize(handler)
+	// TODO: implement authentication middleware
 
 	return handler
 }

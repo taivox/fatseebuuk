@@ -76,7 +76,7 @@ function NotificationsPopup() {
 
   useEffect(() => {
     setNotifications(notificationsMockData);
-  }, [notifications]);
+  }, []);
 
   return (
     <>
