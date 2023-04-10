@@ -217,3 +217,36 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) Login(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/login" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+	switch r.Method {
+	case "POST":
+		var ld models.LoginData
+		err := app.readJSON(w, r, &ld)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		validLogIn, err := app.validateLoginData(&ld)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		if validLogIn {
+			resp := JSONResponse{
+				Error:   false,
+				Message: "User logged in successfully",
+			}
+			app.writeJSON(w, http.StatusAccepted, resp)
+		} else {
+			app.errorJSON(w, fmt.Errorf("invalid credentials"), http.StatusUnauthorized)
+		}
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}

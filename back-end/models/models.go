@@ -102,3 +102,8 @@ type RegisterData struct {
 	About           string `json:"about"`
 	ProfileImage    string `json:"profile_image"`
 }
+
+type LoginData struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
