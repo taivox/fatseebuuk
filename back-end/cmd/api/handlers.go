@@ -7,6 +7,8 @@ import (
 	"strconv"
 
 	"back-end/models"
+
+	"github.com/gofrs/uuid"
 )
 
 // Home displays the status of the api, as JSON.
@@ -224,10 +226,24 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		uuid := uuid.Must(uuid.NewV4()).String()
 		resp := JSONResponse{
 			Error:   false,
 			Message: "User logged in successfully",
+			Data:    uuid,
 		}
+
+		userID, err := app.DB.GetUserIDByEmail(ld.Email)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		err = app.DB.AddSession(userID, uuid)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
 		app.writeJSON(w, http.StatusAccepted, resp)
 
 	default:
