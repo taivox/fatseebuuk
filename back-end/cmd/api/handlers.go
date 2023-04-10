@@ -172,23 +172,12 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// TODO: Pilt tuleb salvesada kausta ja andmebaasi selle pildi nimi hashina. Hetkel salvestab kogu pildi andmebaasi (tekstina)
-		// func SaveFormData(w http.ResponseWriter, r *http.Request) {
-		// 	r.ParseMultipartForm(10 << 20) // max form data size of 10MB
-		// 	name := r.FormValue("name")
-		// 	email := r.FormValue("email")
-		// 	imageStr := r.FormValue("image")
-		// 	imageData, err := base64.StdEncoding.DecodeString(strings.Split(imageStr, ",")[1])
-		// 	if err != nil {
-		// 	  // handle error
-		// 	}
-		// 	imageName := fmt.Sprintf("%d_%s", time.Now().UnixNano(), r.FormFile("image").Filename)
-		// 	err = ioutil.WriteFile(imageName, imageData, 0644)
-		// 	if err != nil {
-		// 	  // handle error
-		// 	}
-		// 	// save form data to database or do something else with it
-		//   }
+		imageName, err := saveImageToFile(rd.ProfileImage, "profile")
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		rd.ProfileImage = imageName
 
 		err = app.validateRegisterData(&rd)
 		if err != nil {
