@@ -4,32 +4,63 @@ import { useState } from "react";
 
 
 function Login() {
-  const [formValues, setFormValues] = useState({
-    username: "",
-    password: "",
-  });
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-    setFormValues({ ...formValues, [name]: value });
-    console.log(formValues)
-  };
+  const [errors, setErrors] = useState([])
+  const [error, setError] = useState(null) //TODO: vaatame mis sellega teeme veel
+
+  const hasError = (key) => {
+    return errors.indexOf(key) !== -1
+  }
 
   //send data to backend
   const handleSubmit = (event) => {
     event.preventDefault();
-    console.log(formValues)
-    fetch(`${process.env.REACT_APP_BACKEND}/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formValues),
+
+    const payload = {
+      email:email,
+      password:password,
+    }
+    
+
+    let required = [
+      { field: payload.email, name: "email" },
+      { field: payload.password, name: "password" },
+    ]
+
+    required.forEach((req) => {
+      if (req.field === "") {
+        errors.push(req.name)
+      }
     })
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data);
-      });
+    setErrors(errors)
+
+    if (errors.length > 0) {
+      return
+    }
+
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    }
+    fetch(`${process.env.REACT_APP_BACKEND}/login`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.log(data.message)
+        } else {
+          console.log("SUCCESS!")
+        }
+      })
+      .catch(error => {
+        setError(error)
+      })
+
   };
 
 
@@ -55,11 +86,10 @@ function Login() {
                     className="form-control"
                     type="text"
                     name={"username"}
-                    placeholder={"Email / username"}
-                    value={formValues.username}
-                    onChange={handleChange}
-                    errorDiv={null}
-                    errorMsg={""}
+                    placeholder={"Email"}
+                    onChange={(event) => setEmail(event.target.value)}
+                    errorDiv={hasError("email") ? "text-danger" : "d-none"}
+                    errorMsg={"Please enter email"}
                     style={{ height: "80px" }}
                   />
                 
@@ -68,10 +98,9 @@ function Login() {
                   type="password"
                   name={"password"}
                   placeholder={"Password"}
-                  value={formValues.password}
-                  onChange={handleChange}
-                  errorDiv={null}
-                  errorMsg={""}
+                  onChange={(event) => setPassword(event.target.value)}
+                  errorDiv={hasError("password") ? "text-danger" : "d-none"}
+                  errorMsg={"Please enter password"}
                   style={{ height: "80px" }}
                 />
               

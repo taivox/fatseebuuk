@@ -1,8 +1,6 @@
 package main
 
 import (
-	"back-end/database/repository"
-	"back-end/models"
 	"context"
 	"database/sql"
 	"encoding/json"
@@ -13,6 +11,9 @@ import (
 	"net/mail"
 	"regexp"
 	"strconv"
+
+	"back-end/database/repository"
+	"back-end/models"
 )
 
 type JSONResponse struct {
@@ -94,7 +95,7 @@ func (app *application) validateRegisterData(rd *models.RegisterData) error {
 	ctx, cancel := context.WithTimeout(context.Background(), repository.DbTimeout)
 	defer cancel()
 
-	_, err := mail.ParseAddress(rd.Email)
+	err := validateEmail(rd.Email)
 	if err != nil {
 		return err
 	}
@@ -112,7 +113,7 @@ func (app *application) validateRegisterData(rd *models.RegisterData) error {
 		return errors.New("email already exists")
 	}
 
-	if !HasValidName(rd.FirstName) || !HasValidName(rd.LastName) {
+	if !hasValidName(rd.FirstName) || !hasValidName(rd.LastName) {
 		return errors.New("not a valid name")
 	}
 
@@ -123,37 +124,33 @@ func (app *application) validateRegisterData(rd *models.RegisterData) error {
 	return nil
 }
 
-func HasValidName(name string) bool {
+func (app *application) validateLoginData(ld *models.LoginData) error {
+	err := validateEmail(ld.Email)
+	if err != nil {
+		return err
+	}
+
+	var password string // TODO: CHECK FOR ENCRYPTED PASSWORD
+
+	query := `SELECT password FROM users WHERE email = ?`
+	row := app.DB.DB.QueryRow(query, ld.Email)
+	err = row.Scan(&password)
+	if err != nil {
+		return errors.New("user does not exist")
+	}
+
+	if ld.Password != password {
+		return errors.New("invalid password")
+	}
+	return nil
+}
+
+func hasValidName(name string) bool {
 	regex := regexp.MustCompile("^[A-Za-z]+([' -][A-Za-z]+)*$")
 	return regex.MatchString(name)
 }
 
-func (app *application) validateLoginData(ld *models.LoginData) (bool, error) {
-	isEmail := isValidEmail(ld.Username)
-	var password string
-	if isEmail {
-		query := `SELECT password FROM users WHERE email = ?`
-		row := app.DB.DB.QueryRow(query, ld.Username)
-		err := row.Scan(&password)
-		if err != nil {
-			return false, err
-		}
-	} else {
-		query := `SELECT password FROM users WHERE nickname = ?`
-		row := app.DB.DB.QueryRow(query, ld.Username)
-		err := row.Scan(&password)
-		if err != nil {
-			return false, err
-		}
-	}
-
-	if ld.Password != password {
-		return false, errors.New("invalid password")
-	}
-	return true, nil
-}
-
-func isValidEmail(email string) bool {
+func validateEmail(email string) error {
 	_, err := mail.ParseAddress(email)
-	return err == nil
+	return err
 }
