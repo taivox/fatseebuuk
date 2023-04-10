@@ -238,10 +238,6 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, err)
 			return
 		}
-		if err != nil {
-			app.errorJSON(w, err)
-			return
-		}
 		err = app.DB.AddSession(userID, uuid)
 		if err != nil {
 			app.errorJSON(w, err)
