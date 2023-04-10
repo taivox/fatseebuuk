@@ -63,6 +63,7 @@ function Login() {
           })
           return
         } else {
+          document.cookie = `session=${data.data}`
           navigate("/")
         }
       })
