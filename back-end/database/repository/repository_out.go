@@ -271,3 +271,20 @@ func (m *SqliteDB) GetEventByID(id int) (*models.Event, error) {
 
 	return &event, nil
 }
+
+func (m *SqliteDB) GetUserIDByEmail(email string) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id FROM users WHERE email = ?`
+
+	row := m.DB.QueryRowContext(ctx, query, email)
+	var id int
+
+	err := row.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}

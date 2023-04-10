@@ -29,3 +29,18 @@ func (m *SqliteDB) Register(rd *models.RegisterData) error {
 
 	return nil
 }
+
+func (m *SqliteDB) AddSession(userID int, uuid string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO
+				 sessions (user_id, session_token)
+			 VALUES (?,?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, userID, uuid)
+	if err != nil {
+		return err
+	}
+	return nil
+}
