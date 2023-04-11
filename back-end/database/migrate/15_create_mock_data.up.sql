@@ -2,7 +2,12 @@ INSERT INTO `users` (`first_name`, `last_name`, `nickname`, `date_of_birth`, `pr
 VALUES 
 ('Alice', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'alice@example.com', 'password123', 1),
 ('Bob', 'Johnson', NULL, '1985-05-15', NULL, NULL, 'I love to travel and try new foods.', 'bob@example.com', 'secret456', 0),
-('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', 'qwerty789', 1);
+('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', 'qwerty789', 1),
+('asd', 'asdasd', 'asd_asd', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'asd@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
+('Chad', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'qwe@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
+('Kopli', 'Liinid', 'kopli_l', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'zxc@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1);
+
+
 
 INSERT INTO `posts` (`user_id`, `content`, `image`, `is_public`)
 VALUES 
@@ -11,7 +16,17 @@ VALUES
 (2, 'Trying out this new recipe I found. #yum', NULL, 0),
 (2, 'I cant believe its already fall! 🍂', NULL, 1),
 (3, 'Excited to start my new job!', NULL, 1),
-(3, 'Weekend getaway with the family. #familytime', NULL, 1);
+(3, 'Weekend getaway with the family. #familytime', NULL, 1),
+(3, 'Excited to start my new job!', NULL, 1),
+(4, 'Weekend getaway ma olen asdasd public post ', NULL, 1),
+(4, 'Excited to start ma olen asdasd public post ', NULL, 1),
+(4, 'Weekend getaway ma olen asdasd private post  ', NULL, 0),
+(5, 'Weekend getaway chadsmith public post  ', NULL, 1),
+(5, 'Excited to start chadsmith public post ', NULL, 1),
+(5, 'Weekend getaway chadsmith private post ', NULL, 0),
+(6, 'Excited to start koplilliinbid  public post ', NULL, 1),
+(6, 'Weekend kopliliinidgetaway public post ', NULL, 1),
+(6, 'Weekend kopliliinidgetaway private post ', NULL, 0);
 
 
 INSERT INTO `friends` (`user_id`, `friend_id`, `request_pending`)
@@ -21,7 +36,11 @@ VALUES
 (2, 1, 0),
 (2, 3, 0),
 (3, 1, 0),
-(3, 2, 1);
+(3, 2, 1),
+(4, 5, 0),
+(4, 6, 0),
+(5, 6, 0);
+
 
 INSERT INTO `comments` (`user_id`, `post_id`, `content`)
 VALUES
