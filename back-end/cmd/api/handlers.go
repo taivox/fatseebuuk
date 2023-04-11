@@ -189,6 +189,12 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		rd.Password, err = hashPassword(rd.Password)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
 		err = app.DB.Register(&rd)
 		if err != nil {
 			app.errorJSON(w, err)
