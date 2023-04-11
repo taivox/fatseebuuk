@@ -143,7 +143,7 @@ func (app *application) validateLoginData(ld *models.LoginData) error {
 	if err != nil {
 		return errors.New("invalid email or password")
 	}
-	err = checkPasswordHash(ld.Password, password)
+	err = validatePasswordHash(ld.Password, password)
 	if err != nil {
 		return errors.New("invalid email or password")
 	}
