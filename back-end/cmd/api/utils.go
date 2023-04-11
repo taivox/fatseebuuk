@@ -134,13 +134,17 @@ func (app *application) validateLoginData(ld *models.LoginData) error {
 		return err
 	}
 
-	var password string // TODO: CHECK FOR ENCRYPTED PASSWORD
+	var password string
 
 	query := `SELECT password FROM users WHERE email = ?`
 	row := app.DB.DB.QueryRow(query, ld.Email)
 
 	err = row.Scan(&password)
-	if err != nil || ld.Password != password {
+	if err != nil {
+		return errors.New("invalid email or password")
+	}
+	err = validatePasswordHash(ld.Password, password)
+	if err != nil {
 		return errors.New("invalid email or password")
 	}
 	return nil
