@@ -3,7 +3,7 @@ import { Link, useParams } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import CreateEventPopup from "./CreateEventPopup"
-import dateFormat from "../../Utils"
+import { dateFormat } from "../../Utils"
 import ErrorPage from "../common/ErrorPage"
 
 

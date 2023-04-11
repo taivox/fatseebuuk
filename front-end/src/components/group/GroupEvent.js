@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
-import dateFormat from "../../Utils"
+import {dateFormat} from "../../Utils"
 import ErrorPage from "../common/ErrorPage"
 
 
