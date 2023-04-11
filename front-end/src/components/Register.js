@@ -134,7 +134,7 @@ function Register() {
           Swal.fire({
             icon: 'success',
             title: 'Success!',
-            text: "User registered successfully, please log in!",
+            text: "User registered successfully, check your email for details, please log in!",
           })
           navigate("/login")
         }

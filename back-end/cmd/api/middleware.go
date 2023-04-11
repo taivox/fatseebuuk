@@ -3,7 +3,6 @@ package main
 import (
 	"context"
 	"errors"
-	"fmt"
 	"net/http"
 	"strings"
 )
@@ -37,11 +36,7 @@ func (app *application) Authorize(next http.Handler) http.Handler {
 			return
 		}
 
-		fmt.Println("User ID authorizationis: ", userID) // for testing purposes
-
-		//	next.ServeHTTP(w, r)
-
-		ctx := context.WithValue(r.Context(), "userID", userID)
+		ctx := context.WithValue(r.Context(), "user_id", userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -51,36 +46,39 @@ func (app *application) GetTokenFromHeaderAndVerify(w http.ResponseWriter, r *ht
 
 	// get auth header
 	authHeader := r.Header.Get("Authorization")
-	fmt.Println("authheader: ", authHeader)
 	// sanity check
 	if authHeader == "" {
-		fmt.Println("no auth header")
 		return 0, errors.New("no auth header")
 	}
 
 	// split the header on spaces
 	headerParts := strings.Split(authHeader, " ")
 	if len(headerParts) != 2 {
-		fmt.Println("invalid auth header")
 		return 0, errors.New("invalid auth header")
 
 	}
 
 	// check to see if we have the word Bearer
 	if headerParts[0] != "Bearer" {
-		fmt.Println("invalid auth header")
 		return 0, errors.New("invalid auth header")
 	}
-	kypsis := headerParts[1]
-	userID, err := app.DB.ValidateUUID(kypsis)
-	fmt.Println(err)
+	cookie := headerParts[1]
+	userID, err := app.DB.ValidateUUID(cookie)
 	if err != nil {
-		fmt.Println("invalid auth header")
 		return 0, errors.New("invalid auth header")
 	}
-
-	fmt.Println("User ID on", userID)
-	fmt.Println("Kypsis on", kypsis)
 
 	return userID, nil
+}
+
+func (app *application) GetTokenFromHeader(w http.ResponseWriter, r *http.Request) string {
+	w.Header().Add("Vary", "Authorization")
+
+	authHeader := r.Header.Get("Authorization")
+
+	headerParts := strings.Split(authHeader, " ")
+
+	cookie := headerParts[1]
+
+	return cookie
 }

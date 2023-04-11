@@ -10,6 +10,7 @@ import (
 	"io"
 	"net/http"
 	"net/mail"
+	"net/smtp"
 	"os"
 	"regexp"
 	"strconv"
@@ -189,4 +190,19 @@ func saveImageToFile(imageBase64 string, folderName string) (string, error) {
 	}
 
 	return fileNameWithExtension, nil
+}
+
+func sendEmail(rd *models.RegisterData) {
+	// Set up authentication information.
+	auth := smtp.PlainAuth("", "fatseebuuk@gmail.com", "cubkznfrjpmyaqcf", "smtp.gmail.com")
+
+	msg := fmt.Sprintf("Subject: Welcome to the mysterious world of Fatseebuuk! \nDear %s %s, nice to have you on board, please never leave!", rd.FirstName, rd.LastName)
+
+	smtp.SendMail(
+		"smtp.gmail.com:587",
+		auth,
+		"fatseebuuk@gmail.com",
+		[]string{rd.Email},
+		[]byte(msg),
+	)
 }
