@@ -1,8 +1,10 @@
-const dateFormat = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
+export const dateFormat = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' }
 
-function getTimeElapsedString(unixTimestamp) {
+export function getTimeElapsedString(unixTimestamp) {
+    unixTimestamp = new Date(unixTimestamp).getTime()
     const now = Date.now()
-    const elapsed = now - unixTimestamp * 1000 // Convert Unix timestamp to milliseconds
+    const elapsed = now - unixTimestamp // Subtract now from unixTimestamp to get elapsed time
+
     // Calculate the number of minutes, hours, or days that have elapsed
     const minutes = Math.floor(elapsed / 60000) // 1 minute = 60,000 milliseconds
     const hours = Math.floor(elapsed / 3600000) // 1 hour = 3,600,000 milliseconds
@@ -19,5 +21,4 @@ function getTimeElapsedString(unixTimestamp) {
     }
 }
 
-export default { getTimeElapsedString, dateFormat }
 

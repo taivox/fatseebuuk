@@ -288,3 +288,27 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) Feed(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/feed" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+
+		UserID := r.Context().Value("user_id").(int)
+
+		feed, err := app.DB.GetUserFeed(UserID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting feed from database"), http.StatusNotFound)
+			return
+		}
+
+		app.writeJSON(w, http.StatusAccepted, feed)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}

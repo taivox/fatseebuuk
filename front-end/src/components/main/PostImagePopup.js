@@ -1,6 +1,8 @@
 import { useState } from "react"
-import { Modal } from "react-bootstrap"
+import { Modal, Container, Row } from "react-bootstrap"
 import { Link } from "react-router-dom"
+import { getTimeElapsedString } from "../../Utils"
+
 
 function PostImagePopup({ post, onClose }) {
   const [show, setShow] = useState(true)
@@ -26,12 +28,13 @@ function PostImagePopup({ post, onClose }) {
       </Modal.Header>
       <Modal.Body>
         {post.image !== "" && <> <img src={`/post/${post.image}`} alt="" className="w-100" />
-          <div className="d-flex justify-content-between align-items-center">
-            <button className="btn">
-              <box-icon name="like" /> 23
-            </button>
-            <button className="btn btn">23 Comments</button>
-          </div></>}
+        </>}
+        <div className="d-flex justify-content-between align-items-center">
+          <button className="btn">
+            <box-icon name="like" /> {post.likes}
+          </button>
+          <button className="btn btn">{`${post.comments ? post.comments.length : '0'} Comments`}</button>
+        </div>
         <div><p className="card-text">
           {showFullText[post.poster.user_id]
             ? post.content
@@ -64,44 +67,46 @@ function PostImagePopup({ post, onClose }) {
           </div>
         </div>
 
-        {!post.comments ? <div>No comments yet!</div> : post.comments.map((comment) => (
-          <div>
-            <div className="d-flex align-items-center media mb-3">
-              <Link to={`/profile/${comment.poster.user_id}`}>
-                <img
-                  className="rounded-circle mr-3"
-                  src={`/profile/${comment.poster.profile_image}`}
-                  style={{ width: "80px", height: "80px", objectFit: "cover" }}
-                  alt=""
-                />
-              </Link>
-              <div className="media-body bg-light rounded p-2">
-                <Link className="Link" to={`/profile/${comment.poster.user_id}`}>
-                  <h6 className="mt-0">{`${comment.poster.first_name} ${comment.poster.last_name}`}</h6>
-                </Link>
-                <p>
-                  {comment.content}
-                </p>
+
+
+
+        <Container>
+          <Row>
+
+            {!post.comments ? <div>No comments yet!</div> : post.comments.map((comment) => (
+              <div key={comment.comment_id}>
+                <div className="d-flex align-items-center media mb-3">
+                  <Link to={`/profile/${comment.poster.user_id}`}>
+                    <img
+                      className="rounded-circle mr-3"
+                      src={`/profile/${comment.poster.profile_image}`}
+                      style={{ width: "80px", height: "80px", objectFit: "cover" }}
+                      alt=""
+                    />
+                  </Link>
+                  <div className="media-body bg-light rounded p-2">
+                    <Link className="Link" to={`/profile/${comment.poster.user_id}`}>
+                      <h6 className="mt-0">{`${comment.poster.first_name} ${comment.poster.last_name}`}</h6>
+                    </Link>
+                    <p style={{ wordBreak: 'break-all' }}>
+                      {comment.content}
+                    </p>
+                  </div>
+                  {comment.likes !== 0 && <><box-icon name="like" color="blue" />{comment.likes}</>}
+                </div>
+                <div className="d-flex align-items-center">
+                  <button type="button" className="btn btn-outline-ligth btn-sm m-1">
+                    Like
+                  </button>
+                  <button type="button" className="btn btn-outline-ligth btn-sm m-1">
+                    Reply
+                  </button>
+                  <span className="text-muted mr-3">{getTimeElapsedString(comment.created)}</span>
+                </div>
               </div>
-            </div>
-            <div className="d-flex align-items-center">
-              <button type="button" className="btn btn-outline-ligth btn-sm m-1">
-                Like
-              </button>
-              <button type="button" className="btn btn-outline-ligth btn-sm m-1">
-                Reply
-              </button>
-              <span className="text-muted mr-3">{comment.created}</span>
-            </div>
-          </div>
-        ))}
-
-
-
-
-
-
-
+            ))}
+          </Row>
+        </Container>
 
 
 

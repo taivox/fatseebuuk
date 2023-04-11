@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react"
 import { Link, useOutletContext } from "react-router-dom"
 import PostImagePopup from "./PostImagePopup"
+import { getTimeElapsedString } from "../../Utils"
+
 
 function Feed() {
   const [posts, setPosts] = useState([])
@@ -16,18 +18,6 @@ function Feed() {
     setSelectedPost(null)
   }
 
-  const [text, setText] =
-    useState(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
-    est id elit consectetur sollicitudin. Nam vel turpis eget ipsum
-    bibendum dictum at in lectus. Mauris a semper urna, ac facilisis
-    nulla. Pellentesque habitant morbi tristique senectus et netus
-    et malesuada fames ac turpis egestas. Praesent congue nulla nec
-    ipsum bibendum, vel finibus turpis luctus. Sed ornare, lorem vel
-    varius tristique, est massa dictum est, vitae euismod massa
-    mauris a augue. Sed at sapien nunc. Suspendisse potenti. Aenean
-    hendrerit mi ut turpis maximus, vel imperdiet augue bibendum.
-    Donec ut consequat enim. Duis pharetra euismod ex sed dignissim.
-    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`)
   const textLimit = 100
 
   useEffect(() => {
@@ -41,60 +31,21 @@ function Feed() {
       headers: headers
     }
 
-    fetch(`${process.env.REACT_APP_BACKEND}/`, requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND}/feed`, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log("cookie sent")
+        console.log(data)
+        setPosts(data)
       })
       .catch(err => {
         console.log(err)
       })
 
-    const dummyPosts = [
-      {
-        id: 1,
-        posterID: 1,
-        poster: "John Doe",
-        profileImage: "/profile/chad.jpg",
-        global: true,
-        postedAt: "Posted 1 day ago",
-        postContent: text,
-        postImage: "/post/chadpost.png",
-      },
-      {
-        id: 2,
-        posterID: 2,
-        poster: "Dora Explorer",
-        profileImage: "/profile/dota.jpg",
-        global: false,
-        postedAt: "Posted 2 hours ago",
-        postContent: text,
-        postImage: "/post/js.jpg",
-      },
-      {
-        id: 3,
-        posterID: 3,
-        poster: "Peppa Pug",
-        profileImage: "/profile/peppa.jpg",
-        global: false,
-        postedAt: "Posted 5 days ago",
-        postContent: text,
-        postImage: "/post/oldprogrammers.webp",
-      },
-      {
-        id: 4,
-        posterID: 4,
-        poster: "Steve Scumbag",
-        profileImage: "/profile/scumbag.jpg",
-        global: true,
-        postedAt: "Posted 12 days ago",
-        postContent: text,
-        postImage: "/post/nagutaivo.png",
-      },
-    ]
 
-    setPosts(dummyPosts)
-  }, [text, cookie])
+
+
+    // setPosts(dummyPosts)
+  }, [cookie])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
@@ -106,13 +57,13 @@ function Feed() {
   return (
     <>
       {posts.map((p) => (
-        <div key={p.id} className="card">
+        <div key={p.post_id} className="card">
           <div className="card-body">
             <div className="media ">
               <div className="d-flex align-items-center m-2">
-                <Link to={`/profile/${p.id}`}>
+                <Link to={`/profile/${p.poster.user_id}`}>
                   <img
-                    src={p.profileImage}
+                    src={`/profile/${p.poster.profile_image}`}
                     className="mr-3 rounded-circle"
                     style={{
                       height: "60px",
@@ -123,36 +74,36 @@ function Feed() {
                     alt="..."
                   />
                 </Link>
-                <div key={p.posterID} className="m-3">
+                <div key={p.poster.user_id} className="m-3">
                   <h5 className="mt-0" style={{ cursor: "pointer" }}>
                     <Link className="Link" to={`/profile/${p.id}`}>
-                      {p.poster}{" "}
-                      <box-icon color="grey" name={p.global ? "globe" : "user"} />
+                      {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
+                      <box-icon color="grey" name={p.is_public ? "globe" : "user"} />
                     </Link>
                   </h5>
-                  <small className="text-muted">{p.postedAt}</small>
+                  <small className="text-muted">{getTimeElapsedString(p.created)}</small>
                 </div>
               </div>
               <div className="media-body">
                 <p className="card-text">
-                  {showFullText[p.id]
-                    ? p.postContent
-                    : p.postContent.slice(0, textLimit)}
-                  {p.postContent.length > textLimit && !showFullText[p.id] && (
+                  {showFullText[p.post_id]
+                    ? p.content
+                    : p.content.slice(0, textLimit)}
+                  {p.content.length > textLimit && !showFullText[p.post_id] && (
                     <span>
                       ...{" "}
                       <span
                         className="show-more-link"
                         href="#!"
-                        onClick={() => toggleText(p.id)}
+                        onClick={() => toggleText(p.post_id)}
                       >
                         See more
                       </span>
                     </span>
                   )}
                 </p>
-                <img
-                  src={p.postImage}
+                {p.image && <img
+                  src={`/post/${p.image}`}
                   className="img-fluid mb-2"
                   style={{
                     height: "300px",
@@ -162,16 +113,16 @@ function Feed() {
                   }}
                   alt="..."
                   onClick={() => handleImageClick(p)}
-                />
+                />}
                 <div className="d-flex justify-content-between align-items-center">
                   <button className="btn">
-                    <box-icon name="like" /> 23
+                    <box-icon name="like" /> {p.likes}
                   </button>
                   <button
                     onClick={() => handleImageClick(p)}
                     className="btn btn"
                   >
-                    23 Comments
+                    {p.comments ? `${p.comments.length}` : '0'} Comments
                   </button>
                 </div>
                 <hr />

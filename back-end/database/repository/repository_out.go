@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"sort"
 	"time"
 
 	"back-end/models"
@@ -91,6 +92,131 @@ func (m *SqliteDB) GetAllGroups() ([]*models.Group, error) {
 	}
 
 	return groups, nil
+}
+
+func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	// Get all friends from the database
+	var friends []int
+	var posts []*models.Post
+	query := `SELECT friend_id FROM friends WHERE user_id = ? UNION SELECT user_id FROM friends WHERE friend_id = ?`
+
+	rows, err := m.DB.QueryContext(ctx, query, id, id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var friend int
+		err = rows.Scan(&friend)
+		if err != nil {
+			return nil, err
+		}
+		friends = append(friends, friend)
+	}
+
+	// Get all friends' posts
+	for _, friendID := range friends {
+		query = `SELECT post_id, user_id, content, COALESCE(image, ''),created, is_public FROM posts WHERE user_id = ?`
+		rows, err := m.DB.QueryContext(ctx, query, friendID)
+		if err != nil {
+			return nil, err
+		}
+		for rows.Next() {
+			var post models.Post
+			var userID int
+			rows.Scan(
+				&post.PostID,
+				&userID,
+				&post.Content,
+				&post.Image,
+				&post.Created,
+				&post.IsPublic,
+			)
+
+			// Get user for this post
+			var user models.User
+			query = `SELECT user_id, first_name, last_name, profile_image FROM users WHERE user_id = ?`
+			row := m.DB.QueryRowContext(ctx, query, userID)
+			row.Scan(
+				&user.UserID,
+				&user.FirstName,
+				&user.LastName,
+				&user.ProfileImage,
+			)
+			post.Poster = user
+
+			// Get comments for this post
+			var commentUserID int
+			query = `SELECT comment_id, user_id, post_id, content, created FROM comments WHERE post_id = ?`
+			cRows, err := m.DB.QueryContext(ctx, query, post.PostID)
+			if err != nil {
+				return nil, err
+			}
+			for cRows.Next() {
+				var comment models.Comment
+				cRows.Scan(
+					&comment.CommentID,
+					&commentUserID,
+					&comment.PostID,
+					&comment.Content,
+					&comment.Created,
+				)
+
+				// Get user for this comment
+				var commentUser models.User
+				query = `SELECT user_id, first_name, last_name, COALESCE(profile_image,'default_profile_image.png') FROM users WHERE user_id = ?`
+				row = m.DB.QueryRowContext(ctx, query, commentUserID)
+				row.Scan(
+					&commentUser.UserID,
+					&commentUser.FirstName,
+					&commentUser.LastName,
+					&commentUser.ProfileImage,
+				)
+
+				comment.Poster = commentUser
+
+				// Get likes for this comment
+				query = `SELECT COUNT(*) FROM comment_likes WHERE comment_id = ?`
+				row = m.DB.QueryRowContext(ctx, query, comment.CommentID)
+				row.Scan(&comment.Likes)
+
+				post.Comments = append(post.Comments, comment)
+			}
+
+			post.Comments = SortCommentsByCreated(post.Comments)
+
+			// Get likes for this post
+			query = `SELECT COUNT(*) FROM post_likes WHERE post_id = ?`
+			row = m.DB.QueryRowContext(ctx, query, post.PostID)
+			row.Scan(&post.Likes)
+
+			posts = append(posts, &post)
+		}
+	}
+
+	posts = SortPostsByCreated(posts)
+
+	return posts, nil
+}
+
+// Kas saab need kaks funci yheks teha? kuidagi input ja output interface ja sortida created fieldi j2rgi
+// TODO: Move this to utils and utils to package utils. Cant import from package main
+func SortPostsByCreated(posts []*models.Post) []*models.Post {
+	sort.Slice(posts, func(i, j int) bool {
+		return posts[i].Created.After(posts[j].Created)
+	})
+	return posts
+}
+
+// TODO: Move this to utils and utils to package utils. Cant import from package main
+func SortCommentsByCreated(comments []models.Comment) []models.Comment {
+	sort.Slice(comments, func(i, j int) bool {
+		return comments[i].Created.Before(comments[j].Created)
+	})
+	return comments
 }
 
 func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
