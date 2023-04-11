@@ -5,6 +5,8 @@ import CreateGroupPopup from "../group/CreateGroupPopup"
 function Groups() {
   const [groups, setGroups] = useState([])
   const [createModalShowing, setCreateModalShowing] = useState(false)
+  const [cookie, setCookie] = useState("");
+  const [cookieSet, setCookieSet] = useState(false);
 
   const handleCreateGroupClick = () => {
     setCreateModalShowing(true)
@@ -15,8 +17,32 @@ function Groups() {
   }
 
   useEffect(() => {
+    let cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      if (cookie.startsWith("session=")) {
+        setCookie(cookie.substring("session=".length))
+        break;
+      }
+    }
+    setCookieSet(true);
+  }, []);
+
+  useEffect(() => {
+    let cookies = document.cookie.split(";");
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim();
+      if (cookie.startsWith("session=")) {
+        setCookie(cookie.substring("session=".length))
+        break;
+      }
+    }
+    
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",
@@ -31,7 +57,7 @@ function Groups() {
       .catch((error) => {
         console.log(error)
       })
-  }, [])
+  }, [cookie,setCookie])
 
   return (
     <>

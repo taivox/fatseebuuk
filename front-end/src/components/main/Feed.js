@@ -35,14 +35,11 @@ function Feed() {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
     headers.append("Authorization",cookie)
-    console.log(headers)
 
     const requestOptions = {
       method: 'GET',
       headers: headers
     }
-
-    console.log(requestOptions)
 
     fetch(`${process.env.REACT_APP_BACKEND}/`,requestOptions)
       .then(response => response.json())

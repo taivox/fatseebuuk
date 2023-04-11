@@ -296,7 +296,7 @@ func (m *SqliteDB) ValidateUUID(uuid string) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	query := `SELECT user_id FROM users WHERE uuid = ?`
+	query := `SELECT user_id FROM sessions WHERE session_token = ?`
 
 	row := m.DB.QueryRowContext(ctx, query, uuid)
 	var id int

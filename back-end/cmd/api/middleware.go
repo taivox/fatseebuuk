@@ -26,6 +26,11 @@ func (app *application) enableCORS(h http.Handler) http.Handler {
 // auth required handler
 func (app *application) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path == "/login" || r.URL.Path == "/register" {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		userID, err := app.GetTokenFromHeaderAndVerify(w, r)
 		if err != nil {
 			w.WriteHeader(http.StatusUnauthorized)
@@ -46,7 +51,7 @@ func (app *application) GetTokenFromHeaderAndVerify(w http.ResponseWriter, r *ht
 
 	// get auth header
 	authHeader := r.Header.Get("Authorization")
-
+	fmt.Println("authheader: ", authHeader)
 	// sanity check
 	if authHeader == "" {
 		fmt.Println("no auth header")
@@ -68,6 +73,7 @@ func (app *application) GetTokenFromHeaderAndVerify(w http.ResponseWriter, r *ht
 	}
 	kypsis := headerParts[1]
 	userID, err := app.DB.ValidateUUID(kypsis)
+	fmt.Println(err)
 	if err != nil {
 		fmt.Println("invalid auth header")
 		return 0, errors.New("invalid auth header")
