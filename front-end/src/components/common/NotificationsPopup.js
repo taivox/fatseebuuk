@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react"
+import { Link } from "react-router-dom"
 
 function NotificationsPopup() {
-  const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([])
 
   //types are set according to boxicon names. subject_id is message_id or event_id etc
   const notificationsMockData = [
@@ -72,11 +72,11 @@ function NotificationsPopup() {
         profile_image: "chad.jpg",
       },
     }, // is member of a group and an event is created
-  ];
+  ]
 
   useEffect(() => {
-    setNotifications(notificationsMockData);
-  }, []);
+    setNotifications(notificationsMockData)
+  }, [])
 
   return (
     <>
@@ -92,21 +92,21 @@ function NotificationsPopup() {
         </a>
         <ul className="dropdown-menu dropdown-menu">
           {notifications !== [] ? notifications.map((notification) => (
-            <li>
+            <li key={notification.notification_id}>
               <Link to={"#!"} className="dropdown-item" href="#!">
                 <box-icon
                   color="black"
-                  type= "icon"
+                  type="icon"
                   name={notification.type}
                 ></box-icon>
                 {notification.type}
               </Link>
             </li>
-          )): <div>Nothing here</div>}
+          )) : <div>Nothing here</div>}
         </ul>
       </li>
     </>
-  );
+  )
 }
 
-export default NotificationsPopup;
+export default NotificationsPopup

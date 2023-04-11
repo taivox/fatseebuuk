@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
-import PostImagePopup from "./PostImagePopup";
+import { useEffect, useState } from "react"
+import { Link, useOutletContext } from "react-router-dom"
+import PostImagePopup from "./PostImagePopup"
 
 function Feed() {
-  const [posts, setPosts] = useState([]);
-  const [showFullText, setShowFullText] = useState({});
-  const [selectedPost, setSelectedPost] = useState(null);
-  const {cookie} = useOutletContext()
+  const [posts, setPosts] = useState([])
+  const [showFullText, setShowFullText] = useState({})
+  const [selectedPost, setSelectedPost] = useState(null)
+  const { cookie } = useOutletContext()
 
   const handleImageClick = (post) => {
-    setSelectedPost(post);
-  };
+    setSelectedPost(post)
+  }
 
   const handlePostImagePopupClose = () => {
-    setSelectedPost(null);
-  };
+    setSelectedPost(null)
+  }
 
   const [text, setText] =
     useState(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
@@ -27,27 +27,27 @@ function Feed() {
     mauris a augue. Sed at sapien nunc. Suspendisse potenti. Aenean
     hendrerit mi ut turpis maximus, vel imperdiet augue bibendum.
     Donec ut consequat enim. Duis pharetra euismod ex sed dignissim.
-    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`);
-  const textLimit = 100;
+    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`)
+  const textLimit = 100
 
   useEffect(() => {
 
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
-    headers.append("Authorization",cookie)
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: 'GET',
       headers: headers
     }
 
-    fetch(`${process.env.REACT_APP_BACKEND}/`,requestOptions)
+    fetch(`${process.env.REACT_APP_BACKEND}/`, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log("cookie sent");
+        console.log("cookie sent")
       })
       .catch(err => {
-        console.log(err);
+        console.log(err)
       })
 
     const dummyPosts = [
@@ -91,17 +91,17 @@ function Feed() {
         postContent: text,
         postImage: "/post/nagutaivo.png",
       },
-    ];
+    ]
 
-    setPosts(dummyPosts);
-  }, [text,cookie]);
+    setPosts(dummyPosts)
+  }, [text, cookie])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,
       [postId]: !prevShowFullText[postId],
-    }));
-  };
+    }))
+  }
 
   return (
     <>
@@ -111,24 +111,24 @@ function Feed() {
             <div className="media ">
               <div className="d-flex align-items-center m-2">
                 <Link to={`/profile/${p.id}`}>
-                <img
-                  src={p.profileImage}
-                  className="mr-3 rounded-circle"
-                  style={{
-                    height: "60px",
-                    width: "60px",
-                    objectFit: "cover",
-                    cursor: "pointer"
-                  }}
-                  alt="..."
-                />
+                  <img
+                    src={p.profileImage}
+                    className="mr-3 rounded-circle"
+                    style={{
+                      height: "60px",
+                      width: "60px",
+                      objectFit: "cover",
+                      cursor: "pointer"
+                    }}
+                    alt="..."
+                  />
                 </Link>
                 <div key={p.posterID} className="m-3">
-                  <h5 className="mt-0" style={{cursor:"pointer"}}>
-                <Link className="Link" to={`/profile/${p.id}`}>
-                    {p.poster}{" "}
-                    <box-icon color="grey" name={p.global ? "globe" : "user"} />
-                </Link>
+                  <h5 className="mt-0" style={{ cursor: "pointer" }}>
+                    <Link className="Link" to={`/profile/${p.id}`}>
+                      {p.poster}{" "}
+                      <box-icon color="grey" name={p.global ? "globe" : "user"} />
+                    </Link>
                   </h5>
                   <small className="text-muted">{p.postedAt}</small>
                 </div>
@@ -141,13 +141,13 @@ function Feed() {
                   {p.postContent.length > textLimit && !showFullText[p.id] && (
                     <span>
                       ...{" "}
-                      <p
+                      <span
                         className="show-more-link"
                         href="#!"
                         onClick={() => toggleText(p.id)}
                       >
                         See more
-                      </p>
+                      </span>
                     </span>
                   )}
                 </p>
@@ -198,7 +198,7 @@ function Feed() {
         />
       )}
     </>
-  );
+  )
 }
 
-export default Feed;
+export default Feed

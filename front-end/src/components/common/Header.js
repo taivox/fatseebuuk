@@ -1,13 +1,34 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import Profile from "./../../images/profile.webp"
 import { useState } from "react"
 import NotificationsPopup from "./NotificationsPopup"
 
-function Header() {
+function Header({ cookie }) {
   const [notificationsShowing, setNotificationsShowing] = useState(false)
-
   const toggleNotifications = () => {
     setNotificationsShowing(!notificationsShowing)
+  }
+  const navigate = useNavigate()
+
+  const logout = () => {
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    let requestOptions = {
+      method: "POST",
+      headers: headers,
+    }
+    fetch(`${process.env.REACT_APP_BACKEND}/logout`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          console.log(data)
+        } else {
+          document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+          navigate("/login")
+        }
+      })
   }
 
   return (
@@ -75,7 +96,7 @@ function Header() {
                   ></box-icon>
                 </a>
               </li>
-              <NotificationsPopup/>
+              <NotificationsPopup />
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -93,17 +114,9 @@ function Header() {
                     </a>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#!">
-                      Another action
-                    </a>
-                  </li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li>
-                    <a className="dropdown-item" href="#!">
-                      Something else here
-                    </a>
+                    <Link onClick={logout} className="dropdown-item" href="#!">
+                      Logout
+                    </Link>
                   </li>
 
                 </ul>

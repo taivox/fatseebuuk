@@ -47,3 +47,16 @@ func (m *SqliteDB) AddSession(userID int, uuid string) error {
 	}
 	return nil
 }
+
+func (m *SqliteDB) RemoveSession(uuid string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `DELETE FROM sessions WHERE session_token = ?`
+
+	_, err := m.DB.ExecContext(ctx, stmt, uuid)
+	if err != nil {
+		return err
+	}
+	return nil
+}

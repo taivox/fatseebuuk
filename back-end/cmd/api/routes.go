@@ -55,6 +55,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/login", app.Login)
 
 	mux.HandleFunc("/", app.Home)
+	mux.HandleFunc("/logout", app.Logout)
 	mux.HandleFunc("/user/", app.User)
 	mux.HandleFunc("/groups", app.AllGroups)
 

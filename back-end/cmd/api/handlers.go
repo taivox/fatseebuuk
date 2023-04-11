@@ -18,8 +18,6 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("NYYD ON HOME")
-
 	switch r.Method {
 	case "GET":
 		payload := struct {
@@ -176,12 +174,17 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		imageName, err := saveImageToFile(rd.ProfileImage, "profile")
-		if err != nil {
-			app.errorJSON(w, err)
-			return
+		var imageName string
+		if rd.ProfileImage != "" {
+			imageName, err = saveImageToFile(rd.ProfileImage, "profile")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+			rd.ProfileImage = imageName
+		} else {
+			rd.ProfileImage = "default_profile_picture.png"
 		}
-		rd.ProfileImage = imageName
 
 		err = app.validateRegisterData(&rd)
 		if err != nil {
@@ -200,6 +203,8 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, err)
 			return
 		}
+
+		go sendEmail(&rd)
 
 		resp := JSONResponse{
 			Error:   false,
@@ -250,6 +255,31 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			app.errorJSON(w, err)
 			return
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/logout" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+
+		cookie := app.GetTokenFromHeader(w, r)
+
+		app.DB.RemoveSession(cookie)
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "User logged out successfully",
 		}
 
 		app.writeJSON(w, http.StatusAccepted, resp)
