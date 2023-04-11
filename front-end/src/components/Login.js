@@ -63,7 +63,7 @@ function Login() {
           })
           return
         } else {
-          document.cookie = `session=${data.data}`
+          document.cookie = `session=Bearer ${data.data}`
           navigate("/")
         }
       })

@@ -291,3 +291,20 @@ func (m *SqliteDB) GetUserIDByEmail(email string) (int, error) {
 
 	return id, nil
 }
+
+func (m *SqliteDB) ValidateUUID(uuid string) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id FROM sessions WHERE session_token = ?`
+
+	row := m.DB.QueryRowContext(ctx, query, uuid)
+	var id int
+
+	err := row.Scan(&id)
+	if err != nil {
+		return 0, err
+	}
+
+	return id, nil
+}

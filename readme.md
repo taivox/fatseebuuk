@@ -23,4 +23,4 @@ go run ./cmd/api
 
 #### Written in [Go](https://go.dev/) version 1.20, [JavaScript](https://en.wikipedia.org/wiki/JavaScript), [React 18.2](https://react.dev/)
 
-##### Authors [taivox](https://01.kood.tech/git/taivox) & [Jserva](https://01.kood.tech/git/Jserva) & [ViktorVT](https://01.kood.tech/git/ViktorVT) & [enrisuimets](https://01.kood.tech/git/enrisuimets)
+##### Authors [taivox](https://01.kood.tech/git/taivox) & [Jserva](https://01.kood.tech/git/Jserva) & [enrisuimets](https://01.kood.tech/git/enrisuimets)
