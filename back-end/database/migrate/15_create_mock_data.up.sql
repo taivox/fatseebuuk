@@ -172,16 +172,18 @@ INSERT INTO groups_comments (user_id, post_id, content, created) VALUES
 (1, 4, "I had no idea about this topic, thanks for bringing it to my attention.", '2022-10-15 09:00:00');
 
 INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pending) VALUES
-(1, 1, false, false),
-(2, 1, false, true),
-(3, 1, true, false),
-(2, 2, false, false),
-(3, 2, false, true),
-(1, 3, true, false),
-(3, 3, false, false),
-(1, 4, false, false),
-(2, 4, true, false),
-(3, 4, false, true);
+(1, 1, 0, 0),
+(2, 1, 0, 1),
+(3, 1, 1, 0),
+(2, 2, 0, 0),
+(3, 2, 0, 1),
+(1, 3, 1, 0),
+(3, 3, 0, 0),
+(1, 4, 0, 0),
+(4, 1, 0, 0),
+(4, 2, 1, 0),
+(4, 3, 0, 1),
+(3, 4, 0, 1);
 
 INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES 
 (1, 1, 'Charity Run', 'A charity run for local organizations', NULL, '2022-04-15 09:00:00'),

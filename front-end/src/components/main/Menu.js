@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom"
 
-function Menu() {
+function Menu({ cookie }) {
   const [groups, setGroups] = useState([])
 
   useEffect(() => {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",
@@ -21,7 +22,8 @@ function Menu() {
       .catch((error) => {
         console.log(error)
       })
-  }, [])
+  }, [cookie])
+
   return (
     <div className="col-md-3">
       <nav>

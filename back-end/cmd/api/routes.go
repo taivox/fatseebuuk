@@ -76,6 +76,12 @@ func (app *application) routes() http.Handler {
 			app.Group(w, r)
 			return
 		}
+		// Handler for joining group. Example: /groups/1/join
+		if regexp.MustCompile(`/groups/\d+/join$`).MatchString(r.URL.Path) {
+			app.GroupJoin(w, r)
+			return
+		}
+
 		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
 	})
 

@@ -34,7 +34,7 @@ function App() {
       <Header cookie={cookie} />
       <div className="container">
         <div className="row">
-          <Menu />
+          <Menu cookie={cookie}/>
           <div className="col-md-6">
             <Outlet context={{ cookie, setCookie }} />
           </div>
