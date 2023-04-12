@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"back-end/models"
 )
@@ -63,6 +64,7 @@ func (m *SqliteDB) RemoveSession(uuid string) error {
 	return nil
 }
 
+// TODO: Enri tahab siia funcile paremat nime!!!
 func (m *SqliteDB) AddUserToGroup(userID, groupID int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
@@ -85,6 +87,37 @@ func (m *SqliteDB) AddUserToGroup(userID, groupID int) error {
 			 VALUES (?,?,?,?)`
 
 	_, err = m.DB.ExecContext(ctx, stmt, userID, groupID, true, false)
+	if err != nil {
+		return err
+	}
+
+	var groupCreatorID int
+	query = `SELECT user_id FROM groups WHERE group_id = ?`
+	row = m.DB.QueryRowContext(ctx, query, groupID)
+	err = row.Scan(&groupCreatorID)
+	if err != nil {
+		return err
+	}
+	err = m.CreateNotification(groupCreatorID, userID, "group_request")
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Insert notification to database. Takes in user ID who the notification belongs to and notification type.
+// Notification type can be "group_invite", "group_request", "friend_request, "event_created"
+func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+	fmt.Println("siinka", toID, fromID, notificationType)
+
+	stmt := `INSERT INTO
+				notifications (to_id, from_id, notification_type)
+			VALUES (?,?,?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, toID, fromID, notificationType)
 	if err != nil {
 		return err
 	}

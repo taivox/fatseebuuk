@@ -41,10 +41,6 @@ function Feed() {
         console.log(err)
       })
 
-
-
-
-    // setPosts(dummyPosts)
   }, [cookie])
 
   const toggleText = (postId) => {
@@ -76,7 +72,7 @@ function Feed() {
                 </Link>
                 <div key={p.poster.user_id} className="m-3">
                   <h5 className="mt-0" style={{ cursor: "pointer" }}>
-                    <Link className="Link" to={`/profile/${p.id}`}>
+                    <Link className="Link" to={`/profile/${p.poster.user_id}`}>
                       {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
                       <box-icon color="grey" name={p.is_public ? "globe" : "user"} />
                     </Link>

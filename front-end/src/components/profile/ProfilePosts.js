@@ -107,12 +107,11 @@ function ProfilePosts({ props }) {
                 <TextArea
                   title={""}
                   name={""}
-                  value={""}
                   rows={"3"}
                   placeholder={"What's on your mind?"}
                 />
                 <div className="form-group m-2">
-                  <label for="post-image" className="btn btn-ligth mb-0">
+                  <label htmlFor="post-image" className="btn btn-ligth mb-0">
                     <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Image
                   </label>
                   <input
@@ -167,13 +166,13 @@ function ProfilePosts({ props }) {
                   {p.postContent.length > textLimit && !showFullText[p.id] && (
                     <span>
                       ...{" "}
-                      <p
+                      <span
                         className="show-more-link"
                         href="#!"
                         onClick={() => toggleText(p.id)}
                       >
                         See more
-                      </p>
+                      </span>
                     </span>
                   )}
                 </p>

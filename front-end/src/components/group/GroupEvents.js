@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useParams } from "react-router-dom"
+import { Link, useOutletContext, useParams } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import CreateEventPopup from "./CreateEventPopup"
@@ -13,6 +13,7 @@ function GroupEvents() {
   const [createModalShowing, setCreateModalShowing] = useState(false)
   const { group_id } = useParams()
   const [error, setError] = useState(null)
+  const { cookie } = useOutletContext()
 
   const handleCreateEventClick = () => {
     setCreateModalShowing(true)
@@ -25,6 +26,7 @@ function GroupEvents() {
   useEffect(() => {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",

@@ -54,7 +54,7 @@ function Group() {
           throw new Error(data.message)
         }
         setHasAccess(data.user_is_group_member)
-        setHidden(hasAccess ? "d-none":"")
+        setHidden(hasAccess ? "d-none" : "")
         setGroup(data)
         setGroupPosts(data.posts)
       })
@@ -76,7 +76,7 @@ function Group() {
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/join`, requestOptions)
       .then(response => response.json())
       .then(data => {
-        console.log("seeondata",data)
+        console.log("seeondata", data)
         if (data.error) {
           console.log("error tuli", data)
         } else {
@@ -97,12 +97,12 @@ function Group() {
           <div className="row">
             <GroupMenu />
             <div className="col-md-6">
-            <div className="profile-buttons p-4">
-          <button onClick={joinGroup} className={`btn btn-primary ${hidden}`}>
-            <box-icon name='plus' color="white" />
-            Join Group
-          </button>
-        </div>
+              <div className="profile-buttons p-4">
+                <button onClick={joinGroup} className={`btn btn-primary ${hidden}`}>
+                  <box-icon name='plus' color="white" />
+                  Join Group
+                </button>
+              </div>
             </div>
             <Chats />
           </div>
@@ -110,7 +110,7 @@ function Group() {
         <Footer />
       </div>
     )
-  }else{
+  } else {
     return (
       <div>
         <Header />
@@ -119,7 +119,7 @@ function Group() {
           <div className="row">
             <GroupMenu />
             <div className="col-md-6">
-              {groupPosts.length > 0 && <Outlet context={{ groupPosts }} />}
+              {groupPosts.length > 0 && <Outlet context={{ groupPosts, cookie }} />}
             </div>
             <Chats />
           </div>

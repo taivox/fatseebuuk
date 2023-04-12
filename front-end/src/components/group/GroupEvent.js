@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
-import {dateFormat} from "../../Utils"
+import { dateFormat } from "../../Utils"
 import ErrorPage from "../common/ErrorPage"
 
 
@@ -15,6 +15,7 @@ function GroupEvent() {
     const [poster, setPoster] = useState({})
     const [showFullText, setShowFullText] = useState({})
     const [error, setError] = useState(null)
+    const { cookie } = useOutletContext()
 
     const textLimit = 100
 
@@ -22,6 +23,7 @@ function GroupEvent() {
 
         const headers = new Headers()
         headers.append("Content-Type", "application/json")
+        headers.append("Authorization", cookie)
 
         const requestOptions = {
             method: "GET",
@@ -33,14 +35,14 @@ function GroupEvent() {
                 if (data.error) {
                     throw new Error(data.message)
                 }
+                console.log("votseeon", data)
                 setEvent(data)
                 setPoster(data.poster)
+                console.log("seeonposter", data.poster)
             })
             .catch((error) => {
                 setError(error)
             })
-
-
     }, [])
 
     const toggleText = (postId) => {

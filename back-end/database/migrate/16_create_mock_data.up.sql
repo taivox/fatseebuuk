@@ -181,8 +181,6 @@ INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pendi
 (3, 3, 0, 0),
 (1, 4, 0, 0),
 (4, 1, 0, 0),
-(4, 2, 1, 0),
-(4, 3, 0, 1),
 (3, 4, 0, 1);
 
 INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES 
@@ -191,7 +189,9 @@ INSERT INTO events (user_id, group_id, title, description, image, event_date) VA
 (2, 1, 'Community Cleanup', 'A cleanup event for the local community', 'guys.webp', '2022-05-15 10:00:00'),
 (2, 1, 'Art Exhibition', 'An art exhibition featuring local artists', NULL, '2023-06-01 18:00:00'),
 (3, 1, 'Bake Sale', 'A bake sale to raise funds for charity', 'guys.webp', '2023-06-15 12:00:00'),
-(3, 1, 'Movie Night', 'A movie night featuring classic films', 'flowers.jpg', '2023-07-01 19:00:00');
+(3, 1, 'Movie Night', 'A movie night featuring classic films', 'flowers.jpg', '2023-07-01 19:00:00'),
+(2, 2, 'teise grupi event', 'A movie teise grupi event teiselt userilt films', 'flowers.jpg', '2023-07-01 19:00:00');
+
 
 INSERT INTO events_attendance (event_id, user_id, is_going) VALUES
 (1, 1, true),

@@ -12,11 +12,26 @@ function Profile() {
   const [profile, setProfile] = useState({})
   let { user_id } = useParams()
   const [error, setError] = useState(null)
+  const [cookie, setCookie] = useState("")
+  const [cookieSet, setCookieSet] = useState(false)
 
+  useEffect(() => {
+    let cookies = document.cookie.split(";")
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim()
+      if (cookie.startsWith("session=")) {
+        setCookie(cookie.substring("session=".length))
+        break
+      }
+    }
+    setCookieSet(true)
+  }, [])
 
   useEffect(() => {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",
@@ -29,18 +44,17 @@ function Profile() {
         if (data.error) {
           throw new Error(data.message)
         }
+        console.log("seeonuser", data)
         setProfile(data)
       })
       .catch((error) => {
         setError(error)
       })
 
-  }, [])
+  }, [cookie])
 
 
-
-
-  if (error) {
+  if (false) {
     return <><ErrorPage error={error} /></>
   } else {
     return (

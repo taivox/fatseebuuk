@@ -108,3 +108,12 @@ type LoginData struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
+
+// Notification type can be "group_invite", "group_request", "friend_request, "event_created"
+type Notification struct {
+	NotificationID int    `json:"notification_id"`
+	ToID           int    `json:"to_id"`
+	FromID         int    `json:"from_id"`
+	Type           string `json:"type"`
+	CreatedAt      string `json:"created"`
+}
