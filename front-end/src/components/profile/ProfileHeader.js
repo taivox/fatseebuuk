@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 
 const ProfileHeader = ({ props }) => {
 
+
   return (
     <div className="container">
       <div className="cover-container">

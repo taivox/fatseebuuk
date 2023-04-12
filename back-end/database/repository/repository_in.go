@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
 	"back-end/models"
 )
@@ -111,7 +110,6 @@ func (m *SqliteDB) AddUserToGroup(userID, groupID int) error {
 func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
-	fmt.Println("siinka", toID, fromID, notificationType)
 
 	stmt := `INSERT INTO
 				notifications (to_id, from_id, notification_type)
