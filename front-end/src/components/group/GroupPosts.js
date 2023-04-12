@@ -54,12 +54,11 @@ function GroupPosts(props) {
                 <TextArea
                   title={""}
                   name={""}
-                  value={""}
                   rows={"3"}
                   placeholder={"Write something..."}
                 />
                 <div className="form-group m-2">
-                  <label for="post-image" className="btn btn-ligth mb-0">
+                  <label htmlFor="post-image" className="btn btn-ligth mb-0">
                     <box-icon name='photo-album' type='solid' color='green'></box-icon> Add Image
                   </label>
                   <input
@@ -114,13 +113,13 @@ function GroupPosts(props) {
                   {p.content.length > textLimit && !showFullText[p.poster.user_id] && (
                     <span>
                       ...{" "}
-                      <p
+                      <span
                         className="show-more-link"
                         href="#!"
                         onClick={() => toggleText(p.poster.user_id)}
                       >
                         See more
-                      </p>
+                      </span>
                     </span>
                   )}
                 </p>

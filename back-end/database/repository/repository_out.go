@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"sort"
 	"time"
 
 	"back-end/models"
@@ -202,23 +201,6 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 	return posts, nil
 }
 
-// Kas saab need kaks funci yheks teha? kuidagi input ja output interface ja sortida created fieldi j2rgi
-// TODO: Move this to utils and utils to package utils. Cant import from package main
-func SortPostsByCreated(posts []*models.Post) []*models.Post {
-	sort.Slice(posts, func(i, j int) bool {
-		return posts[i].Created.After(posts[j].Created)
-	})
-	return posts
-}
-
-// TODO: Move this to utils and utils to package utils. Cant import from package main
-func SortCommentsByCreated(comments []models.Comment) []models.Comment {
-	sort.Slice(comments, func(i, j int) bool {
-		return comments[i].Created.Before(comments[j].Created)
-	})
-	return comments
-}
-
 func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
@@ -304,8 +286,34 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 
 			post.Comments = append(post.Comments, comment)
 		}
+
 		group.Posts = append(group.Posts, post)
 	}
+	return &group, nil
+}
+
+func (m *SqliteDB) GetGroupByIDForNonMember(id int) (*models.Group, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	// Get group
+	query := `SELECT group_id, title, description, created, user_id, COALESCE(image, 'default_group_image.png') FROM groups WHERE group_id = ?`
+
+	row := m.DB.QueryRowContext(ctx, query, id)
+	var group models.Group
+
+	err := row.Scan(
+		&group.GroupID,
+		&group.Title,
+		&group.Description,
+		&group.Created,
+		&group.UserID,
+		&group.Image,
+	)
+	if err != nil {
+		return nil, err
+	}
+
 	return &group, nil
 }
 
@@ -433,4 +441,20 @@ func (m *SqliteDB) ValidateUUID(uuid string) (int, error) {
 	}
 
 	return id, nil
+}
+
+func (m *SqliteDB) ValidateGroupMembership(userID, groupID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+	query := `SELECT user_id FROM groups_members WHERE user_id = ? AND group_id = ? AND request_pending = false AND invitation_pending = false`
+
+	row := m.DB.QueryRowContext(ctx, query, userID, groupID)
+	var id int
+
+	err := row.Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

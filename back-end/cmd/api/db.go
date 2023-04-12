@@ -2,7 +2,6 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	"os"
 	"strings"
 
@@ -37,7 +36,6 @@ func openDB() (*sql.DB, error) {
 		for _, name := range fileNames {
 			fileName := name.Name()
 			if !strings.Contains(fileName, ".down") {
-				fmt.Println(path + fileName)
 				readFile, err := os.ReadFile(path + fileName)
 				if err != nil {
 					return nil, err

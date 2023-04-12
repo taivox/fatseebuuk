@@ -1,4 +1,4 @@
-import { Outlet, useParams } from "react-router-dom"
+import { Outlet, useNavigate, useParams } from "react-router-dom"
 import Footer from "./common/Footer"
 import Header from "./common/Header"
 import GroupHeader from "./group/GroupHeader"
@@ -13,11 +13,34 @@ function Group() {
   const [groupPosts, setGroupPosts] = useState([])
   let { group_id } = useParams()
   const [error, setError] = useState(null)
+  const [hasAccess, setHasAccess] = useState(false)
+  const [cookie, setCookie] = useState("")
+  const [cookieSet, setCookieSet] = useState(false)
+  const navigate = useNavigate()
+  const [hidden, setHidden] = useState("d-none")
 
 
   useEffect(() => {
+    let cookies = document.cookie.split(";")
+
+    for (let i = 0; i < cookies.length; i++) {
+      let cookie = cookies[i].trim()
+      if (cookie.startsWith("session=")) {
+        setCookie(cookie.substring("session=".length))
+        break
+      }
+    }
+    setCookieSet(true)
+  }, [])
+
+  useEffect(() => {
+    if (cookieSet && cookie === "") {
+      navigate("/login")
+    }
+
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",
@@ -26,22 +49,68 @@ function Group() {
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data)
         if (data.error) {
           throw new Error(data.message)
         }
+        setHasAccess(data.user_is_group_member)
+        setHidden(hasAccess ? "d-none":"")
         setGroup(data)
         setGroupPosts(data.posts)
       })
       .catch((error) => {
         setError(error)
       })
+  }, [cookie])
 
 
-  }, [])
+  const joinGroup = () => {
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
-  if (error) {
+    let requestOptions = {
+      method: "POST",
+      headers: headers,
+    }
+    fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/join`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        console.log("seeondata",data)
+        if (data.error) {
+          console.log("error tuli", data)
+        } else {
+          console.log("success tuli ja muuta nupp mittekatiivseks")
+        }
+      })
+  }
+
+
+  if (false) {
     return <><ErrorPage error={error} /></>
-  } else {
+  } else if (!hasAccess && cookieSet) {
+    return (
+      <div>
+        <Header />
+        {group && <GroupHeader group={group} />}
+        <div className="container">
+          <div className="row">
+            <GroupMenu />
+            <div className="col-md-6">
+            <div className="profile-buttons p-4">
+          <button onClick={joinGroup} className={`btn btn-primary ${hidden}`}>
+            <box-icon name='plus' color="white" />
+            Join Group
+          </button>
+        </div>
+            </div>
+            <Chats />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
+  }else{
     return (
       <div>
         <Header />

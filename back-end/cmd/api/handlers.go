@@ -79,6 +79,7 @@ func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
 // Group page
 func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 	groupID, err := getID(r.URL.Path, `\d+$`)
+	userID := r.Context().Value("user_id").(int)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("group not found"), http.StatusNotFound)
 		return
@@ -87,11 +88,22 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 
-		group, err := app.DB.GetGroupByID(groupID)
+		errNotMember := app.DB.ValidateGroupMembership(userID, groupID)
+
+		var group *models.Group
+		if errNotMember != nil {
+			group, err = app.DB.GetGroupByIDForNonMember(groupID)
+			group.UserIsGroupMember = false
+		} else {
+			group, err = app.DB.GetGroupByID(groupID)
+			group.UserIsGroupMember = true
+		}
+
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error getting group from database"), http.StatusNotFound)
 			return
 		}
+
 		_ = app.writeJSON(w, http.StatusOK, group)
 
 	default:
@@ -151,6 +163,36 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_ = app.writeJSON(w, http.StatusOK, event)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/join$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "POST":
+
+		err := app.DB.AddUserToGroup(userID, groupID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error joining group"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "User requested join successfully",
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

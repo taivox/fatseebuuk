@@ -17,13 +17,14 @@ type User struct {
 }
 
 type Group struct {
-	GroupID     string      `json:"group_id"`
-	Title       string      `json:"title"`
-	Description string      `json:"description"`
-	Created     time.Time   `json:"created"`
-	UserID      string      `json:"user_id"`
-	Image       string      `json:"image"`
-	Posts       []GroupPost `json:"posts,omitempty"`
+	GroupID           int         `json:"group_id"`
+	Title             string      `json:"title"`
+	Description       string      `json:"description"`
+	Created           time.Time   `json:"created"`
+	UserID            int         `json:"user_id"`
+	Image             string      `json:"image"`
+	Posts             []GroupPost `json:"posts,omitempty"`
+	UserIsGroupMember bool        `json:"user_is_group_member"`
 }
 
 type GroupPost struct {
@@ -33,7 +34,7 @@ type GroupPost struct {
 	Content  string         `json:"content"`
 	Image    string         `json:"image"`
 	Created  time.Time      `json:"created"`
-	Comments []GroupComment `json:"comments"`
+	Comments []GroupComment `json:"comments,omitempty"`
 	Likes    int            `json:"likes"`
 }
 
