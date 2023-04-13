@@ -64,6 +64,7 @@ function Login() {
           return
         } else {
           document.cookie = `session=Bearer ${data.data}`
+          localStorage.setItem("user", JSON.stringify(data.user_id))
           navigate("/")
         }
       })

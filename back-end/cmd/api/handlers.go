@@ -89,14 +89,20 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 
 		errNotMember := app.DB.ValidateGroupMembership(userID, groupID)
+		errNotOwner := app.DB.ValidateGroupOwnership(userID, groupID)
 
 		var group *models.Group
-		if errNotMember != nil {
+		if errNotMember != nil && errNotOwner != nil {
 			group, err = app.DB.GetGroupByIDForNonMember(groupID)
 			group.UserIsGroupMember = false
-		} else {
+			group.UserIsGroupOwner = false
+		} else if errNotMember == nil {
 			group, err = app.DB.GetGroupByID(groupID)
 			group.UserIsGroupMember = true
+		} else if errNotOwner == nil {
+			group, err = app.DB.GetGroupByID(groupID)
+			group.UserIsGroupOwner = true
+
 		}
 
 		if err != nil {
@@ -182,6 +188,7 @@ func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 
 		err := app.DB.AddUserToGroup(userID, groupID)
+		fmt.Println(err)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error joining group"), http.StatusNotFound)
 			return
@@ -293,6 +300,7 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, err)
 			return
 		}
+		resp.UserID = userID
 		err = app.DB.AddSession(userID, uuid)
 		if err != nil {
 			app.errorJSON(w, err)
@@ -349,6 +357,30 @@ func (app *application) Feed(w http.ResponseWriter, r *http.Request) {
 		}
 
 		app.writeJSON(w, http.StatusAccepted, feed)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/notifications" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+
+		UserID := r.Context().Value("user_id").(int)
+
+		notifications, err := app.DB.GetUserNotifications(UserID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting notifications from database"), http.StatusNotFound)
+			return
+		}
+		fmt.Println(notifications)
+		app.writeJSON(w, http.StatusAccepted, notifications)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
