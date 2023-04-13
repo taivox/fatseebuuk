@@ -98,7 +98,7 @@ func (m *SqliteDB) AddUserToGroup(userID, groupID int) error {
 	if err != nil {
 		return err
 	}
-	err = m.CreateNotification(groupCreatorID, userID, "group_request")
+	err = m.CreateNotification(groupCreatorID, userID, "group_request", "calendar-star", fmt.Sprintf("/groups/%d", groupID))
 	if err != nil {
 		return err
 	}
@@ -107,18 +107,19 @@ func (m *SqliteDB) AddUserToGroup(userID, groupID int) error {
 }
 
 // Insert notification to database. Takes in user ID who the notification belongs to and notification type.
-// Notification type can be "group_invite", "group_request", "friend_request, "event_created"
-func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType string) error {
+// Notification type can be "group_invite", "group_request", "friend_request, "event_created", "like"
+func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType, boxiconsName, link string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 	fmt.Println("siinka", toID, fromID, notificationType)
 
 	stmt := `INSERT INTO
-				notifications (to_id, from_id, notification_type)
-			VALUES (?,?,?)`
+				notifications (to_id, from_id, type, boxicons_name, link)
+			VALUES (?,?,?,?,?)`
 
-	_, err := m.DB.ExecContext(ctx, stmt, toID, fromID, notificationType)
+	_, err := m.DB.ExecContext(ctx, stmt, toID, fromID, notificationType, boxiconsName, link)
 	if err != nil {
+		fmt.Println("error", err)
 		return err
 	}
 	return nil

@@ -5,9 +5,9 @@ import NotificationsPopup from "./NotificationsPopup"
 
 function Header({ cookie }) {
   const [notificationsShowing, setNotificationsShowing] = useState(false)
-  const toggleNotifications = () => {
-    setNotificationsShowing(!notificationsShowing)
-  }
+  // const toggleNotifications = () => {
+  //   setNotificationsShowing(!notificationsShowing)
+  // }
   const navigate = useNavigate()
 
   const logout = () => {
@@ -96,7 +96,7 @@ function Header({ cookie }) {
                   ></box-icon>
                 </a>
               </li>
-              <NotificationsPopup />
+              <NotificationsPopup  />
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"

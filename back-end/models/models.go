@@ -25,6 +25,7 @@ type Group struct {
 	Image             string      `json:"image"`
 	Posts             []GroupPost `json:"posts,omitempty"`
 	UserIsGroupMember bool        `json:"user_is_group_member"`
+	UserIsGroupOwner  bool        `json:"user_is_group_owner"`
 }
 
 type GroupPost struct {
@@ -113,7 +114,9 @@ type LoginData struct {
 type Notification struct {
 	NotificationID int    `json:"notification_id"`
 	ToID           int    `json:"to_id"`
-	FromID         int    `json:"from_id"`
+	From           User   `json:"from"`
 	Type           string `json:"type"`
+	Boxicons_name  string `json:"boxicons_name"`
 	CreatedAt      string `json:"created"`
+	Link           string `json:"link"`
 }
