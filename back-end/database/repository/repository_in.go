@@ -111,7 +111,6 @@ func (m *SqliteDB) AddUserToGroup(userID, groupID int) error {
 func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType, boxiconsName, link string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
-	fmt.Println("siinka", toID, fromID, notificationType)
 
 	stmt := `INSERT INTO
 				notifications (to_id, from_id, type, boxicons_name, link)
@@ -119,7 +118,6 @@ func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType, boxico
 
 	_, err := m.DB.ExecContext(ctx, stmt, toID, fromID, notificationType, boxiconsName, link)
 	if err != nil {
-		fmt.Println("error", err)
 		return err
 	}
 	return nil

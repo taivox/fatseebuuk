@@ -188,7 +188,6 @@ func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 
 		err := app.DB.AddUserToGroup(userID, groupID)
-		fmt.Println(err)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error joining group"), http.StatusNotFound)
 			return
