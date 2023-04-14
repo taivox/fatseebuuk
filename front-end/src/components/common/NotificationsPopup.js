@@ -94,10 +94,6 @@ function NotificationsPopup() {
 
     return notificationContent
   }
- 
-  // useEffect(() => {
-  //   setNotifications(notificationsMockData)
-  // }, [])
 
 
 
@@ -115,29 +111,36 @@ function NotificationsPopup() {
   }, [])
 
   useEffect(() => {
-    const headers = new Headers()
-    headers.append("Content-Type", "application/json")
-    headers.append("Authorization", cookie)
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
 
     const requestOptions = {
       method: "GET",
       headers: headers,
-    }
+    };
 
-    fetch(`${process.env.REACT_APP_BACKEND}/notifications`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND}/notifications`, requestOptions);
+        const data = await response.json();
         if (data.error) {
-          throw new Error(data.message)
+          throw new Error(data.message);
         }
-        setNotifications(data)
-        console.log(data)
-      })
-      .catch((error) => {
-        setError(error)
-      })
+        setNotifications(data);
+        console.log(data);
+      } catch (error) {
+        setError(error);
+      } finally {
+        if (document.cookie.includes("session=")){
+          setTimeout(fetchNotifications, 5000);
+        }
+      }
+    };
 
-  }, [cookie])
+    fetchNotifications();
+
+  }, [cookie]);
 
   return (
     <>
