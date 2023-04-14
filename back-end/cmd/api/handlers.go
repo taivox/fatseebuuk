@@ -378,8 +378,32 @@ func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, fmt.Errorf("error getting notifications from database"), http.StatusNotFound)
 			return
 		}
-		fmt.Println(notifications)
+		// fmt.Println(notifications)
 		app.writeJSON(w, http.StatusAccepted, notifications)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) GroupRequests(w http.ResponseWriter, r *http.Request) {
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/requests$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		// UserID := r.Context().Value("user_id").(int)
+
+		groupRequests, err := app.DB.GetGroupRequests(groupID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting group requests from database"), http.StatusNotFound)
+			return
+		}
+		fmt.Println(groupRequests)
+		app.writeJSON(w, http.StatusAccepted, groupRequests)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

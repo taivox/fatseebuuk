@@ -120,3 +120,8 @@ type Notification struct {
 	CreatedAt      string `json:"created"`
 	Link           string `json:"link"`
 }
+
+type GroupRequests struct {
+	Requester User `json:"requester"`
+	GroupID   int  `json:"group_id"`
+}

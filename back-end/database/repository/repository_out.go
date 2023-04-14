@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	"back-end/models"
@@ -518,4 +519,36 @@ func (m *SqliteDB) GetUserNotifications(id int) ([]models.Notification, error) {
 		notifications = append(notifications, notification)
 	}
 	return notifications, nil
+}
+
+func (m *SqliteDB) GetGroupRequests(id int) ([]models.GroupRequests, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id, group_id FROM groups_members
+				WHERE group_id = ? AND request_pending = true`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	var requests []models.GroupRequests
+	for rows.Next() {
+		var userID int
+		var request models.GroupRequests
+		err := rows.Scan(&userID, &request.GroupID)
+		if err != nil {
+			return nil, err
+		}
+
+		requester, err := m.GetUserByID(userID)
+		if err != nil {
+			return nil, err
+		}
+		request.Requester = *requester
+
+		requests = append(requests, request)
+	}
+	fmt.Println(requests)
+	return requests, nil
 }
