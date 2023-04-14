@@ -95,8 +95,9 @@ function Group() {
         {group && <GroupHeader group={group} />}
         <div className="container">
           <div className="row">
-            <GroupMenu groupID={group.group_id}/>
+            <GroupMenu groupOwner={true} cookie={cookie}/>
             <div className="col-md-6">
+             <><h1>OWNER</h1></>
               {groupPosts && groupPosts.length > 0 && <Outlet context={{ groupPosts, cookie }} />}
             </div>
             <Chats />

@@ -45,6 +45,7 @@ function Profile() {
           throw new Error(data.message)
         }
         console.log("seeonuser", data)
+      
         setProfile(data)
       })
       .catch((error) => {

@@ -83,6 +83,11 @@ func (app *application) routes() http.Handler {
 			return
 		}
 
+		if regexp.MustCompile(`/groups/\d+/requests$`).MatchString(r.URL.Path) {
+			app.GroupRequests(w, r)
+			return
+		}
+
 		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
 	})
 
