@@ -155,7 +155,7 @@ function NotificationsPopup() {
           <box-icon color="white" type="regular" name="bell"></box-icon>
         </a>
         <ul className="dropdown-menu dropdown-menu-end" style={{ width: "250px"}}>
-          {notifications !== [] ? notifications.map((notification) => (
+          {notifications.length > 0 ? notifications.map((notification) => (
             <li  key={notification.notification_id}>
               <Link to={notification.link} className="dropdown-item" href="#!">
                 <div  className="d-flex">
