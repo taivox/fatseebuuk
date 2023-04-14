@@ -59,6 +59,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/user/", app.User)
 	mux.HandleFunc("/groups", app.AllGroups)
 	mux.HandleFunc("/feed", app.Feed)
+	mux.HandleFunc("/notifications", app.Notifications)
 
 	mux.HandleFunc("/groups/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for events. Example: /groups/1/events/1

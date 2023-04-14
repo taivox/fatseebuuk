@@ -1,8 +1,8 @@
 INSERT INTO `users` (`first_name`, `last_name`, `nickname`, `date_of_birth`, `profile_image`, `cover_image`, `about`, `email`, `password`, `is_public`)
 VALUES 
-('Alice', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'alice@example.com', 'password123', 1),
-('Bob', 'Johnson', NULL, '1985-05-15', NULL, NULL, 'I love to travel and try new foods.', 'bob@example.com', 'secret456', 0),
-('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', 'qwerty789', 1),
+('Alice', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'alice@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
+('Bob', 'Johnson', NULL, '1985-05-15', NULL, NULL, 'I love to travel and try new foods.', 'bob@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 0),
+('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('asd', 'asdasd', 'asd_asd', '1990-01-01', 'chad.jpg', 'cover1.jpg', 'I am a software engineer.', 'asd@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('Chad', 'Smith', 'alice_s', '1990-01-01', 'dota.jpg', 'cover1.jpg', 'I am a software engineer.', 'qwe@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('Kopli', 'Liinid', 'kopli_l', '1990-01-01', 'peppa.jpg', 'cover3.jpg', 'I am a software engineer.', 'zxc@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1);
@@ -142,7 +142,7 @@ INSERT INTO `comment_likes` (`comment_id`, `user_id`) VALUES
 
 
 INSERT INTO groups (title, description, user_id, image) VALUES
-('Sports Fans', 'A group for sports enthusiasts', 1, NULL),
+('Sports Fans', 'A group for sports enthusiasts', 5, NULL),
 ('Book Club', 'A group for book lovers', 2, NULL),
 ('Travel Lovers', 'A group for travel enthusiasts', 3, NULL);
 
@@ -180,7 +180,6 @@ INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pendi
 (1, 3, 1, 0),
 (3, 3, 0, 0),
 (1, 4, 0, 0),
-(4, 1, 0, 0),
 (3, 4, 0, 1);
 
 INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES 
@@ -209,3 +208,6 @@ INSERT INTO messages (from_id, to_id, content, is_seen, created) VALUES
 (3, 1, "Pretty good, thanks for asking!", 0, "2023-04-05 12:03:00"),
 (2, 3, "Long time no see!", 0, "2023-04-05 12:04:00"),
 (3, 2, "Yeah, it's been a while!", 1, "2023-04-05 12:05:00");
+
+INSERT INTO notifications (to_id, from_id, type, boxicons_name, link) VALUES
+(4, 5, "friend_request", "user-plus", "/asdasd")

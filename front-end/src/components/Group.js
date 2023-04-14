@@ -18,7 +18,7 @@ function Group() {
   const [cookieSet, setCookieSet] = useState(false)
   const navigate = useNavigate()
   const [hidden, setHidden] = useState("d-none")
-
+  const [isgroupOwner, setIsGroupOwner] = useState(false)
 
   useEffect(() => {
     let cookies = document.cookie.split(";")
@@ -49,11 +49,11 @@ function Group() {
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data)
         if (data.error) {
           throw new Error(data.message)
         }
         setHasAccess(data.user_is_group_member)
+        setIsGroupOwner(data.user_is_group_owner)
         setHidden(hasAccess ? "d-none" : "")
         setGroup(data)
         setGroupPosts(data.posts)
@@ -88,6 +88,23 @@ function Group() {
 
   if (false) {
     return <><ErrorPage error={error} /></>
+  } else if (isgroupOwner) {
+    return (
+      <div>
+        <Header />
+        {group && <GroupHeader group={group} />}
+        <div className="container">
+          <div className="row">
+            <GroupMenu groupID={group.group_id}/>
+            <div className="col-md-6">
+              {groupPosts && groupPosts.length > 0 && <Outlet context={{ groupPosts, cookie }} />}
+            </div>
+            <Chats />
+          </div>
+        </div>
+        <Footer />
+      </div>
+    )
   } else if (!hasAccess && cookieSet) {
     return (
       <div>
@@ -110,7 +127,7 @@ function Group() {
         <Footer />
       </div>
     )
-  } else {
+  }else {
     return (
       <div>
         <Header />

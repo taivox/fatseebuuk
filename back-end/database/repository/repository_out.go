@@ -458,3 +458,64 @@ func (m *SqliteDB) ValidateGroupMembership(userID, groupID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) ValidateGroupOwnership(userID, groupID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+	query := `SELECT user_id FROM groups WHERE user_id = ? AND group_id = ?`
+
+	row := m.DB.QueryRowContext(ctx, query, userID, groupID)
+	var id int
+
+	err := row.Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) GetUserNotifications(id int) ([]models.Notification, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT
+				notification_id, to_id, from_id, type, boxicons_name, link, created
+			FROM
+				notifications
+			WHERE
+				to_id = ?`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var fromID int
+	var notifications []models.Notification
+	for rows.Next() {
+		var notification models.Notification
+		err := rows.Scan(
+			&notification.NotificationID,
+			&notification.ToID,
+			&fromID,
+			&notification.Type,
+			&notification.Boxicons_name,
+			&notification.Link,
+			&notification.CreatedAt,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		user, err := m.GetUserByID(fromID)
+		if err != nil {
+			return nil, err
+		}
+		notification.From = *user
+
+		notifications = append(notifications, notification)
+	}
+	return notifications, nil
+}
