@@ -126,3 +126,8 @@ type GroupRequests struct {
 	Requester User `json:"requester"`
 	GroupID   int  `json:"group_id"`
 }
+
+type Friend struct {
+	Friend         User `json:"friend"`
+	RequestPending bool `json:"request_pending"`
+}

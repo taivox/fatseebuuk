@@ -446,6 +446,33 @@ func (app *application) GroupRequests(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) LeaveGroup(w http.ResponseWriter, r *http.Request) {
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/leave$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		userID := r.Context().Value("user_id").(int)
+
+		err := app.DB.RemoveGroupMembership(groupID, userID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error removing membership from database"), http.StatusNotFound)
+			return
+		}
+		resp := JSONResponse{
+			Error:   false,
+			Message: "User left group successfully",
+		}
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
 func (app *application) ApproveGroupRequest(w http.ResponseWriter, r *http.Request) {
 	requestID, err := getID(r.URL.Path, `\d+$`)
 	if err != nil {
@@ -517,6 +544,29 @@ func (app *application) RejectGroupRequest(w http.ResponseWriter, r *http.Reques
 			Message: "Request successfully removed",
 		}
 		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) FriendsList(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/friends" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		userID := r.Context().Value("user_id").(int)
+
+		friends, err := app.DB.GetFriendsList(userID)
+		fmt.Println(err)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting friends list from database"), http.StatusNotFound)
+			return
+		}
+		app.writeJSON(w, http.StatusAccepted, friends)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

@@ -552,3 +552,36 @@ func (m *SqliteDB) GetGroupRequests(id int) ([]models.GroupRequests, error) {
 	fmt.Println(requests)
 	return requests, nil
 }
+
+func (m *SqliteDB) GetFriendsList(id int) ([]models.Friend, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? 
+				UNION SELECT user_id, request_pending FROM friends 
+				WHERE friend_id = ?`
+
+	rows, err := m.DB.QueryContext(ctx, query, id, id)
+	if err != nil {
+		return nil, err
+	}
+	var friends []models.Friend
+	for rows.Next() {
+		var userID int
+		var friend models.Friend
+		err := rows.Scan(&userID, &friend.RequestPending)
+		if err != nil {
+			return nil, err
+		}
+
+		user, err := m.GetUserByID(userID)
+		if err != nil {
+			return nil, err
+		}
+		friend.Friend = *user
+
+		friends = append(friends, friend)
+	}
+	fmt.Println(friends)
+	return friends, nil
+}

@@ -60,6 +60,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/groups", app.AllGroups)
 	mux.HandleFunc("/feed", app.Feed)
 	mux.HandleFunc("/notifications", app.Notifications)
+	mux.HandleFunc("/friends", app.FriendsList)
 
 	mux.HandleFunc("/groups/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for events. Example: /groups/1/events/1
@@ -95,6 +96,11 @@ func (app *application) routes() http.Handler {
 
 		if regexp.MustCompile(`/groups/\d+/approverequest/\d+$`).MatchString(r.URL.Path) {
 			app.ApproveGroupRequest(w, r)
+			return
+		}
+
+		if regexp.MustCompile(`/groups/\d+/leave$`).MatchString(r.URL.Path) {
+			app.LeaveGroup(w, r)
 			return
 		}
 

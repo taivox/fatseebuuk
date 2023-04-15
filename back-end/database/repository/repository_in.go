@@ -140,6 +140,19 @@ func (m *SqliteDB) RemoveNotification() error {
 	return nil
 }
 
+func (m *SqliteDB) RemoveGroupMembership(groupID, userID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `DELETE FROM groups_members WHERE group_id = ? AND user_id = ?`
+
+	_, err := m.DB.ExecContext(ctx, stmt, groupID, userID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (m *SqliteDB) RemoveGroupRequest(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
