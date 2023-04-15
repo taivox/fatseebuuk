@@ -91,7 +91,7 @@ function Group() {
   } else if (isgroupOwner) {
     return (
       <div>
-        <Header />
+        <Header cookie={cookie}/>
         {group && <GroupHeader group={group} />}
         <div className="container">
           <div className="row">
@@ -109,7 +109,7 @@ function Group() {
   } else if (!hasAccess && cookieSet) {
     return (
       <div>
-        <Header />
+        <Header cookie={cookie}/>
         {group && <GroupHeader group={group} />}
         <div className="container">
           <div className="row">
@@ -131,7 +131,7 @@ function Group() {
   }else {
     return (
       <div>
-        <Header />
+        <Header cookie={cookie}/>
         {group && <GroupHeader group={group} />}
         <div className="container">
           <div className="row">

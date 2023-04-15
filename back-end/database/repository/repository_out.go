@@ -525,7 +525,7 @@ func (m *SqliteDB) GetGroupRequests(id int) ([]models.GroupRequests, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	query := `SELECT user_id, group_id FROM groups_members
+	query := `SELECT groups_members_id, user_id, group_id FROM groups_members
 				WHERE group_id = ? AND request_pending = true`
 
 	rows, err := m.DB.QueryContext(ctx, query, id)
@@ -536,7 +536,7 @@ func (m *SqliteDB) GetGroupRequests(id int) ([]models.GroupRequests, error) {
 	for rows.Next() {
 		var userID int
 		var request models.GroupRequests
-		err := rows.Scan(&userID, &request.GroupID)
+		err := rows.Scan(&request.RequestID, &userID, &request.GroupID)
 		if err != nil {
 			return nil, err
 		}

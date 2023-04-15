@@ -385,7 +385,7 @@ func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		//long polling 30 sec with 0.5 sec ticker
+		// long polling 30 sec with 0.5 sec ticker
 		if len(notifications) == notificationAmount {
 			ticker := time.NewTicker(500 * time.Millisecond)
 			defer ticker.Stop()
@@ -426,7 +426,12 @@ func (app *application) GroupRequests(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-		// UserID := r.Context().Value("user_id").(int)
+		userID := r.Context().Value("user_id").(int)
+		errNotOwner := app.DB.ValidateGroupOwnership(userID, groupID)
+		if errNotOwner != nil {
+			app.errorJSON(w, fmt.Errorf("unauthorized, not the group owner"), http.StatusNotFound)
+			return
+		}
 
 		groupRequests, err := app.DB.GetGroupRequests(groupID)
 		if err != nil {
@@ -435,6 +440,83 @@ func (app *application) GroupRequests(w http.ResponseWriter, r *http.Request) {
 		}
 		fmt.Println(groupRequests)
 		app.writeJSON(w, http.StatusAccepted, groupRequests)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) ApproveGroupRequest(w http.ResponseWriter, r *http.Request) {
+	requestID, err := getID(r.URL.Path, `\d+$`)
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid request id"), http.StatusNotFound)
+		return
+	}
+
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/approverequest/\d+`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		userID := r.Context().Value("user_id").(int)
+		errNotOwner := app.DB.ValidateGroupOwnership(userID, groupID)
+		if errNotOwner != nil {
+			app.errorJSON(w, fmt.Errorf("unauthorized, not the group owner"), http.StatusNotFound)
+			return
+		}
+
+		err := app.DB.ApproveGroupRequest(requestID)
+		fmt.Println(err)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error approving request from database"), http.StatusNotFound)
+			return
+		}
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Member successfully added",
+		}
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) RejectGroupRequest(w http.ResponseWriter, r *http.Request) {
+	requestID, err := getID(r.URL.Path, `\d+$`)
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid request id"), http.StatusNotFound)
+		return
+	}
+
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/rejectrequest/\d+`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "GET":
+		userID := r.Context().Value("user_id").(int)
+		errNotOwner := app.DB.ValidateGroupOwnership(userID, groupID)
+		if errNotOwner != nil {
+			app.errorJSON(w, fmt.Errorf("unauthorized, not the group owner"), http.StatusNotFound)
+			return
+		}
+
+		err := app.DB.RemoveGroupRequest(requestID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error removing request from database"), http.StatusNotFound)
+			return
+		}
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Request successfully removed",
+		}
+		app.writeJSON(w, http.StatusAccepted, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
