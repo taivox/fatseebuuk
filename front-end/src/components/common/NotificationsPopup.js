@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Link } from "react-router-dom"
 
 function NotificationsPopup() {
@@ -6,7 +6,8 @@ function NotificationsPopup() {
   const [cookie, setCookie] = useState("")
   const [cookieSet, setCookieSet] = useState(false)
   const [error, setError] = useState()
-
+  const [notificationsAmount, setNotificationsAmount] = useState(999999)
+  const notificationsAmountRef = useRef(notificationsAmount);
   //types are set according to boxicon names. subject_id is message_id or event_id etc
   const notificationsMockData = [
     {
@@ -120,24 +121,32 @@ function NotificationsPopup() {
       headers: headers,
     };
 
+    let url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmount}`
+
     const fetchNotifications = async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND}/notifications`, requestOptions);
+        const response = await fetch(url, requestOptions);
         const data = await response.json();
+        if (data === null){
+          setNotificationsAmount(0)
+          notificationsAmountRef.current = 0;
+        }
         if (data.error) {
           throw new Error(data.message);
         }
         setNotifications(data);
-        console.log(data);
+        setNotificationsAmount(data.length);
+        notificationsAmountRef.current = data.length;
       } catch (error) {
         setError(error);
       } finally {
-        if (document.cookie.includes("session=")){
-          setTimeout(fetchNotifications, 5000);
+        url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmountRef.current}`;
+        if (document.cookie.includes("session=")) {
+          setTimeout(fetchNotifications, 25000);
         }
       }
     };
-
+    
     fetchNotifications();
 
   }, [cookie]);

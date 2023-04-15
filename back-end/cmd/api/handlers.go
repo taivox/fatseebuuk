@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"time"
 
 	"back-end/models"
 
@@ -370,7 +371,12 @@ func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
 
 	switch r.Method {
 	case "GET":
-
+		notificationAmount, err := strconv.Atoi(r.URL.Query().Get("notificationsAmount"))
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting notificationsAmount from url"), http.StatusNotFound)
+			return
+		}
+		fmt.Println(notificationAmount)
 		UserID := r.Context().Value("user_id").(int)
 
 		notifications, err := app.DB.GetUserNotifications(UserID)
@@ -378,8 +384,33 @@ func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, fmt.Errorf("error getting notifications from database"), http.StatusNotFound)
 			return
 		}
-		// fmt.Println(notifications)
-		app.writeJSON(w, http.StatusAccepted, notifications)
+
+		//long polling 30 sec with 0.5 sec ticker
+		if len(notifications) == notificationAmount {
+			ticker := time.NewTicker(500 * time.Millisecond)
+			defer ticker.Stop()
+			timeout := time.After(20 * time.Second)
+			for {
+				select {
+				case <-ticker.C:
+					notifications, err = app.DB.GetUserNotifications(UserID)
+					if err != nil {
+						app.errorJSON(w, fmt.Errorf("error getting notifications from database"), http.StatusNotFound)
+						return
+					}
+					if len(notifications) != notificationAmount {
+						app.writeJSON(w, http.StatusAccepted, notifications)
+						return
+					}
+				case <-timeout:
+					app.writeJSON(w, http.StatusAccepted, notifications)
+					return
+				}
+			}
+		} else {
+			app.writeJSON(w, http.StatusAccepted, notifications)
+			return
+		}
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
