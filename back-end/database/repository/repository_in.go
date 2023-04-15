@@ -122,3 +122,48 @@ func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType, boxico
 	}
 	return nil
 }
+
+func (m *SqliteDB) RemoveNotification() error {
+	// TODO
+	// ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	// defer cancel()
+
+	// stmt := `INSERT INTO
+	// 			notifications (to_id, from_id, type, boxicons_name, link)
+	// 		VALUES (?,?,?,?,?)`
+
+	// _, err := m.DB.ExecContext(ctx, stmt, toID, fromID, notificationType, boxiconsName, link)
+	// if err != nil {
+	// 	return err
+	// }
+	// return nil
+	return nil
+}
+
+func (m *SqliteDB) RemoveGroupRequest(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `DELETE FROM groups_members WHERE groups_members_id = ?`
+
+	_, err := m.DB.ExecContext(ctx, stmt, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SqliteDB) ApproveGroupRequest(id int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `UPDATE groups_members
+	SET request_pending = false, invitation_pending = false
+	WHERE groups_members_id = ?`
+
+	_, err := m.DB.ExecContext(ctx, stmt, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

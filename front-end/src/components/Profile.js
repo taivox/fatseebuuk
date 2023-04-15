@@ -60,7 +60,7 @@ function Profile() {
   } else {
     return (
       <div>
-        <Header />
+        <Header cookie={cookie}/>
 
         <ProfileHeader props={profile} />
         <div>

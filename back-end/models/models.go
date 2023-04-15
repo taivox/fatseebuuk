@@ -122,6 +122,7 @@ type Notification struct {
 }
 
 type GroupRequests struct {
+	RequestID int  `json:"request_id"`
 	Requester User `json:"requester"`
 	GroupID   int  `json:"group_id"`
 }
