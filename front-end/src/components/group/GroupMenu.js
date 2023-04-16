@@ -101,7 +101,7 @@ function GroupMenu({ groupOwner, cookie }) {
           console.log(error);
         });
     }
-  }, [group_id, groupOwner]);
+  }, [group_id, groupOwner,cookie]);
   return (
     <div className="col-md-3">
       <nav>
