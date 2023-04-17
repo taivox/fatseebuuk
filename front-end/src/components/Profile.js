@@ -25,6 +25,7 @@ function Profile() {
         break
       }
     }
+    console.log("cookie on n[[d set") 
     setCookieSet(true)
   }, [])
 
@@ -45,8 +46,7 @@ function Profile() {
         if (data.error) {
           throw new Error(data.message)
         }
-        console.log("seeonuser", data)
-      
+        console.log("see on data @ profile.js", data)
         setProfile(data)
       })
       .catch((error) => {

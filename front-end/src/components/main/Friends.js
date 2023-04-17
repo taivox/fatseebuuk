@@ -20,7 +20,6 @@ function Friends() {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("seeondata", data);
         setFriendList(data)
         if (data.error) {
           console.log("error tuli", data);

@@ -35,7 +35,6 @@ function GroupEvent() {
                 if (data.error) {
                     throw new Error(data.message)
                 }
-                console.log("votseeon", data)
                 setEvent(data)
                 setPoster(data.poster)
                 console.log("seeonposter", data.poster)

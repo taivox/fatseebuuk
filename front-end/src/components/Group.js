@@ -80,7 +80,6 @@ function Group() {
     )
       .then((response) => response.json())
       .then((data) => {
-        console.log("seeondata", data);
         if (data.error) {
           console.log("error tuli", data);
         } else {

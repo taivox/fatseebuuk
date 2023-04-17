@@ -23,7 +23,6 @@ function Header({ cookie }) {
       .then(response => response.json())
       .then(data => {
         if (data.error) {
-          console.log(data)
         } else {
           document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
           navigate("/login")

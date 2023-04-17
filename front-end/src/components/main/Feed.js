@@ -33,7 +33,6 @@ function Feed() {
       fetch(`${process.env.REACT_APP_BACKEND}/feed`, requestOptions)
         .then(response => response.json())
         .then(data => {
-          console.log(data)
           setPosts(data)
         })
         .catch(err => {

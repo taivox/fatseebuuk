@@ -14,6 +14,7 @@ type User struct {
 	Email        string    `json:"email,omitempty"`
 	Created      time.Time `json:"-"`
 	IsPublic     bool      `json:"is_public"`
+	FriendStatus int       `json:"friend_status,omitempty"`
 }
 
 type Group struct {

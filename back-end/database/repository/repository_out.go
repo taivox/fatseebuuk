@@ -549,7 +549,6 @@ func (m *SqliteDB) GetGroupRequests(id int) ([]models.GroupRequests, error) {
 
 		requests = append(requests, request)
 	}
-	fmt.Println(requests)
 	return requests, nil
 }
 
@@ -557,7 +556,7 @@ func (m *SqliteDB) GetFriendsList(id int) ([]models.Friend, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? 
+	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? AND request_pending = false
 				UNION SELECT user_id, request_pending FROM friends 
 				WHERE friend_id = ?`
 
@@ -582,6 +581,31 @@ func (m *SqliteDB) GetFriendsList(id int) ([]models.Friend, error) {
 
 		friends = append(friends, friend)
 	}
-	fmt.Println(friends)
 	return friends, nil
+}
+
+// 1 means not friends, 2 means pending request, 0 means friends
+func (m *SqliteDB) ValidateFriendStatus(userID, friendID int) (int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? AND friend_id = ?
+				UNION SELECT user_id, request_pending FROM friends WHERE friend_id = ? AND user_id = ?`
+
+	row := m.DB.QueryRowContext(ctx, query, userID, friendID, userID, friendID)
+	var id int
+	var requestPending bool
+
+	err := row.Scan(&id, &requestPending)
+	fmt.Println(requestPending)
+	if err == sql.ErrNoRows {
+		return 1, nil
+	}
+	if err != nil {
+		return 0, err
+	}
+	if requestPending {
+		return 2, nil
+	}
+	return 0, nil
 }

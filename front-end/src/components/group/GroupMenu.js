@@ -39,7 +39,6 @@ function GroupMenu({ groupOwner, cookie }) {
       .catch((error) => {
         console.log(error);
       });
-    console.log("approved", groupID, requestID);
   };
 
   const rejectRequest = (groupID, requestID) => {
@@ -75,7 +74,6 @@ function GroupMenu({ groupOwner, cookie }) {
       .catch((error) => {
         console.log(error);
       });
-    console.log("rejected", groupID, requestID);
   };
 
   useEffect(() => {
@@ -95,7 +93,6 @@ function GroupMenu({ groupOwner, cookie }) {
         .then((response) => response.json())
         .then((data) => {
           setGroupRequests(data);
-          console.log(data);
         })
         .catch((error) => {
           console.log(error);

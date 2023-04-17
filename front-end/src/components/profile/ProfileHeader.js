@@ -5,6 +5,10 @@ import { Link } from "react-router-dom"
 const ProfileHeader = ({ props }) => {
 
 
+  console.log("seeonfriendstatus", props.friend_status)
+
+
+
   return (
     <div className="container">
       <div className="cover-container">
@@ -121,10 +125,13 @@ const ProfileHeader = ({ props }) => {
           </div>
         </div>
         <div className="profile-buttons p-5">
-          <button className="btn btn-primary">
-            <box-icon name="user-plus" type="solid" />
-            Add Friend
-          </button>
+          {props.friend_status && (
+            <button className="btn btn-primary">
+              <box-icon name="user-plus" type="solid" />
+              {props.friend_status === 1 ? 'Add Friend' :
+              props.friend_status === 2 ? 'Request Pending' : 'Friends'}
+            </button>
+          )}
           <button className="btn btn-light">
             <box-icon name="chat" type="solid" />
             Message

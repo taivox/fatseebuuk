@@ -81,7 +81,6 @@ function Login() {
       .then(response => response.json())
       .then(data => {
         if (data.error) {
-          console.log(data.message)
           Swal.fire({
             icon: 'error',
             title: 'Oops...',

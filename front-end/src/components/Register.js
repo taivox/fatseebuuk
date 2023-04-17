@@ -142,14 +142,12 @@ function Register() {
       method: "POST",
       headers: headers,
     }
-    console.log("headers:",headers)
-    console.log("reqopt",requestOptions)
+
 
     fetch(`${process.env.REACT_APP_BACKEND}/register`, requestOptions)
       .then(response => response.json())
       .then(data => {
         if (data.error) {
-          console.log(data.message)
           Swal.fire({
             icon: 'error',
             title: 'Oops...',

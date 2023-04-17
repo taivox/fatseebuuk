@@ -39,21 +39,37 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 
 // User page
 func (app *application) User(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("SEEONPATH", r.URL.Path)
+	fmt.Println("Tuli user handlerisse")
 	userID, err := getID(r.URL.Path, `\d+$`)
+	fmt.Println(userID)
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("user not found: invalid id"), http.StatusNotFound)
 		return
 	}
 
+	fmt.Println("Tuli user handlerisse")
+
 	switch r.Method {
 	case "GET":
 		user, err := app.DB.GetUserByID(userID)
+		fmt.Println(user)
 		if err != nil {
+			fmt.Println(err)
 			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
 			return
 		}
+		currentUserID := r.Context().Value("user_id").(int)
+		fmt.Println("userid on", userID, "currentuserID on ", currentUserID)
+		if userID != currentUserID {
+			user.FriendStatus, err = app.DB.ValidateFriendStatus(currentUserID, userID)
+			fmt.Println(user.FriendStatus)
+			if err != nil {
+				app.errorJSON(w, fmt.Errorf("error getting friend status from database"), http.StatusNotFound)
+				return
+			}
+		}
 		_ = app.writeJSON(w, http.StatusOK, user)
-
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -461,7 +477,6 @@ func (app *application) GroupRequests(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, fmt.Errorf("error getting group requests from database"), http.StatusNotFound)
 			return
 		}
-		fmt.Println(groupRequests)
 		app.writeJSON(w, http.StatusAccepted, groupRequests)
 
 	default:
@@ -519,7 +534,6 @@ func (app *application) ApproveGroupRequest(w http.ResponseWriter, r *http.Reque
 		}
 
 		err := app.DB.ApproveGroupRequest(requestID)
-		fmt.Println(err)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error approving request from database"), http.StatusNotFound)
 			return
@@ -582,9 +596,7 @@ func (app *application) FriendsList(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
 		userID := r.Context().Value("user_id").(int)
-
 		friends, err := app.DB.GetFriendsList(userID)
-		fmt.Println(err)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error getting friends list from database"), http.StatusNotFound)
 			return
