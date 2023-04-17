@@ -17,6 +17,32 @@ function Login() {
     return errors.indexOf(key) !== -1
   }
 
+  //check if user is logged in and redirect to home page if true
+  if (document.cookie.includes("session")) {
+    let cookies = document.cookie.split(";")
+    cookies.forEach((cookie) => {
+    if (cookie.includes("session")) {
+      const token = cookie.split("=")[1]
+      fetch(`${process.env.REACT_APP_BACKEND}/validate-login`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            return
+          } else {
+            navigate("/")
+          }
+        }
+        )
+      }
+    })
+  }
+
   //send data to backend
   const handleSubmit = (event) => {
     event.preventDefault();

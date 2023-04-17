@@ -22,6 +22,32 @@ function Register() {
 
   const [error, setError] = useState(null)
 
+  //check if user is logged in and redirect to home page if true
+  if (document.cookie.includes("session")) {
+    let cookies = document.cookie.split(";")
+    cookies.forEach((cookie) => {
+    if (cookie.includes("session")) {
+      const token = cookie.split("=")[1]
+      fetch(`${process.env.REACT_APP_BACKEND}/validate-login`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            return
+          } else {
+            navigate("/")
+          }
+        }
+        )
+      }
+    })
+  }
+
   const hasError = (key) => {
     return errors.indexOf(key) !== -1
   }
@@ -265,6 +291,7 @@ function Register() {
                       }}
                       className="col-md-12"
                       src={imagePreview && imagePreview}
+                      alt=""
                     />
                     <br />
                     <p className="m-2">Add Image (Optional)</p>

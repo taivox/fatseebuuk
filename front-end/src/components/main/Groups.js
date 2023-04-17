@@ -39,24 +39,25 @@ function Groups() {
         break;
       }
     }
-    
-    const headers = new Headers()
-    headers.append("Content-Type", "application/json")
-    headers.append("Authorization", cookie)
-
-    const requestOptions = {
-      method: "GET",
-      headers: headers,
+    if (cookieSet) {
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
+  
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      }
+  
+      fetch(`${process.env.REACT_APP_BACKEND}/groups`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          setGroups(data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
     }
-
-    fetch(`${process.env.REACT_APP_BACKEND}/groups`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        setGroups(data)
-      })
-      .catch((error) => {
-        console.log(error)
-      })
   }, [cookie,setCookie])
 
   return (

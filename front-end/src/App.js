@@ -29,21 +29,23 @@ function App() {
     }
   }, [navigate, cookie, cookieSet])
 
-  return (
-    <div>
-      <Header cookie={cookie} />
-      <div className="container">
-        <div className="row">
-          <Menu cookie={cookie}/>
-          <div className="col-md-6">
-            <Outlet context={{ cookie, setCookie }} />
+  if (cookieSet){
+    return (
+      <div>
+        <Header cookie={cookie} />
+        <div className="container">
+          <div className="row">
+            <Menu cookie={cookie}/>
+            <div className="col-md-6">
+              <Outlet context={{ cookie, setCookie }} />
+            </div>  
+            <Chats />
           </div>
-          <Chats />
         </div>
+        <Footer />
       </div>
-      <Footer />
-    </div>
-  )
+    )
+  }
 }
 
 export default App

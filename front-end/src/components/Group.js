@@ -38,6 +38,7 @@ function Group() {
       navigate("/login");
     }
 
+    if(cookieSet){
     const headers = new Headers();
     headers.append("Content-Type", "application/json");
     headers.append("Authorization", cookie);
@@ -60,7 +61,8 @@ function Group() {
       })
       .catch((error) => {
         setError(error);
-      });
+      });      
+    }
   }, [cookie]);
 
   const joinGroup = () => {

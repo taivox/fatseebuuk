@@ -28,7 +28,7 @@ function Friends() {
           console.log("success tuli ja muuta nupp mittekatiivseks");
         }
       });
-  },[friendList])
+  },[cookie])
 
   return (
     <>

@@ -29,6 +29,7 @@ function Profile() {
   }, [])
 
   useEffect(() => {
+    if (cookieSet) {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -51,7 +52,7 @@ function Profile() {
       .catch((error) => {
         setError(error)
       })
-
+    }
   }, [cookie])
 
 

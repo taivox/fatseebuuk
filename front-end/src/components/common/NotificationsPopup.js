@@ -8,69 +8,7 @@ function NotificationsPopup() {
   const [error, setError] = useState()
   const [notificationsAmount, setNotificationsAmount] = useState(999999)
   const notificationsAmountRef = useRef(notificationsAmount);
-  //types are set according to boxicon names. subject_id is message_id or event_id etc
-  const notificationsMockData = [
-    {
-      notification_id: 2,
-      type: "like",
-      boxicon_name: "like",
-      subject_id: 3,
-      from: {
-        first_name: "Chad",
-        last_name: "Smith",
-        user_id: 1,
-        profile_image: "chad.jpg",
-      },
-    }, // someone liked your post
-    {
-      notification_id: 3,
-      type: "friend_request",
-      boxicon_name: "user-plus",
-      subject_id: 1,
-      from: {
-        first_name: "Chad",
-        last_name: "Smith",
-        user_id: 1,
-        profile_image: "chad.jpg",
-      },
-    }, // has a private profile and some other user sends him/her a following request
-    {
-      notification_id: 4,
-      type: "group_invite",
-      boxicon_name: "calendar-plus",
-      subject_id: 1,
-      from: {
-        first_name: "Chad",
-        last_name: "Smith",
-        user_id: 1,
-        profile_image: "chad.jpg",
-      },
-    }, // receives a group invitation, so he can refuse or accept the request
-    {
-      notification_id: 5,
-      type: "group_request",
-      boxicon_name: "calendar-star",
-      subject_id: 1,
-      from: {
-        first_name: "Chad",
-        last_name: "Smith",
-        user_id: 1,
-        profile_image: "chad.jpg",
-      },
-    }, // is the creator of a group and another user requests to join the group, so he can refuse or accept the request
-    {
-      notification_id: 6,
-      type: "event_created",
-      boxicon_name: "calendar-plus",
-      subject_id: 1,
-      from: {
-        first_name: "Chad",
-        last_name: "Smith",
-        user_id: 1,
-        profile_image: "chad.jpg",
-      },
-    }, // is member of a group and an event is created
-  ]
+  
   
   const printNotification = (notification) => {
     let notificationContent = ""
@@ -91,6 +29,8 @@ function NotificationsPopup() {
       case "event_created":
         notificationContent = `${notification.from.first_name} ${notification.from.last_name} has created an event for your group.` 
         break  
+      default:
+          // Do nothing
     }
 
     return notificationContent
@@ -112,44 +52,44 @@ function NotificationsPopup() {
   }, [])
 
   useEffect(() => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+  if(cookieSet){
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", cookie);
 
-    const requestOptions = {
-      method: "GET",
-      headers: headers,
-    };
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      };
 
-    let url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmount}`
+      let url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmount}`
 
-    const fetchNotifications = async () => {
-      try {
-        const response = await fetch(url, requestOptions);
-        const data = await response.json();
-        if (data === null){
-          setNotificationsAmount(0)
-          notificationsAmountRef.current = 0;
+      const fetchNotifications = async () => {
+        try {
+          const response = await fetch(url, requestOptions);
+          const data = await response.json();
+          if (data === null){
+            setNotificationsAmount(0)
+            notificationsAmountRef.current = 0;
+          }
+          if (data.error) {
+            throw new Error(data.message);
+          }
+          setNotifications(data);
+          setNotificationsAmount(data.length);
+          notificationsAmountRef.current = data.length;
+        } catch (error) {
+          setError(error);
+        } finally {
+          url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmountRef.current}`;
+          if (document.cookie.includes("session=")) {
+            setTimeout(fetchNotifications, 25000);
+          }
         }
-        if (data.error) {
-          throw new Error(data.message);
-        }
-        setNotifications(data);
-        setNotificationsAmount(data.length);
-        notificationsAmountRef.current = data.length;
-      } catch (error) {
-        setError(error);
-      } finally {
-        url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmountRef.current}`;
-        if (document.cookie.includes("session=")) {
-          setTimeout(fetchNotifications, 25000);
-        }
-      }
-    };
-    
-    fetchNotifications();
-
-  }, [cookie]);
+      };
+      fetchNotifications();
+    }
+  }, [cookie, setCookie]);
 
   return (
     <>
@@ -177,6 +117,7 @@ function NotificationsPopup() {
                     borderRadius: "100%",
                     objectFit: "cover",
                   }}
+                  alt=""
                   />
                 <div>
                 <box-icon

@@ -21,26 +21,24 @@ function Feed() {
   const textLimit = 100
 
   useEffect(() => {
+      const headers = new Headers()
+      headers.append('Content-Type', 'application/json')
+      headers.append("Authorization", cookie)
 
-    const headers = new Headers()
-    headers.append('Content-Type', 'application/json')
-    headers.append("Authorization", cookie)
+      const requestOptions = {
+        method: 'GET',
+        headers: headers
+      }
 
-    const requestOptions = {
-      method: 'GET',
-      headers: headers
-    }
-
-    fetch(`${process.env.REACT_APP_BACKEND}/feed`, requestOptions)
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setPosts(data)
-      })
-      .catch(err => {
-        console.log(err)
-      })
-
+      fetch(`${process.env.REACT_APP_BACKEND}/feed`, requestOptions)
+        .then(response => response.json())
+        .then(data => {
+          console.log(data)
+          setPosts(data)
+        })
+        .catch(err => {
+          console.log(err)
+        })
   }, [cookie])
 
   const toggleText = (postId) => {
