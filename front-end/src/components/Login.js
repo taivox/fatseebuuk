@@ -1,8 +1,8 @@
-import Swal from "sweetalert2";
-import Footer from "./common/Footer";
-import Input from "./form/Input";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2"
+import Footer from "./common/Footer"
+import Input from "./form/Input"
+import { useState } from "react"
+import { useNavigate } from "react-router-dom"
 
 
 function Login() {
@@ -21,37 +21,35 @@ function Login() {
   if (document.cookie.includes("session")) {
     let cookies = document.cookie.split(";")
     cookies.forEach((cookie) => {
-    if (cookie.includes("session")) {
-      const token = cookie.split("=")[1]
-      fetch(`${process.env.REACT_APP_BACKEND}/validate-login`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            return
-          } else {
-            navigate("/")
+      if (cookie.includes("session")) {
+        const token = cookie.split("=")[1]
+        fetch(`${process.env.REACT_APP_BACKEND}/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": token,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data) {
+              navigate("/")
+            }
           }
-        }
-        )
+          )
       }
     })
   }
 
   //send data to backend
   const handleSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     const payload = {
-      email:email,
-      password:password,
+      email: email,
+      password: password,
     }
-    
+
 
     let required = [
       { field: payload.email, name: "email" },
@@ -71,7 +69,7 @@ function Login() {
 
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
-    
+
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
@@ -97,7 +95,7 @@ function Login() {
         setError(error)
       })
 
-  };
+  }
 
 
   return (
@@ -106,7 +104,7 @@ function Login() {
         <div>
           <div className="text-center">
             <div>
-                    <h1 >Welcome to Fatseebuuk!</h1>
+              <h1 >Welcome to Fatseebuuk!</h1>
               <h2>Login</h2>
             </div>
           </div>
@@ -117,34 +115,34 @@ function Login() {
           </div>
           <form>
             <div className="col-12">
-            
-                  <Input
-                    className="form-control"
-                    type="text"
-                    name={"username"}
-                    placeholder={"Email"}
-                    onChange={(event) => setEmail(event.target.value)}
-                    errorDiv={hasError("email") ? "text-danger" : "d-none"}
-                    errorMsg={"Please enter email"}
-                    style={{ height: "80px" }}
-                  />
-                
-                <Input
-                  className="form-control"
-                  type="password"
-                  name={"password"}
-                  placeholder={"Password"}
-                  onChange={(event) => setPassword(event.target.value)}
-                  errorDiv={hasError("password") ? "text-danger" : "d-none"}
-                  errorMsg={"Please enter password"}
-                  style={{ height: "80px" }}
-                />
-              
+
+              <Input
+                className="form-control"
+                type="text"
+                name={"username"}
+                placeholder={"Email"}
+                onChange={(event) => setEmail(event.target.value)}
+                errorDiv={hasError("email") ? "text-danger" : "d-none"}
+                errorMsg={"Please enter email"}
+                style={{ height: "80px" }}
+              />
+
+              <Input
+                className="form-control"
+                type="password"
+                name={"password"}
+                placeholder={"Password"}
+                onChange={(event) => setPassword(event.target.value)}
+                errorDiv={hasError("password") ? "text-danger" : "d-none"}
+                errorMsg={"Please enter password"}
+                style={{ height: "80px" }}
+              />
+
             </div>
           </form>
         </div>
         <div className="justify-content-between">
-        <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}>
             <div className="d-flex  align-items-center m-2">
               <button
                 type="submit"
@@ -156,24 +154,24 @@ function Login() {
             </div>
           </form>
           <div className="d-flex  align-items-center">
-            <button 
+            <button
               style={{ width: "100%", height: "80px" }}
               className="btn btn-primary m-2"
             >
-                <box-icon type='logo' size="lg" color="white" name='github'></box-icon>
+              <box-icon type='logo' size="lg" color="white" name='github'></box-icon>
             </button>
             <button
               style={{ width: "100%", height: "80px" }}
               className="btn btn-primary m-2"
             >
-                <box-icon type='logo' size="lg" color="white"  name='google'   ></box-icon>
+              <box-icon type='logo' size="lg" color="white" name='google'   ></box-icon>
             </button>
           </div>
         </div>
       </div>
-      <Footer/>
+      <Footer />
     </div>
-  );
+  )
 }
 
-export default Login;
+export default Login

@@ -10,11 +10,12 @@ func (app *application) routes() http.Handler {
 	// create a router mux
 	mux := http.NewServeMux()
 
-	// handlers for routes
+	// handlers for unauthenticated routes
 	mux.HandleFunc("/register", app.Register)
 	mux.HandleFunc("/login", app.Login)
-	mux.HandleFunc("/validate-login", app.ValidateLogin)
+	//	mux.HandleFunc("/validate-login", app.ValidateLogin)
 
+	//handlers for authenticated routes
 	mux.HandleFunc("/", app.Home)
 	mux.HandleFunc("/logout", app.Logout)
 	mux.HandleFunc("/user/", app.User)

@@ -5,7 +5,7 @@ VALUES
 ('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('asd', 'asdasd', 'asd_asd', '1990-01-01', 'chad.jpg', 'cover1.jpg', 'I am a software engineer.', 'asd@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('Chad', 'Smith', 'alice_s', '1990-01-01', 'dota.jpg', 'cover1.jpg', 'I am a software engineer.', 'qwe@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
-('Kopli', 'Liinid', 'kopli_l', '1990-01-01', 'peppa.jpg', 'cover3.jpg', 'I am a software engineer.', 'zxc@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1);
+('Kopli', 'Liinid', 'kopli_l', '1990-01-01', 'peppa.jpg', NULL, 'I am a software engineer.', 'zxc@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1);
 
 
 
