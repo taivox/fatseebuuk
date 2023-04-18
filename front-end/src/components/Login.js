@@ -30,13 +30,7 @@ function Login() {
             "Authorization": token,
           },
         })
-          .then((response) => response.json())
-          .then((data) => {
-            if (data) {
-              navigate("/")
-            }
-          }
-          )
+          .then((response) => response.status === 200 ? (() => navigate('/'))() : null)
       }
     })
   }
