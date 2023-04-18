@@ -7,13 +7,13 @@ function NotificationsPopup() {
   const [cookieSet, setCookieSet] = useState(false)
   const [error, setError] = useState()
   const [notificationsAmount, setNotificationsAmount] = useState(999999)
-  const notificationsAmountRef = useRef(notificationsAmount);
-  
-  
+  const notificationsAmountRef = useRef(notificationsAmount)
+
+
   const printNotification = (notification) => {
     let notificationContent = ""
 
-    switch(notification.type){
+    switch (notification.type) {
       case "like":
         notificationContent = `${notification.from.first_name} ${notification.from.last_name} liked your content.`
         break
@@ -21,16 +21,16 @@ function NotificationsPopup() {
         notificationContent = `${notification.from.first_name} ${notification.from.last_name} invited you to join a group.`
         break
       case "group_request":
-        notificationContent = `${notification.from.first_name} ${notification.from.last_name} requested to join your group.`  
+        notificationContent = `${notification.from.first_name} ${notification.from.last_name} requested to join your group.`
         break
       case "friend_request":
-        notificationContent = `${notification.from.first_name} ${notification.from.last_name} has sent you a friend request.` 
+        notificationContent = `${notification.from.first_name} ${notification.from.last_name} has sent you a friend request.`
         break
       case "event_created":
-        notificationContent = `${notification.from.first_name} ${notification.from.last_name} has created an event for your group.` 
-        break  
+        notificationContent = `${notification.from.first_name} ${notification.from.last_name} has created an event for your group.`
+        break
       default:
-          // Do nothing
+      // Do nothing
     }
 
     return notificationContent
@@ -52,44 +52,44 @@ function NotificationsPopup() {
   }, [])
 
   useEffect(() => {
-  if(cookieSet){
-      const headers = new Headers();
-      headers.append("Content-Type", "application/json");
-      headers.append("Authorization", cookie);
+    if (cookieSet) {
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
 
       const requestOptions = {
         method: "GET",
         headers: headers,
-      };
+      }
 
       let url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmount}`
 
       const fetchNotifications = async () => {
         try {
-          const response = await fetch(url, requestOptions);
-          const data = await response.json();
-          if (data === null){
+          const response = await fetch(url, requestOptions)
+          const data = await response.json()
+          if (data === null) {
             setNotificationsAmount(0)
-            notificationsAmountRef.current = 0;
+            notificationsAmountRef.current = 0
           }
           if (data.error) {
-            throw new Error(data.message);
+            throw new Error(data.message)
           }
-          setNotifications(data);
-          setNotificationsAmount(data.length);
-          notificationsAmountRef.current = data.length;
+          setNotifications(data)
+          setNotificationsAmount(data.length)
+          notificationsAmountRef.current = data.length
         } catch (error) {
-          setError(error);
+          setError(error)
         } finally {
-          url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmountRef.current}`;
+          url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmountRef.current}`
           if (document.cookie.includes("session=")) {
-            setTimeout(fetchNotifications, 25000);
+            setTimeout(fetchNotifications, 25000)
           }
         }
-      };
-      fetchNotifications();
+      }
+      fetchNotifications()
     }
-  }, [cookie, setCookie]);
+  }, [cookie, setCookie])
 
   return (
     <>
@@ -103,31 +103,31 @@ function NotificationsPopup() {
         >
           <box-icon color="white" type="regular" name="bell"></box-icon>
         </a>
-        <ul className="dropdown-menu dropdown-menu-end" style={{ width: "250px"}}>
+        <ul className="dropdown-menu dropdown-menu-end" style={{ width: "250px" }}>
           {notifications.length > 0 ? notifications.map((notification) => (
-            <li  key={notification.notification_id}>
+            <li key={notification.notification_id}>
               <Link to={notification.link} className="dropdown-item" href="#!">
-                <div  className="d-flex">
+                <div className="d-flex">
 
-                <img src={`profile/${notification.from.profile_image}`}
-                className={"m-2"}
-                  style={{
-                    height: "45px",
-                    width: "45px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                  }}
-                  alt=""
+                  <img src={`profile/${notification.from.profile_image}`}
+                    className={"m-2"}
+                    style={{
+                      height: "45px",
+                      width: "45px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                    }}
+                    alt=""
                   />
-                <div>
-                <box-icon
-                  color="black"
-                  type="icon"
-                  name={notification.boxicons_name}
-                  ></box-icon>
-               <span style={{ whiteSpace: "normal", wordWrap: "break-word" }}> {printNotification(notification)}</span>
-                </div>
+                  <div>
+                    <box-icon
+                      color="black"
+                      type="icon"
+                      name={notification.boxicons_name}
+                    ></box-icon>
+                    <span style={{ whiteSpace: "normal", wordWrap: "break-word" }}> {printNotification(notification)}</span>
                   </div>
+                </div>
               </Link>
             </li>
           )) : <div>No notifications</div>}

@@ -45,7 +45,6 @@ function Profile() {
           if (data.error) {
             throw new Error(data.message)
           }
-          console.log(data)
           setProfile(data)
         })
         .catch((error) => {
@@ -62,7 +61,7 @@ function Profile() {
       <div>
         <Header cookie={cookie} />
 
-        <ProfileHeader props={profile} />
+        <ProfileHeader props={profile} cookie={cookie} />
         <div>
           <div className="profile-content">
             <div className="container">

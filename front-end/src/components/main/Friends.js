@@ -29,6 +29,8 @@ function Friends() {
       })
   }, [cookie])
 
+  console.log(friendList)
+
   return (
     <>
       <div className="card">
@@ -62,6 +64,13 @@ function Friends() {
                 <button
                   className="btn btn-light"
                 >
+                  <box-icon color="red" name="x" />
+                </button></div>}
+
+              {!f.request_pending && <div>
+                <button
+                  className="btn btn-light"
+                > Remove friend
                   <box-icon color="red" name="x" />
                 </button></div>}
             </div>

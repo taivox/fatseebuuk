@@ -24,6 +24,20 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/notifications", app.Notifications)
 	mux.HandleFunc("/friends", app.FriendsList)
 
+	mux.HandleFunc("/friends/", func(w http.ResponseWriter, r *http.Request) {
+		// Handler for adding friend. Example: /friends/1/add
+		if regexp.MustCompile(`/friends/\d+/add$`).MatchString(r.URL.Path) {
+			app.FriendAdd(w, r)
+			return
+		}
+		// Handler for removing friend. Example: /friends/1/remove
+		if regexp.MustCompile(`/friends/\d+/remove$`).MatchString(r.URL.Path) {
+			app.FriendRemove(w, r)
+			return
+		}
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+	})
+
 	mux.HandleFunc("/groups/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for events. Example: /groups/1/events/1
 		if regexp.MustCompile(`/groups/\d+/events/\d+$`).MatchString(r.URL.Path) {

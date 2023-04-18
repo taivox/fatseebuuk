@@ -170,13 +170,46 @@ func (m *SqliteDB) ApproveGroupRequest(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	stmt := `UPDATE groups_members
-	SET request_pending = false, invitation_pending = false
-	WHERE groups_members_id = ?`
+	stmt := `UPDATE 
+				groups_members
+			SET
+				request_pending = false, invitation_pending = false
+			WHERE
+				groups_members_id = ?`
 
 	_, err := m.DB.ExecContext(ctx, stmt, id)
 	if err != nil {
 		return err
 	}
+	return nil
+}
+
+func (m *SqliteDB) AddFriend(userID, friendID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO 
+				friends (user_id, friend_id, request_pending)
+			VALUES
+				(?, ?, ?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, userID, friendID, true)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (m *SqliteDB) RemoveFriend(userID, friendID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `DELETE FROM friends WHERE (user_id = ? AND friend_id = ?) OR (friend_id = ? AND user_id = ?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, userID, friendID, userID, friendID)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }

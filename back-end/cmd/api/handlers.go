@@ -57,12 +57,10 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 		if userID != currentUserID {
 			user.FriendStatus, err = app.DB.ValidateFriendStatus(currentUserID, userID)
 			if err != nil {
-				fmt.Println("error on", err)
 				app.errorJSON(w, fmt.Errorf("error getting friend status from database"), http.StatusNotFound)
 				return
 			}
 		}
-		fmt.Println(user.FriendStatus)
 		_ = app.writeJSON(w, http.StatusOK, user)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -596,6 +594,66 @@ func (app *application) FriendsList(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		app.writeJSON(w, http.StatusAccepted, friends)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) FriendAdd(w http.ResponseWriter, r *http.Request) {
+	friendID, err := strconv.Atoi(regexp.MustCompile(`/friends/(\d+)/add$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid user id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "POST":
+
+		err := app.DB.AddFriend(userID, friendID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error adding user to friends"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Friend added successfully",
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) FriendRemove(w http.ResponseWriter, r *http.Request) {
+	friendID, err := strconv.Atoi(regexp.MustCompile(`/friends/(\d+)/remove$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid user id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "POST":
+
+		err := app.DB.RemoveFriend(userID, friendID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error removing user from friends"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Friend removed successfully",
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
