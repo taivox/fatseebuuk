@@ -2,7 +2,7 @@ INSERT INTO `users` (`first_name`, `last_name`, `nickname`, `date_of_birth`, `pr
 VALUES 
 ('Alice', 'Smith', 'alice_s', '1990-01-01', 'profile1.webp', 'cover1.jpg', 'I am a software engineer.', 'alice@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('Bob', 'Johnson', NULL, '1985-05-15', NULL, NULL, 'I love to travel and try new foods.', 'bob@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 0),
-('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, 'cover3.png', 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
+('Charlie', 'Lee', 'charlie_lee', '1993-11-30', NULL, NULL, 'https://cdn.pixabay.com/photo/2021/06/29/08/07/twitter-cover-6373493_960_720.jpg', 'charlie@example.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('asd', 'asdasd', 'asd_asd', '1990-01-01', 'chad.jpg', 'cover1.jpg', 'I am a software engineer.', 'asd@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('Chad', 'Smith', 'alice_s', '1990-01-01', 'dota.jpg', 'cover1.jpg', 'I am a software engineer.', 'qwe@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1),
 ('Kopli', 'Liinid', 'kopli_l', '1990-01-01', 'peppa.jpg', NULL, 'I am a software engineer.', 'zxc@gmail.com', '$2a$04$uWKnKQRWxK6FmcacvDjNJuMXhsKZsvZ0GdkgqcemNfzXiHubA7hDW', 1);
@@ -172,7 +172,7 @@ INSERT INTO groups_comments (user_id, post_id, content, created) VALUES
 (1, 4, "I had no idea about this topic, thanks for bringing it to my attention.", '2022-10-15 09:00:00');
 
 INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pending) VALUES
-(1, 1, 0, 0),
+(4, 1, 0, 0),
 (2, 1, 0, 1),
 (3, 1, 1, 0),
 (2, 2, 0, 0),

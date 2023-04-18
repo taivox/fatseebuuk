@@ -39,36 +39,30 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 
 // User page
 func (app *application) User(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("SEEONPATH", r.URL.Path)
-	fmt.Println("Tuli user handlerisse")
 	userID, err := getID(r.URL.Path, `\d+$`)
-	fmt.Println(userID)
+
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("user not found: invalid id"), http.StatusNotFound)
 		return
 	}
 
-	fmt.Println("Tuli user handlerisse")
-
 	switch r.Method {
 	case "GET":
 		user, err := app.DB.GetUserByID(userID)
-		fmt.Println(user)
 		if err != nil {
-			fmt.Println(err)
 			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
 			return
 		}
 		currentUserID := r.Context().Value("user_id").(int)
-		fmt.Println("userid on", userID, "currentuserID on ", currentUserID)
 		if userID != currentUserID {
 			user.FriendStatus, err = app.DB.ValidateFriendStatus(currentUserID, userID)
-			fmt.Println(user.FriendStatus)
 			if err != nil {
+				fmt.Println("error on", err)
 				app.errorJSON(w, fmt.Errorf("error getting friend status from database"), http.StatusNotFound)
 				return
 			}
 		}
+		fmt.Println(user.FriendStatus)
 		_ = app.writeJSON(w, http.StatusOK, user)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

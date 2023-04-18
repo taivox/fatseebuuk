@@ -25,35 +25,34 @@ function Profile() {
         break
       }
     }
-    console.log("cookie on n[[d set") 
     setCookieSet(true)
   }, [])
 
   useEffect(() => {
     if (cookieSet) {
-    const headers = new Headers()
-    headers.append("Content-Type", "application/json")
-    headers.append("Authorization", cookie)
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
 
-    const requestOptions = {
-      method: "GET",
-      headers: headers,
-    }
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      }
 
-    fetch(`${process.env.REACT_APP_BACKEND}/user/${user_id}`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          throw new Error(data.message)
-        }
-        console.log("see on data @ profile.js", data)
-        setProfile(data)
-      })
-      .catch((error) => {
-        setError(error)
-      })
+      fetch(`${process.env.REACT_APP_BACKEND}/user/${user_id}`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            throw new Error(data.message)
+          }
+          console.log(data)
+          setProfile(data)
+        })
+        .catch((error) => {
+          setError(error)
+        })
     }
-  }, [cookie])
+  }, [cookie, cookieSet, user_id])
 
 
   if (false) {
@@ -61,7 +60,7 @@ function Profile() {
   } else {
     return (
       <div>
-        <Header cookie={cookie}/>
+        <Header cookie={cookie} />
 
         <ProfileHeader props={profile} />
         <div>

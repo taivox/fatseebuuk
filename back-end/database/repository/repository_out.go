@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"time"
 
 	"back-end/models"
@@ -584,7 +583,7 @@ func (m *SqliteDB) GetFriendsList(id int) ([]models.Friend, error) {
 	return friends, nil
 }
 
-// 1 means not friends, 2 means pending request, 0 means friends
+// 1 means not friends, 2 means pending request, 3 means friends
 func (m *SqliteDB) ValidateFriendStatus(userID, friendID int) (int, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
@@ -597,7 +596,6 @@ func (m *SqliteDB) ValidateFriendStatus(userID, friendID int) (int, error) {
 	var requestPending bool
 
 	err := row.Scan(&id, &requestPending)
-	fmt.Println(requestPending)
 	if err == sql.ErrNoRows {
 		return 1, nil
 	}
@@ -607,5 +605,5 @@ func (m *SqliteDB) ValidateFriendStatus(userID, friendID int) (int, error) {
 	if requestPending {
 		return 2, nil
 	}
-	return 0, nil
+	return 3, nil
 }

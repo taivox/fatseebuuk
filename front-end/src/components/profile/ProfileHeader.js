@@ -3,11 +3,7 @@ import { Link } from "react-router-dom"
 // import { BiMessageAdd, BiUserPlus } from "react-icons/bi";
 
 const ProfileHeader = ({ props }) => {
-
-
-  console.log("seeonfriendstatus", props.friend_status)
-
-
+  console.log("miks undef", props.friend_status)
 
   return (
     <div className="container">
@@ -128,8 +124,7 @@ const ProfileHeader = ({ props }) => {
           {props.friend_status && (
             <button className="btn btn-primary">
               <box-icon name="user-plus" type="solid" />
-              {props.friend_status === 1 ? 'Add Friend' :
-              props.friend_status === 2 ? 'Request Pending' : 'Friends'}
+              {props.friend_status === 1 ? 'Add Friend' : props.friend_status === 2 ? 'Request Pending' : 'Friends'}
             </button>
           )}
           <button className="btn btn-light">
