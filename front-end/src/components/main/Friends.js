@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react"
-import { Link, useOutletContext } from "react-router-dom"
+import { Link, useNavigate, useOutletContext } from "react-router-dom"
+import Swal from "sweetalert2"
 
 function Friends() {
   const [friendList, setFriendList] = useState([])
   const { cookie } = useOutletContext()
+  const navigate = useNavigate()
 
 
   function AcceptFriendRequest(friendID) {
@@ -18,7 +20,7 @@ function Friends() {
     }
     fetch(
       `${process.env.REACT_APP_BACKEND}/friends/${friendID}/accept`, requestOptions)
-      .then((response) => response.json())
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         if (data.error) {
           console.log("error tuli", data)
@@ -29,29 +31,61 @@ function Friends() {
   }
 
   function RemoveFriendRequest(friendID) {
-    console.log("Nyyd callis removefriend")
-    const headers = new Headers()
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, remove friend!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        headers.append("Authorization", cookie)
 
-    headers.append("Content-Type", "application/json")
-    headers.append("Authorization", cookie)
-
-    let requestOptions = {
-      method: "POST",
-      headers: headers,
-    }
-    fetch(
-      `${process.env.REACT_APP_BACKEND}/friends/${friendID}/remove`, requestOptions)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.error) {
-          console.log("error tuli", data)
-        } else {
-          fetchFriendslist()
+        const requestOptions = {
+          method: "POST",
+          headers: headers,
         }
-      })
+        fetch(
+          `${process.env.REACT_APP_BACKEND}/friends/${friendID}/remove`, requestOptions)
+          .then(response => response.status === 401 ? navigate('/login') : response.json())
+          .then((data) => {
+            if (data.error) {
+              Swal.fire("Oops...", data.message, "error")
+              return
+            }
+          }).catch((error) => { console.log(error) })
+        Swal.fire("Done!", "You are no longer frein!", "success")
+        fetchFriendslist()
+      }
+    })
+
+    // console.log("Nyyd callis removefriend")
+    // const headers = new Headers()
+
+    // headers.append("Content-Type", "application/json")
+    // headers.append("Authorization", cookie)
+
+    // let requestOptions = {
+    //   method: "POST",
+    //   headers: headers,
+    // }
+    // fetch(
+    //   `${process.env.REACT_APP_BACKEND}/friends/${friendID}/remove`, requestOptions)
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     if (data.error) {
+    //       console.log("error tuli", data)
+    //     } else {
+    //       fetchFriendslist()
+    //     }
+    //   })
   }
 
-  
+
   useEffect(() => {
     fetchFriendslist()
   }, [cookie])
@@ -69,7 +103,7 @@ function Friends() {
       `${process.env.REACT_APP_BACKEND}/friends`,
       requestOptions
     )
-      .then((response) => response.json())
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         setFriendList(data)
       })
@@ -102,9 +136,9 @@ function Friends() {
                 </div>
               </Link>
               {f.request_pending && <div><button
-              className="btn btn-light" onClick={() => AcceptFriendRequest(f.friend.user_id)}>
-              
-               <box-icon color="green" name="check" />
+                className="btn btn-light" onClick={() => AcceptFriendRequest(f.friend.user_id)}>
+
+                <box-icon color="green" name="check" />
               </button>
                 <button
                   className="btn btn-light" onClick={() => RemoveFriendRequest(f.friend.user_id)}

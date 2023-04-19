@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useOutletContext } from "react-router-dom"
+import { Link, useNavigate, useOutletContext } from "react-router-dom"
 import PostImagePopup from "./PostImagePopup"
 import { getTimeElapsedString } from "../../Utils"
 
@@ -9,6 +9,7 @@ function Feed() {
   const [showFullText, setShowFullText] = useState({})
   const [selectedPost, setSelectedPost] = useState(null)
   const { cookie } = useOutletContext()
+  const navigate = useNavigate()
 
   const handleImageClick = (post) => {
     setSelectedPost(post)
@@ -30,8 +31,9 @@ function Feed() {
       headers: headers
     }
 
+    //  .then(response => response.json())
     fetch(`${process.env.REACT_APP_BACKEND}/feed`, requestOptions)
-      .then(response => response.json())
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then(data => {
         setPosts(data)
       })

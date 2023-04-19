@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useOutletContext, useParams } from "react-router-dom"
+import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import CreateEventPopup from "./CreateEventPopup"
@@ -14,6 +14,7 @@ function GroupEvents() {
   const { group_id } = useParams()
   const [error, setError] = useState(null)
   const { cookie } = useOutletContext()
+  const navigate = useNavigate()
 
   const handleCreateEventClick = () => {
     setCreateModalShowing(true)
@@ -33,7 +34,7 @@ function GroupEvents() {
       headers: headers,
     }
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events`, requestOptions)
-      .then((response) => response.json())
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         if (data.error) {
           throw new Error(data.message)

@@ -16,6 +16,7 @@ function GroupEvent() {
     const [showFullText, setShowFullText] = useState({})
     const [error, setError] = useState(null)
     const { cookie } = useOutletContext()
+    const navigate = useNavigate()
 
     const textLimit = 100
 
@@ -30,7 +31,7 @@ function GroupEvent() {
             headers: headers,
         }
         fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events/${event_id}`, requestOptions)
-            .then((response) => response.json())
+            .then(response => response.status === 401 ? navigate('/login') : response.json())
             .then((data) => {
                 if (data.error) {
                     throw new Error(data.message)
