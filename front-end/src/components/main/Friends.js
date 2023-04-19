@@ -23,8 +23,7 @@ function Friends() {
         if (data.error) {
           console.log("error tuli", data)
         } else {
-          console.log("success tuli, friend on friends listi lisatud")
-        // Call function to refetch friends list  onButtonClick()
+          fetchFriendslist()
         }
       })
   }
@@ -32,6 +31,7 @@ function Friends() {
   function RemoveFriendRequest(friendID) {
     console.log("Nyyd callis removefriend")
     const headers = new Headers()
+
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
 
@@ -46,14 +46,17 @@ function Friends() {
         if (data.error) {
           console.log("error tuli", data)
         } else {
-          console.log("success tuli. friend on listist remuuvitod")
-        // Call function to refetch friends list  onButtonClick()
+          fetchFriendslist()
         }
       })
   }
 
   
   useEffect(() => {
+    fetchFriendslist()
+  }, [cookie])
+
+  const fetchFriendslist = () => {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -69,9 +72,8 @@ function Friends() {
       .then((response) => response.json())
       .then((data) => {
         setFriendList(data)
-        console.log("friends list on set")
       })
-  }, [cookie])
+  }
 
 
   return (
