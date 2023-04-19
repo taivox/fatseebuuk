@@ -117,7 +117,7 @@ function Friends() {
           <h5 className="card-title">Friends</h5>
         </div>
         <div className="list-group">
-          {friendList.map(f => (
+          {friendList && friendList.length > 0 ? friendList.map(f => (
             <div key={f.friend.user_id} className="list-group-item list-group-item-action d-flex align-items-center">
               <Link to={`/profile/${f.friend.user_id}`} className="Link d-flex align-items-center">
                 <img
@@ -152,7 +152,7 @@ function Friends() {
                   <box-icon color="red" name="x" />
                 </button></div>}
             </div>
-          ))}
+          )):<div className="m-2">You got no friends, buddy!</div>}
         </div>
       </div>
     </>

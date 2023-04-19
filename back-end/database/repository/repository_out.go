@@ -100,7 +100,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 	// Get all friends from the database
 	var friends []int
 	var posts []*models.Post
-	query := `SELECT friend_id FROM friends WHERE user_id = ? UNION SELECT user_id FROM friends WHERE friend_id = ?`
+	query := `SELECT friend_id FROM friends WHERE user_id = ? AND request_pending = false UNION SELECT user_id FROM friends WHERE friend_id = ? AND request_pending = false`
 
 	rows, err := m.DB.QueryContext(ctx, query, id, id)
 	if err != nil {

@@ -51,7 +51,7 @@ function Feed() {
 
   return (
     <>
-      {posts.map((p) => (
+      {posts && posts.length > 0 ? posts.map((p) => (
         <div key={p.post_id} className="card">
           <div className="card-body">
             <div className="media ">
@@ -136,7 +136,7 @@ function Feed() {
             </div>
           </div>
         </div>
-      ))}
+      )):<div className="card m-2 align-items-center"><h3>No posts.</h3></div>}
       {selectedPost && (
         <PostImagePopup
           post={selectedPost}
