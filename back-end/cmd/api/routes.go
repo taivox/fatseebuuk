@@ -30,6 +30,11 @@ func (app *application) routes() http.Handler {
 			app.FriendAdd(w, r)
 			return
 		}
+		// Handler for accepting friend request. Example: /friends/1/accept
+		if regexp.MustCompile(`/friends/\d+/accept$`).MatchString(r.URL.Path) {
+			app.FriendAccept(w, r)
+			return
+		}
 		// Handler for removing friend. Example: /friends/1/remove
 		if regexp.MustCompile(`/friends/\d+/remove$`).MatchString(r.URL.Path) {
 			app.FriendRemove(w, r)

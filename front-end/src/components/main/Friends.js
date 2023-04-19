@@ -5,6 +5,54 @@ function Friends() {
   const [friendList, setFriendList] = useState([])
   const { cookie } = useOutletContext()
 
+
+  function AcceptFriendRequest(friendID) {
+    console.log("Nyyd callis acceptfriend")
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    let requestOptions = {
+      method: "POST",
+      headers: headers,
+    }
+    fetch(
+      `${process.env.REACT_APP_BACKEND}/friends/${friendID}/accept`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          console.log("error tuli", data)
+        } else {
+          console.log("success tuli, friend on friends listi lisatud")
+        // Call function to refetch friends list  onButtonClick()
+        }
+      })
+  }
+
+  function RemoveFriendRequest(friendID) {
+    console.log("Nyyd callis removefriend")
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    let requestOptions = {
+      method: "POST",
+      headers: headers,
+    }
+    fetch(
+      `${process.env.REACT_APP_BACKEND}/friends/${friendID}/remove`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          console.log("error tuli", data)
+        } else {
+          console.log("success tuli. friend on listist remuuvitod")
+        // Call function to refetch friends list  onButtonClick()
+        }
+      })
+  }
+
+  
   useEffect(() => {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
@@ -21,15 +69,10 @@ function Friends() {
       .then((response) => response.json())
       .then((data) => {
         setFriendList(data)
-        if (data.error) {
-          console.log("error tuli", data)
-        } else {
-          console.log("success tuli ja muuta nupp mittekatiivseks")
-        }
+        console.log("friends list on set")
       })
   }, [cookie])
 
-  console.log(friendList)
 
   return (
     <>
@@ -57,19 +100,18 @@ function Friends() {
                 </div>
               </Link>
               {f.request_pending && <div><button
-                className="btn btn-light"
-              >
-                <box-icon color="green" name="check" />
+              className="btn btn-light" onClick={() => AcceptFriendRequest(f.friend.user_id)}>
+              
+               <box-icon color="green" name="check" />
               </button>
                 <button
-                  className="btn btn-light"
+                  className="btn btn-light" onClick={() => RemoveFriendRequest(f.friend.user_id)}
                 >
                   <box-icon color="red" name="x" />
                 </button></div>}
-
               {!f.request_pending && <div>
                 <button
-                  className="btn btn-light"
+                  className="btn btn-light" onClick={() => RemoveFriendRequest(f.friend.user_id)}
                 > Remove friend
                   <box-icon color="red" name="x" />
                 </button></div>}

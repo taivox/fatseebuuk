@@ -213,3 +213,22 @@ func (m *SqliteDB) RemoveFriend(userID, friendID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) ApproveFriendRequest(userID, friendID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `UPDATE 
+				friends
+			SET
+				request_pending = false
+			WHERE
+				(user_id = ? AND friend_id = ?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, friendID, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

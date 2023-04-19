@@ -600,10 +600,11 @@ func (app *application) FriendsList(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Handler for adding a friend
 func (app *application) FriendAdd(w http.ResponseWriter, r *http.Request) {
 	friendID, err := strconv.Atoi(regexp.MustCompile(`/friends/(\d+)/add$`).FindStringSubmatch(r.URL.Path)[1])
 	if err != nil {
-		app.errorJSON(w, fmt.Errorf("invalid user id"), http.StatusNotFound)
+		app.errorJSON(w, fmt.Errorf("invalid friend id"), http.StatusNotFound)
 		return
 	}
 
@@ -630,6 +631,38 @@ func (app *application) FriendAdd(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Handler for accepting friend request
+func (app *application) FriendAccept(w http.ResponseWriter, r *http.Request) {
+	friendID, err := strconv.Atoi(regexp.MustCompile(`/friends/(\d+)/accept$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid friend id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "POST":
+
+		err := app.DB.ApproveFriendRequest(userID, friendID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error accepting friend request"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Friend request accepted successfully",
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+// Handler for removing friend and declining friend request
 func (app *application) FriendRemove(w http.ResponseWriter, r *http.Request) {
 	friendID, err := strconv.Atoi(regexp.MustCompile(`/friends/(\d+)/remove$`).FindStringSubmatch(r.URL.Path)[1])
 	if err != nil {
