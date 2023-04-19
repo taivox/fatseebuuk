@@ -123,20 +123,24 @@ func (m *SqliteDB) CreateNotification(toID, fromID int, notificationType, boxico
 	return nil
 }
 
-func (m *SqliteDB) RemoveNotification() error {
-	// TODO
-	// ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
-	// defer cancel()
+func (m *SqliteDB) RemoveNotification(userID, friendID int, notificationType string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
 
-	// stmt := `INSERT INTO
-	// 			notifications (to_id, from_id, type, boxicons_name, link)
-	// 		VALUES (?,?,?,?,?)`
+	stmt := `DELETE FROM
+				notifications
+			WHERE 
+				to_id = ?
+			AND
+				from_id = ?
+			AND
+				type = ?`
 
-	// _, err := m.DB.ExecContext(ctx, stmt, toID, fromID, notificationType, boxiconsName, link)
-	// if err != nil {
-	// 	return err
-	// }
-	// return nil
+	_, err := m.DB.ExecContext(ctx, stmt, userID, friendID, notificationType)
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -157,12 +161,28 @@ func (m *SqliteDB) RemoveGroupRequest(id int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	stmt := `DELETE FROM groups_members WHERE groups_members_id = ?`
-
-	_, err := m.DB.ExecContext(ctx, stmt, id)
+	var groupOwnerID, userID int
+	query := `SELECT g.user_id, gm.user_id FROM groups_members AS gm
+			INNER JOIN groups AS g ON gm.group_id = g.group_id
+			WHERE gm.groups_members_id = ?`
+	row := m.DB.QueryRowContext(ctx, query, id)
+	err := row.Scan(&groupOwnerID, &userID)
 	if err != nil {
 		return err
 	}
+
+	stmt := `DELETE FROM groups_members WHERE groups_members_id = ?`
+
+	_, err = m.DB.ExecContext(ctx, stmt, id)
+	if err != nil {
+		return err
+	}
+
+	err = m.RemoveNotification(groupOwnerID, userID, "group_request")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -181,6 +201,22 @@ func (m *SqliteDB) ApproveGroupRequest(id int) error {
 	if err != nil {
 		return err
 	}
+
+	var groupOwnerID, userID int
+	query := `SELECT g.user_id, gm.user_id FROM groups_members AS gm 
+			INNER JOIN groups AS g ON gm.group_id = g.group_id
+			WHERE gm.groups_members_id = ?`
+	row := m.DB.QueryRowContext(ctx, query, id)
+	err = row.Scan(&groupOwnerID, &userID)
+	if err != nil {
+		return err
+	}
+
+	err = m.RemoveNotification(groupOwnerID, userID, "group_request")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -197,6 +233,12 @@ func (m *SqliteDB) AddFriend(userID, friendID int) error {
 	if err != nil {
 		return err
 	}
+
+	err = m.CreateNotification(friendID, userID, "friend_request", "user-plus", "/friends")
+	if err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -208,6 +250,11 @@ func (m *SqliteDB) RemoveFriend(userID, friendID int) error {
 
 	_, err := m.DB.ExecContext(ctx, stmt, userID, friendID, userID, friendID)
 	if err != nil {
+		return err
+	}
+
+	err = m.RemoveNotification(userID, friendID, "friend_request")
+	if err != nil && err != sql.ErrNoRows {
 		return err
 	}
 
@@ -226,6 +273,11 @@ func (m *SqliteDB) ApproveFriendRequest(userID, friendID int) error {
 				(user_id = ? AND friend_id = ?)`
 
 	_, err := m.DB.ExecContext(ctx, stmt, friendID, userID)
+	if err != nil {
+		return err
+	}
+
+	err = m.RemoveNotification(userID, friendID, "friend_request")
 	if err != nil {
 		return err
 	}
