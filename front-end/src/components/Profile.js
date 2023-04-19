@@ -30,28 +30,34 @@ function Profile() {
 
   useEffect(() => {
     if (cookieSet) {
-      const headers = new Headers()
-      headers.append("Content-Type", "application/json")
-      headers.append("Authorization", cookie)
-
-      const requestOptions = {
-        method: "GET",
-        headers: headers,
-      }
-
-      fetch(`${process.env.REACT_APP_BACKEND}/user/${user_id}`, requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            throw new Error(data.message)
-          }
-          setProfile(data)
-        })
-        .catch((error) => {
-          setError(error)
-        })
+      fetchProfileData();
     }
-  }, [cookie, cookieSet, user_id])
+  }, [cookie, cookieSet, user_id]);
+
+  const fetchProfileData = () => {
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
+  
+    const requestOptions = {
+      method: "GET",
+      headers: headers,
+    };
+  
+    fetch(`${process.env.REACT_APP_BACKEND}/user/${user_id}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.message);
+        }
+        setProfile(data);
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  };
+  
+  
 
 
   if (false) {
@@ -61,7 +67,7 @@ function Profile() {
       <div>
         <Header cookie={cookie} />
 
-        <ProfileHeader props={profile} cookie={cookie} />
+        <ProfileHeader props={profile} cookie={cookie} onButtonClick={fetchProfileData} />
         <div>
           <div className="profile-content">
             <div className="container">

@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import { Link, useNavigate } from "react-router-dom"
 // import { BiMessageAdd, BiUserPlus } from "react-icons/bi";
 
-function ProfileHeader({ props, cookie }) {
+function ProfileHeader({ props, cookie, onButtonClick }) {
   const navigate = useNavigate()
 
 
@@ -23,7 +23,7 @@ function ProfileHeader({ props, cookie }) {
           console.log("error tuli", data)
         } else {
           console.log("success tuli ja muuta nupp")
-          navigate(`/profile/${props.user_id}`)
+          onButtonClick()
         }
       })
   }
@@ -46,6 +46,7 @@ function ProfileHeader({ props, cookie }) {
         } else {
           console.log("success tuli ja muuta nupp")
           navigate(`/profile/${props.user_id}`)
+          onButtonClick()
         }
       })
   }
