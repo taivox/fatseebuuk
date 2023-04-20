@@ -25,7 +25,10 @@ INSERT INTO posts (user_id, content, image, created, is_public) VALUES
 (5, 'Weekend getaway chadsmith private post pildiga', 'nagutaivo.png', '2023-04-11 19:00:00', 0),
 (6, 'Excited to start koplilliinbid public post pildiga ', 'chadpost.png', '2023-04-11 14:30:00', 1),
 (6, 'Weekend kopliliinidgetaway public post ', NULL, '2023-04-11 07:15:00', 1),
-(6, 'Weekend kopliliinidgetaway private post ', NULL, '2023-03-11 18:00:00', 0);
+(6, 'Weekend kopliliinidgetaway private post ', NULL, '2023-03-11 18:00:00', 0),
+(4, 'public post pildiga ', 'chadpost.png', '2023-04-11 14:30:00', 1),
+(4, ' public post pildiga', 'nagutaivo.png', '2023-04-11 07:15:00', 1),
+(4, ' private post pildiga', 'chadpost.png', '2023-03-11 18:00:00', 0);
 
 
 INSERT INTO `friends` (`user_id`, `friend_id`, `request_pending`)
@@ -34,9 +37,9 @@ VALUES
 (1, 3, 1),
 (2, 1, 0),
 (2, 3, 0),
-(3, 1, 0),
-(3, 2, 1),
-(4, 5, 1),
+(4, 2, 0),
+(4, 3, 0),
+(4, 5, 0),
 (4, 6, 0),
 (5, 6, 0);
 

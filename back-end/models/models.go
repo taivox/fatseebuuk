@@ -14,7 +14,10 @@ type User struct {
 	Email        string    `json:"email,omitempty"`
 	Created      time.Time `json:"-"`
 	IsPublic     bool      `json:"is_public"`
+	IsOwner      bool      `json:"is_owner"`
 	FriendStatus int       `json:"friend_status,omitempty"`
+	FriendsList  []Friend  `json:"friends_list,omitempty"`
+	Posts        []*Post   `json:"posts,omitempty"`
 }
 
 type Group struct {
@@ -131,4 +134,9 @@ type GroupRequests struct {
 type Friend struct {
 	Friend         User `json:"friend"`
 	RequestPending bool `json:"request_pending"`
+}
+
+type SearchData struct {
+	UserID int    `json:"user_id"`
+	Users  []User `json:"users"`
 }

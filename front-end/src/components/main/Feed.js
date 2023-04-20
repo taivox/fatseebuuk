@@ -36,6 +36,7 @@ function Feed() {
       .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then(data => {
         setPosts(data)
+        console.log("feeddata", data)
       })
       .catch(err => {
         console.log(err)
