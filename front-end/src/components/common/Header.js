@@ -124,8 +124,20 @@ function Header({ cookie }) {
             <div className="card-header"><strong>Results</strong></div>
             <ul className="list-group list-group-flush">
               {filteredResults.length > 0 ? filteredResults.map(result => (
-                <li className="list-group-item">{`${result.first_name} ${result.last_name}`}</li>
-              )) :<div>No results</div>}
+                <li className="list-group-item">
+                  <a href={`/profile/${result.user_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                    <img src={`/profile/${result.profile_image}`} alt={`${result.first_name} ${result.last_name}`} style={{ width: '45px', height: '45px', borderRadius: "100%", objectFit: "cover", paddingRight: "5px" }} />
+                    {`${result.first_name} ${result.last_name}`}
+                  </a>
+                </li>
+              )) : <div style={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                height: '45px',
+                marginLeft: '10px',
+              }}>No results</div>
+            }
             </ul>
           </div>
         )}
