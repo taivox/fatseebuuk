@@ -8,6 +8,7 @@ function NotificationsPopup() {
   const [error, setError] = useState()
   const [notificationsAmount, setNotificationsAmount] = useState(999999)
   const notificationsAmountRef = useRef(notificationsAmount)
+  const lastResponseStatus = useRef(null);
 
 
   const printNotification = (notification) => {
@@ -64,9 +65,14 @@ function NotificationsPopup() {
 
       let url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmount}`
 
+
       const fetchNotifications = async () => {
         try {
           const response = await fetch(url, requestOptions)
+          if (response.status === 401) {
+            lastResponseStatus.current = 401;
+            throw new Error('Unauthorized');
+          }
           const data = await response.json()
           if (data === null) {
             setNotificationsAmount(0)
@@ -82,12 +88,14 @@ function NotificationsPopup() {
           setError(error)
         } finally {
           url = `${process.env.REACT_APP_BACKEND}/notifications?notificationsAmount=${notificationsAmountRef.current}`
-          if (document.cookie.includes("session=")) {
+          if (document.cookie.includes("session=") && lastResponseStatus.current !== 401) {
             setTimeout(fetchNotifications, 25000)
           }
         }
       }
       fetchNotifications()
+      
+      
     }
   }, [cookie, setCookie])
 

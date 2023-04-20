@@ -97,7 +97,7 @@ func (m *SqliteDB) GetUserPosts(id int) ([]*models.Post, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	query := `SELECT post_id, user_id, content, COALESCE(image, ''),created, is_public FROM posts WHERE user_id = ? ORDER BY CREATED DESC`
+	query := `SELECT post_id, user_id, content, COALESCE(image, ''),created FROM posts WHERE user_id = ? ORDER BY CREATED DESC`
 	rows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil {
 		return nil, err
@@ -113,12 +113,11 @@ func (m *SqliteDB) GetUserPosts(id int) ([]*models.Post, error) {
 			&post.Content,
 			&post.Image,
 			&post.Created,
-			&post.IsPublic,
 		)
 
 		// Get user for this post
 		var user models.User
-		query = `SELECT user_id, first_name, last_name, profile_image FROM users WHERE user_id = ?`
+		query = `SELECT user_id, first_name, last_name, COALESCE(profile_image, 'default_profile_image.png') FROM users WHERE user_id = ?`
 		row := m.DB.QueryRowContext(ctx, query, userID)
 		row.Scan(
 			&user.UserID,
@@ -204,7 +203,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 
 	// Get all friends' posts
 	for _, friendID := range friends {
-		query = `SELECT post_id, user_id, content, COALESCE(image, ''),created, is_public FROM posts WHERE user_id = ?`
+		query = `SELECT post_id, user_id, content, COALESCE(image, ''),created FROM posts WHERE user_id = ?`
 		rows, err := m.DB.QueryContext(ctx, query, friendID)
 		if err != nil {
 			return nil, err
@@ -218,7 +217,6 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 				&post.Content,
 				&post.Image,
 				&post.Created,
-				&post.IsPublic,
 			)
 
 			// Get user for this post
@@ -315,7 +313,8 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			FROM
 				groups_posts
 			WHERE
-				group_id = ?`
+				group_id = ?
+			ORDER BY created DESC`
 	pRows, err := m.DB.QueryContext(ctx, query, id)
 	if err != nil {
 		return nil, err

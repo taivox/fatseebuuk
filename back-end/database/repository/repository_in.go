@@ -284,3 +284,29 @@ func (m *SqliteDB) ApproveFriendRequest(userID, friendID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) AddNewPost(post *models.Post, userID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO posts (user_id, content, image) VALUES (?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, userID, post.Content, post.Image)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddNewGroupPost(post *models.Post, userID, groupID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups_posts (user_id, group_id, content, image) VALUES (?,?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, userID, groupID, post.Content, post.Image)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

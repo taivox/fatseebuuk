@@ -75,7 +75,7 @@ function Profile() {
             <div className="container">
               <div className="row">
                 <ProfileLeft props={profile} />
-                <ProfilePosts props={profile} />
+                <ProfilePosts props={profile} cookie={cookie} updatePosts={fetchProfileData}/>
               </div>
             </div>
           </div>

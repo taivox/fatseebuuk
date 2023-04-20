@@ -26,24 +26,16 @@ function Register() {
   if (document.cookie.includes("session")) {
     let cookies = document.cookie.split(";")
     cookies.forEach((cookie) => {
-    if (cookie.includes("session")) {
-      const token = cookie.split("=")[1]
-      fetch(`${process.env.REACT_APP_BACKEND}/validate-login`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": token,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            return
-          } else {
-            navigate("/")
-          }
-        }
-        )
+      if (cookie.includes("session")) {
+        const token = cookie.split("=")[1]
+        fetch(`${process.env.REACT_APP_BACKEND}/`, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": token,
+          },
+        })
+          .then((response) => response.status === 200 ? (() => navigate('/'))() : null)
       }
     })
   }

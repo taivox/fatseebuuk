@@ -57,7 +57,6 @@ type Post struct {
 	Poster   User      `json:"poster"`
 	Content  string    `json:"content"`
 	Image    string    `json:"image"`
-	IsPublic bool      `json:"is_public"`
 	Created  time.Time `json:"created"`
 	Comments []Comment `json:"comments"`
 	Likes    int       `json:"likes"`

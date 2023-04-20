@@ -89,7 +89,7 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
               <div className="friend-count">{`${props.friends_list ? props.friends_list.length : `No friends, okay`} friends`}</div>
               <div className="friend-list">
                 {props.friends_list && props.friends_list.length > 0 ? props.friends_list.slice(0,6).map(friend => (
-                  <Link to={`/profile/${friend.friend.user_id}`}>
+                  <Link key={friend.friend.user_id} to={`/profile/${friend.friend.user_id}`}>
                   <img
                     className="friend-pic"
                     src={`/profile/${friend.friend.profile_image}`}

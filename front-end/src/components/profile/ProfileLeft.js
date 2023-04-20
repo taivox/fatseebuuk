@@ -1,6 +1,18 @@
+import { Fragment, useState } from "react";
 import { Link } from "react-router-dom";
+import PostImagePopup from "../main/PostImagePopup";
 
 function ProfileLeft({ props }) {
+  const [selectedPost, setSelectedPost] = useState(null);
+
+  const handleImageClick = (post) => {
+    setSelectedPost(post);
+  };
+
+  const handlePostImagePopupClose = () => {
+    setSelectedPost(null);
+  };
+  
   return (
     <div className="col-md-6">
       <div className="card mt-3">
@@ -22,7 +34,7 @@ function ProfileLeft({ props }) {
           <div className="row">
             {props.posts && props.posts.length > 0 ? (
               props.posts.map((post) => (
-                <>
+                <Fragment key={post.post_id}>
                   {post.image !== "" && (
                     <div className="col-md-4">
                       <img
@@ -35,10 +47,11 @@ function ProfileLeft({ props }) {
                           objectFit: "cover",
                           cursor: "pointer",
                         }}
+                        onClick={() => handleImageClick(post)}
                       />
                     </div>
                   )}
-                </>
+                </Fragment>
               ))
             ) : (
               <div>No photos</div>
@@ -55,8 +68,8 @@ function ProfileLeft({ props }) {
         <div className="container m-2">
           <div className="row">
         {props.friends_list && props.friends_list.length > 0 ? props.friends_list.map((friend => (
-
-            <div className="col-md-4">
+          <Fragment key={friend.friend.user_id}>
+            <div  className="col-md-4">
               <Link to={`/profile/${friend.friend.user_id}`}>
                 <img
                   src={`/profile/${friend.friend.profile_image}`}
@@ -73,17 +86,24 @@ function ProfileLeft({ props }) {
               </Link>
               <p style={{ fontSize: "14px", cursor: "pointer" }}>
                 <strong>
-                  <Link to={`/profile/${friend.friend.user_id}`} className="Link">
+                  <Link key={friend.friend.user_id} to={`/profile/${friend.friend.user_id}`} className="Link">
                     {`${friend.friend.first_name} ${friend.friend.last_name}`}
                   </Link>
                 </strong>
               </p>
             </div>
+          </Fragment>
         )))
         : <div className="m-2">No friends</div>}
         </div>
       </div>
       </div>
+      {selectedPost && (
+        <PostImagePopup
+          post={selectedPost}
+          onClose={handlePostImagePopupClose}
+        />
+      )}
     </div>
   );
 }
