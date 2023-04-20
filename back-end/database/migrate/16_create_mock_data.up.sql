@@ -9,26 +9,26 @@ VALUES
 
 
 
-INSERT INTO posts (user_id, content, image, created, is_public) VALUES
-(1, 'This is my first post!', NULL, '2023-04-10 22:00:00', 1),
-(1, 'Just hanging out with friends. #goodtimes', NULL, '2023-04-11 13:45:00', 1),
-(2, 'Trying out this new recipe I found. #yum', NULL, '2023-04-11 08:30:00', 0),
-(2, 'I cant believe its already fall! 🍂', NULL, '2023-04-11 17:15:00', 1),
-(3, 'Excited to start my new job!', NULL, '2023-04-11 09:00:00', 1),
-(3, 'Weekend getaway with the family. #familytime', NULL, '2023-04-11 19:45:00', 1),
-(3, 'Excited to start my new job!', NULL, '2023-04-11 14:30:00', 1),
-(4, 'Weekend getaway ma olen asdasd public post pildiga ', 'js.jpg', '2023-04-11 08:15:00', 1),
-(4, 'Excited to start ma olen asdasd public post ', NULL, '2023-04-11 20:00:00', 1),
-(4, 'Weekend getaway ma olen asdasd private post pildiga ', 'flowers.jpg', '2023-04-11 09:45:00', 0),
-(5, 'Weekend getaway chadsmith public post ', NULL, '2023-04-11 17:30:00', 1),
-(5, 'Excited to start chadsmith public post sellel pole commenteid ', NULL, '2023-04-11 08:15:00', 1),
-(5, 'Weekend getaway chadsmith private post pildiga', 'nagutaivo.png', '2023-04-11 19:00:00', 0),
-(6, 'Excited to start koplilliinbid public post pildiga ', 'chadpost.png', '2023-04-11 14:30:00', 1),
-(6, 'Weekend kopliliinidgetaway public post ', NULL, '2023-04-11 07:15:00', 1),
-(6, 'Weekend kopliliinidgetaway private post ', NULL, '2023-03-11 18:00:00', 0),
-(4, 'public post pildiga ', 'chadpost.png', '2023-04-11 14:30:00', 1),
-(4, ' public post pildiga', 'nagutaivo.png', '2023-04-11 07:15:00', 1),
-(4, ' private post pildiga', 'chadpost.png', '2023-03-11 18:00:00', 0);
+INSERT INTO posts (user_id, content, image, created) VALUES
+(1, 'This is my first post!', NULL, '2023-04-10 22:00:00'),
+(1, 'Just hanging out with friends. #goodtimes', NULL, '2023-04-11 13:45:00'),
+(2, 'Trying out this new recipe I found. #yum', NULL, '2023-04-11 08:30:00'),
+(2, 'I cant believe its already fall! 🍂', NULL, '2023-04-11 17:15:00'),
+(3, 'Excited to start my new job!', NULL, '2023-04-11 09:00:00'),
+(3, 'Weekend getaway with the family. #familytime', NULL, '2023-04-11 19:45:00'),
+(3, 'Excited to start my new job!', NULL, '2023-04-11 14:30:00'),
+(4, 'Weekend getaway ma olen asdasd public post pildiga ', 'js.jpg', '2023-04-11 08:15:00'),
+(4, 'Excited to start ma olen asdasd public post ', NULL, '2023-04-11 20:00:00'),
+(4, 'Weekend getaway ma olen asdasd private post pildiga ', 'flowers.jpg', '2023-04-11 09:45:00'),
+(5, 'Weekend getaway chadsmith public post ', NULL, '2023-04-11 17:30:00'),
+(5, 'Excited to start chadsmith public post sellel pole commenteid ', NULL, '2023-04-11 08:15:00'),
+(5, 'Weekend getaway chadsmith private post pildiga', 'nagutaivo.png', '2023-04-11 19:00:00'),
+(6, 'Excited to start koplilliinbid public post pildiga ', 'chadpost.png', '2023-04-11 14:30:00'),
+(6, 'Weekend kopliliinidgetaway public post ', NULL, '2023-04-11 07:15:00'),
+(6, 'Weekend kopliliinidgetaway private post ', NULL, '2023-03-11 18:00:00'),
+(4, 'public post pildiga ', 'chadpost.png', '2023-04-11 14:30:00'),
+(4, ' public post pildiga', 'nagutaivo.png', '2023-04-11 07:15:00'),
+(4, ' private post pildiga', 'chadpost.png', '2023-03-11 18:00:00');
 
 
 INSERT INTO `friends` (`user_id`, `friend_id`, `request_pending`)

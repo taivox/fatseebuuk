@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Link } from "react-router-dom";
 import TextArea from "../form/TextArea";
 import PostImagePopup from "../main/PostImagePopup";
+import Swal from "sweetalert2"
 
-function ProfilePosts({ props }) {
-  const [posts, setPosts] = useState([]);
+function ProfilePosts({ props, cookie, updatePosts}) {
   const [showFullText, setShowFullText] = useState({});
   const [selectedPost, setSelectedPost] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null)
+  const [postContent, setPostContent] = useState("")
+  const MAX_FILE_SIZE = 10 * 1024 * 1024
+  const [errors, setErrors] = useState([])
+  const [error, setError] = useState([])
+  const textLimit = 100;
+
 
   const handleImageClick = (post) => {
     setSelectedPost(post);
@@ -16,66 +23,105 @@ function ProfilePosts({ props }) {
     setSelectedPost(null);
   };
 
-  const [text, setText] =
-    useState(`Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed id
-    est id elit consectetur sollicitudin. Nam vel turpis eget ipsum
-    bibendum dictum at in lectus. Mauris a semper urna, ac facilisis
-    nulla. Pellentesque habitant morbi tristique senectus et netus
-    et malesuada fames ac turpis egestas. Praesent congue nulla nec
-    ipsum bibendum, vel finibus turpis luctus. Sed ornare, lorem vel
-    varius tristique, est massa dictum est, vitae euismod massa
-    mauris a augue. Sed at sapien nunc. Suspendisse potenti. Aenean
-    hendrerit mi ut turpis maximus, vel imperdiet augue bibendum.
-    Donec ut consequat enim. Duis pharetra euismod ex sed dignissim.
-    Sed sollicitudin eu metus non lobortis. Nunc nec sagittis leo.`);
-  const textLimit = 100;
+  const hasError = (key) => {
+    return errors.indexOf(key) !== -1
+  }
 
-  useEffect(() => {
-    const dummyPosts = [
-      {
-        id: 1,
-        posterID: 1,
-        poster: "John Doe",
-        profileImage: "/profile/chad.jpg",
-        global: true,
-        postedAt: "Posted 1 day ago",
-        postContent: text,
-        postImage: "/post/chadpost.png",
-      },
-      {
-        id: 2,
-        posterID: 2,
-        poster: "Dora Explorer",
-        profileImage: "/profile/dota.jpg",
-        global: false,
-        postedAt: "Posted 2 hours ago",
-        postContent: text,
-        postImage: "/post/js.jpg",
-      },
-      {
-        id: 3,
-        posterID: 3,
-        poster: "Peppa Pug",
-        profileImage: "/profile/peppa.jpg",
-        global: false,
-        postedAt: "Posted 5 days ago",
-        postContent: text,
-        postImage: "/post/oldprogrammers.webp",
-      },
-      {
-        id: 4,
-        posterID: 4,
-        poster: "Steve Scumbag",
-        profileImage: "/profile/scumbag.jpg",
-        global: true,
-        postedAt: "Posted 12 days ago",
-        postContent: text,
-        postImage: "/post/nagutaivo.png",
-      },
-    ];
+  const handleImageUpload = (event) => {
+    const file = event.target.files[0]
+    if (!file) {
+      return
+    }
 
-    setPosts(dummyPosts);
-  }, [text]);
+    if (!file.type.startsWith('image/')) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'Please select an image file',
+      })
+      return
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      localStorage.removeItem("image")
+      setImagePreview(null)
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: 'File size exceeds the limit of 10 MB!',
+      })
+      return
+    }
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+
+    reader.onload = () => {
+      setImagePreview(reader.result)
+    }
+
+    localStorage.setItem("image", imagePreview)
+  }
+
+  const handleSubmit = (event) => {
+    event.preventDefault()
+
+    let errors = []
+    const payload = {
+      content: postContent,
+    }
+
+    let required = [
+      { field: payload.content, name: "content" },
+    ]
+
+    required.forEach((req) => {
+      if (req.field === "") {
+        errors.push(req.name)
+      }
+    })
+
+    setErrors(errors)
+
+    if (errors.length > 0) {
+      return
+    }
+
+    payload.image = imagePreview
+    localStorage.removeItem("image")
+    
+    
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    }
+
+
+    fetch(`${process.env.REACT_APP_BACKEND}/createpost`, requestOptions)
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: data.message,
+          })
+          return
+        }
+        updatePosts()
+        setPostContent("")
+        setImagePreview("")
+      })
+      .catch(error => {
+        setError(error)
+      })
+  }
+
+
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
@@ -102,12 +148,16 @@ function ProfilePosts({ props }) {
                     objectFit: "cover",
                   }}
                 />
-                <form className="flex-grow-1">
+                <form onSubmit={handleSubmit} className="flex-grow-1">
                   <TextArea
                     title={""}
                     name={""}
                     rows={"3"}
                     placeholder={"What's on your mind?"}
+                    value={postContent}
+                    onChange={(event) => setPostContent(event.target.value)}
+                    errorDiv={hasError("post_content") ? "text-danger" : "d-none"}
+                    errorMsg={"Please enter something"} 
                   />
                   <div className="form-group m-2">
                     <label htmlFor="post-image" className="btn btn-ligth mb-0">
@@ -119,18 +169,30 @@ function ProfilePosts({ props }) {
                       Add Image
                     </label>
                     <input
+                      onChange={handleImageUpload}
                       type="file"
                       className="form-control-file d-none"
                       id="post-image"
-                    />
+                      />
                     <button type="submit" className="btn btn-ligth ml-2">
                       <box-icon
                         name="envelope"
                         type="solid"
                         color="blue"
-                      ></box-icon>
+                        ></box-icon>
                       Post
                     </button>
+                        {imagePreview && <img
+                          style={{
+                            borderRadius: "10px",
+                            objectFit: "cover",
+                            height: "130px",
+                            width: "130px",
+                          }}
+                          className="col-md-12"
+                          src={imagePreview && imagePreview}
+                          alt=""
+                        />}
                   </div>
                 </form>
               </div>

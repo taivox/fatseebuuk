@@ -39,31 +39,36 @@ function Group() {
     }
 
     if (cookieSet) {
-      const headers = new Headers()
-      headers.append("Content-Type", "application/json")
-      headers.append("Authorization", cookie)
-
-      const requestOptions = {
-        method: "GET",
-        headers: headers,
-      }
-      fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}`, requestOptions)
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.error) {
-            throw new Error(data.message)
-          }
-          setHasAccess(data.user_is_group_member)
-          setIsGroupOwner(data.user_is_group_owner)
-          setHidden(hasAccess ? "d-none" : "")
-          setGroup(data)
-          setGroupPosts(data.posts)
-        })
-        .catch((error) => {
-          setError(error)
-        })
+      fetchGroup()
     }
   }, [cookie])
+
+  const fetchGroup = () => {
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    const requestOptions = {
+      method: "GET",
+      headers: headers,
+    }
+    fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}`, requestOptions)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          throw new Error(data.message)
+        }
+        setHasAccess(data.user_is_group_member)
+        setIsGroupOwner(data.user_is_group_owner)
+        setHidden(hasAccess ? "d-none" : "")
+        setGroup(data)
+        setGroupPosts(data.posts)
+      })
+      .catch((error) => {
+        setError(error)
+      })
+  }
+
 
   const joinGroup = () => {
     const headers = new Headers()
@@ -137,11 +142,8 @@ function Group() {
           <div className="row">
             <GroupMenu groupOwner={true} cookie={cookie} />
             <div className="col-md-6">
-              <>
-                <h1>OWNER</h1>
-              </>
               {groupPosts && groupPosts.length > 0 && (
-                <Outlet context={{ groupPosts, cookie }} />
+                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }}/>
               )}
             </div>
             <Chats />
@@ -194,7 +196,7 @@ function Group() {
                 </button>
               </div>
               {groupPosts.length > 0 && (
-                <Outlet context={{ groupPosts, cookie }} />
+                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }}/>
               )}
             </div>
             <Chats />

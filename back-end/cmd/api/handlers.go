@@ -731,3 +731,94 @@ func (app *application) FriendRemove(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) CreatePost(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createpost" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		userID := r.Context().Value("user_id").(int)
+		var post models.Post
+
+		err := app.readJSON(w, r, &post)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		var imageName string
+		if post.Image != "" {
+			imageName, err = saveImageToFile(post.Image, "post")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+			post.Image = imageName
+		}
+
+		err = app.DB.AddNewPost(&post, userID)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Posted successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateGroupPost(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		userID := r.Context().Value("user_id").(int)
+		groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createpost$`).FindStringSubmatch(r.URL.Path)[1])
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+			return
+		}
+
+		var post models.Post
+
+		err = app.readJSON(w, r, &post)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		var imageName string
+		if post.Image != "" {
+			imageName, err = saveImageToFile(post.Image, "post")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+			post.Image = imageName
+		}
+
+		err = app.DB.AddNewGroupPost(&post, userID, groupID)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Posted successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}

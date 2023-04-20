@@ -88,7 +88,7 @@ function Header({ cookie }) {
         method: "GET",
         headers: headers,
       };
-      fetch(`${process.env.REACT_APP_BACKEND}/users-search`, requestOptions)
+      fetch(`${process.env.REACT_APP_BACKEND}/userssearch`, requestOptions)
         .then((response) =>
           response.status === 401 ? navigate("/login") : response.json()
         )

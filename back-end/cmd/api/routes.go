@@ -23,7 +23,8 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/feed", app.Feed)
 	mux.HandleFunc("/notifications", app.Notifications)
 	mux.HandleFunc("/friends", app.FriendsList)
-	mux.HandleFunc("/users-search", app.UsersSearch)
+	mux.HandleFunc("/userssearch", app.UsersSearch)
+	mux.HandleFunc("/createpost", app.CreatePost)
 
 	mux.HandleFunc("/friends/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for adding friend. Example: /friends/1/add
@@ -83,6 +84,11 @@ func (app *application) routes() http.Handler {
 
 		if regexp.MustCompile(`/groups/\d+/leave$`).MatchString(r.URL.Path) {
 			app.LeaveGroup(w, r)
+			return
+		}
+
+		if regexp.MustCompile(`/groups/\d+/createpost$`).MatchString(r.URL.Path) {
+			app.CreateGroupPost(w, r)
 			return
 		}
 
