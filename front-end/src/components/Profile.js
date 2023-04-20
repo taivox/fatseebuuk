@@ -4,7 +4,7 @@ import Header from "./common/Header"
 import ProfileHeader from "./profile/ProfileHeader"
 import ProfileLeft from "./profile/ProfileLeft"
 import ProfilePosts from "./profile/ProfilePosts"
-import { useParams } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import ErrorPage from "./common/ErrorPage"
 
 
@@ -14,6 +14,7 @@ function Profile() {
   const [error, setError] = useState(null)
   const [cookie, setCookie] = useState("")
   const [cookieSet, setCookieSet] = useState(false)
+  const navigate = useNavigate()
 
   useEffect(() => {
     let cookies = document.cookie.split(";")
@@ -30,34 +31,34 @@ function Profile() {
 
   useEffect(() => {
     if (cookieSet) {
-      fetchProfileData();
+      fetchProfileData()
     }
-  }, [cookie, cookieSet, user_id]);
+  }, [cookie, cookieSet, user_id])
 
   const fetchProfileData = () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
-  
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
     const requestOptions = {
       method: "GET",
       headers: headers,
-    };
-  
+    }
+
     fetch(`${process.env.REACT_APP_BACKEND}/user/${user_id}`, requestOptions)
-      .then((response) => response.json())
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         if (data.error) {
-          throw new Error(data.message);
+          throw new Error(data.message)
         }
-        setProfile(data);
+        setProfile(data)
       })
       .catch((error) => {
-        setError(error);
-      });
-  };
-  
-  
+        setError(error)
+      })
+  }
+
+
 
 
   if (false) {

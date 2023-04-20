@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import CreateGroupPopup from "../group/CreateGroupPopup"
 
 function Groups() {
   const [groups, setGroups] = useState([])
   const [createModalShowing, setCreateModalShowing] = useState(false)
-  const [cookie, setCookie] = useState("");
-  const [cookieSet, setCookieSet] = useState(false);
+  const [cookie, setCookie] = useState("")
+  const [cookieSet, setCookieSet] = useState(false)
+  const navigate = useNavigate()
+
 
   const handleCreateGroupClick = () => {
     setCreateModalShowing(true)
@@ -17,40 +19,40 @@ function Groups() {
   }
 
   useEffect(() => {
-    let cookies = document.cookie.split(";");
+    let cookies = document.cookie.split(";")
 
     for (let i = 0; i < cookies.length; i++) {
-      let cookie = cookies[i].trim();
+      let cookie = cookies[i].trim()
       if (cookie.startsWith("session=")) {
         setCookie(cookie.substring("session=".length))
-        break;
+        break
       }
     }
-    setCookieSet(true);
-  }, []);
+    setCookieSet(true)
+  }, [])
 
   useEffect(() => {
-    let cookies = document.cookie.split(";");
+    let cookies = document.cookie.split(";")
 
     for (let i = 0; i < cookies.length; i++) {
-      let cookie = cookies[i].trim();
+      let cookie = cookies[i].trim()
       if (cookie.startsWith("session=")) {
         setCookie(cookie.substring("session=".length))
-        break;
+        break
       }
     }
     if (cookieSet) {
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
       headers.append("Authorization", cookie)
-  
+
       const requestOptions = {
         method: "GET",
         headers: headers,
       }
-  
+
       fetch(`${process.env.REACT_APP_BACKEND}/groups`, requestOptions)
-        .then((response) => response.json())
+        .then(response => response.status === 401 ? navigate('/login') : response.json())
         .then((data) => {
           setGroups(data)
         })
@@ -58,7 +60,7 @@ function Groups() {
           console.log(error)
         })
     }
-  }, [cookie,setCookie])
+  }, [cookie, setCookie])
 
   return (
     <>

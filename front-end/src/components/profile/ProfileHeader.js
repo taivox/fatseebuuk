@@ -5,7 +5,6 @@ import { Link, useNavigate } from "react-router-dom"
 function ProfileHeader({ props, cookie, onButtonClick }) {
   const navigate = useNavigate()
 
-
   function AddFriend() {
     const headers = new Headers()
     headers.append("Content-Type", "application/json")

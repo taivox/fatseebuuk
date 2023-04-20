@@ -1,55 +1,56 @@
-import Swal from "sweetalert2";
-import React, { useEffect, useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import Swal from "sweetalert2"
+import React, { useEffect, useState } from "react"
+import { Link, useNavigate, useParams } from "react-router-dom"
 
 function GroupMenu({ groupOwner, cookie }) {
-  const { group_id } = useParams();
-  const [groupRequests, setGroupRequests] = useState([]);
+  const { group_id } = useParams()
+  const [groupRequests, setGroupRequests] = useState([])
+  const navigate = useNavigate()
 
   const approveRequest = (groupID, requestID) => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",
       headers: headers,
-    };
+    }
     fetch(
       `${process.env.REACT_APP_BACKEND}/groups/${groupID}/approverequest/${requestID}`,
       requestOptions
     )
-      .then((response) => response.json())
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         if (data.error) {
           Swal.fire({
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-        }else{
+          })
+        } else {
           Swal.fire({
             icon: "success",
             title: "Yay!",
             text: data.message,
-          });
-          setGroupRequests(prevRequests => prevRequests.filter(request => request.request_id !== requestID));
+          })
+          setGroupRequests(prevRequests => prevRequests.filter(request => request.request_id !== requestID))
         }
       })
       .catch((error) => {
-        console.log(error);
-      });
-  };
+        console.log(error)
+      })
+  }
 
   const rejectRequest = (groupID, requestID) => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     const requestOptions = {
       method: "GET",
       headers: headers,
-    };
+    }
     fetch(
       `${process.env.REACT_APP_BACKEND}/groups/${groupID}/rejectrequest/${requestID}`,
       requestOptions
@@ -61,44 +62,44 @@ function GroupMenu({ groupOwner, cookie }) {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-        }else{
+          })
+        } else {
           Swal.fire({
             icon: "success",
             title: "Yay!",
             text: data.message,
-          });
-          setGroupRequests(prevRequests => prevRequests.filter(request => request.request_id !== requestID));
+          })
+          setGroupRequests(prevRequests => prevRequests.filter(request => request.request_id !== requestID))
         }
       })
       .catch((error) => {
-        console.log(error);
-      });
-  };
+        console.log(error)
+      })
+  }
 
   useEffect(() => {
     if (groupOwner) {
-      const headers = new Headers();
-      headers.append("Content-Type", "application/json");
-      headers.append("Authorization", cookie);
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
 
       const requestOptions = {
         method: "GET",
         headers: headers,
-      };
+      }
       fetch(
         `${process.env.REACT_APP_BACKEND}/groups/${group_id}/requests`,
         requestOptions
       )
         .then((response) => response.json())
         .then((data) => {
-          setGroupRequests(data);
+          setGroupRequests(data)
         })
         .catch((error) => {
-          console.log(error);
-        });
+          console.log(error)
+        })
     }
-  }, [group_id, groupOwner,cookie]);
+  }, [group_id, groupOwner, cookie])
   return (
     <div className="col-md-3">
       <nav>
@@ -153,13 +154,13 @@ function GroupMenu({ groupOwner, cookie }) {
                       <box-icon color="red" name="x" />
                     </button>
                   </div>
-                )):<div>No requests</div>}
+                )) : <div>No requests</div>}
             </div>
           )}
         </div>
       </nav>
     </div>
-  );
+  )
 }
 
-export default GroupMenu;
+export default GroupMenu
