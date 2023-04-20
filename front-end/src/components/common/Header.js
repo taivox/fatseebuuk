@@ -1,6 +1,6 @@
 import { Link, useNavigate } from "react-router-dom"
 import Profile from "./../../images/profile.webp"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import NotificationsPopup from "./NotificationsPopup"
 
 function Header({ cookie }) {
@@ -29,6 +29,34 @@ function Header({ cookie }) {
         }
       })
   }
+
+
+  //TODO: IMPORT USEEFFECT!!!!!!!!!!!!!!!!!!!
+  useEffect(() => {
+    if (cookie){
+      const usersSearch = () => {
+        const headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        headers.append("Authorization", cookie)
+    
+        let requestOptions = {
+          method: "POST",
+          headers: headers,
+        }
+        fetch(`${process.env.REACT_APP_BACKEND}/users-search`, requestOptions)
+          .then(response => response.status === 401 ? navigate('/login') : response.json())
+          .then(data => {
+            if (data.error) {
+    
+            } else {
+              //TODO: data to search bar and link to profile
+            }
+          })
+      }
+    }
+  }, [cookie])
+
+
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark sticky-top">

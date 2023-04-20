@@ -86,74 +86,23 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
           <div className="profile-info">
             <h1>{`${props.first_name} ${props.last_name}`} {props.nickname && `(${props.nickname})`}</h1>
             <div className="friend-info">
-              <div className="friend-count">100 friends</div>
+              <div className="friend-count">{`${props.friends_list ? props.friends_list.length : `No friends, okay`} friends`}</div>
               <div className="friend-list">
-                <img
-                  className="friend-pic"
-                  src="/profile/chad.jpg"
-                  style={{
-                    height: "55px",
-                    width: "55px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                    zIndex: "99999",
-                  }}
-                  alt="profile" />
-                <img
-                  className="friend-pic"
-                  src="/profile/chad.jpg"
-                  style={{
-                    height: "55px",
-                    width: "55px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                    zIndex: "99999",
-                  }}
-                  alt="profile" />
-                <img
-                  className="friend-pic"
-                  src="/profile/chad.jpg"
-                  style={{
-                    height: "55px",
-                    width: "55px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                    zIndex: "99999",
-                  }}
-                  alt="profile" />
-                <img
-                  className="friend-pic"
-                  src="/profile/chad.jpg"
-                  style={{
-                    height: "55px",
-                    width: "55px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                    zIndex: "99999",
-                  }}
-                  alt="profile" />
-                <img
-                  className="friend-pic"
-                  src="/profile/chad.jpg"
-                  style={{
-                    height: "55px",
-                    width: "55px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                    zIndex: "99999",
-                  }}
-                  alt="profile" />
-                <img
-                  className="friend-pic"
-                  src="/profile/chad.jpg"
-                  style={{
-                    height: "55px",
-                    width: "55px",
-                    borderRadius: "100%",
-                    objectFit: "cover",
-                    zIndex: "99999",
-                  }}
-                  alt="profile" />
+                {props.friends_list && props.friends_list.length > 0 ? props.friends_list.slice(0,6).map(friend => (
+                  <Link to={`/profile/${friend.friend.user_id}`}>
+                  <img
+                    className="friend-pic"
+                    src={`/profile/${friend.friend.profile_image}`}
+                    style={{
+                      height: "55px",
+                      width: "55px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                      zIndex: "99999",
+                    }}
+                    alt="profile" />
+                  </Link>
+                )):null}
 
               </div>
             </div>

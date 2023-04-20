@@ -40,7 +40,6 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 // User page
 func (app *application) User(w http.ResponseWriter, r *http.Request) {
 	userID, err := getID(r.URL.Path, `\d+$`)
-
 	if err != nil {
 		app.errorJSON(w, fmt.Errorf("user not found: invalid id"), http.StatusNotFound)
 		return
@@ -53,6 +52,7 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
 			return
 		}
+
 		currentUserID := r.Context().Value("user_id").(int)
 		if userID != currentUserID {
 			user.FriendStatus, err = app.DB.ValidateFriendStatus(currentUserID, userID)
@@ -61,6 +61,23 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 		}
+
+		user.IsOwner = userID == currentUserID
+
+		// Get user posts if user is friend, current user or profile is public
+		if user.FriendStatus == 3 || userID == currentUserID || user.IsPublic {
+			user.FriendsList, err = app.DB.GetFriendsList(userID)
+			if err != nil {
+				app.errorJSON(w, fmt.Errorf("error getting friends list from database"), http.StatusNotFound)
+				return
+			}
+			user.Posts, err = app.DB.GetUserPosts(userID)
+			if err != nil {
+				app.errorJSON(w, fmt.Errorf("error getting user posts from database"), http.StatusNotFound)
+				return
+			}
+		}
+
 		_ = app.writeJSON(w, http.StatusOK, user)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -445,6 +462,26 @@ func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+//userID, k6ik userid 
+func (app *application) UsersSearch(w http.ResponseWriter, r *http.Request){
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+		case "GET":
+			var searchData models.SearchData
+			searchData.Users, err := app.DB.GetAllUsers()
+			if err != nil {
+				app.errorJSON(w, fmt.Errorf("error getting users from database"), http.StatusNotFound)
+				return
+			}
+			searchData.UserID = userID
+
+			app.writeJSON(w, http.StatusAccepted, searchData)
+		default:
+			app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
 

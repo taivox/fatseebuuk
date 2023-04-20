@@ -15,7 +15,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/login", app.Login)
 	//	mux.HandleFunc("/validate-login", app.ValidateLogin)
 
-	//handlers for authenticated routes
+	// handlers for authenticated routes
 	mux.HandleFunc("/", app.Home)
 	mux.HandleFunc("/logout", app.Logout)
 	mux.HandleFunc("/user/", app.User)
@@ -23,6 +23,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/feed", app.Feed)
 	mux.HandleFunc("/notifications", app.Notifications)
 	mux.HandleFunc("/friends", app.FriendsList)
+	mux.HandleFunc("/users-search", app.UsersSearch)
 
 	mux.HandleFunc("/friends/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for adding friend. Example: /friends/1/add
