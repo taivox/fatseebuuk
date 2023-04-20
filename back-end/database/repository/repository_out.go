@@ -204,7 +204,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 
 	// Get all friends' posts
 	for _, friendID := range friends {
-		query = `SELECT post_id, user_id, content, COALESCE(image, 'default_profile_image.png'),created, is_public FROM posts WHERE user_id = ?`
+		query = `SELECT post_id, user_id, content, COALESCE(image, ''),created, is_public FROM posts WHERE user_id = ?`
 		rows, err := m.DB.QueryContext(ctx, query, friendID)
 		if err != nil {
 			return nil, err
@@ -223,7 +223,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 
 			// Get user for this post
 			var user models.User
-			query = `SELECT user_id, first_name, last_name, profile_image FROM users WHERE user_id = ?`
+			query = `SELECT user_id, first_name, last_name, COALESCE(profile_image, 'default_profile_image.png') FROM users WHERE user_id = ?`
 			row := m.DB.QueryRowContext(ctx, query, userID)
 			row.Scan(
 				&user.UserID,
