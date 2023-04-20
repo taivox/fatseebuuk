@@ -465,23 +465,25 @@ func (app *application) Notifications(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-//userID, k6ik userid 
-func (app *application) UsersSearch(w http.ResponseWriter, r *http.Request){
+// userID, k6ik userid
+func (app *application) UsersSearch(w http.ResponseWriter, r *http.Request) {
 	userID := r.Context().Value("user_id").(int)
 
 	switch r.Method {
-		case "GET":
-			var searchData models.SearchData
-			searchData.Users, err := app.DB.GetAllUsers()
-			if err != nil {
-				app.errorJSON(w, fmt.Errorf("error getting users from database"), http.StatusNotFound)
-				return
-			}
-			searchData.UserID = userID
+	case "GET":
+		var searchData models.SearchData
+		var err error
 
-			app.writeJSON(w, http.StatusAccepted, searchData)
-		default:
-			app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+		searchData.Users, err = app.DB.GetAllUsers()
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting users from database"), http.StatusNotFound)
+			return
+		}
+		searchData.UserID = userID
+
+		app.writeJSON(w, http.StatusAccepted, searchData)
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
 

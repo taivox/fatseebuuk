@@ -1,62 +1,107 @@
-import { Link, useNavigate } from "react-router-dom"
-import Profile from "./../../images/profile.webp"
-import { useEffect, useState } from "react"
-import NotificationsPopup from "./NotificationsPopup"
+import { Link, useNavigate } from "react-router-dom";
+import Profile from "./../../images/profile.webp";
+import { useEffect, useState } from "react";
+import NotificationsPopup from "./NotificationsPopup";
+import Input from "../form/Input";
 
 function Header({ cookie }) {
-  const [notificationsShowing, setNotificationsShowing] = useState(false)
+  const [notificationsShowing, setNotificationsShowing] = useState(false);
+  const [searchData, setSearchData] = useState([]);
+  const [search, setSearch] = useState("");
+  const [filteredResults, setFilteredResults] = useState([]);
   // const toggleNotifications = () => {
   //   setNotificationsShowing(!notificationsShowing)
   // }
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  function calculateScore(searchTerm, result) {
+    // Convert both strings to lowercase for case-insensitive comparison
+    searchTerm = searchTerm.toLowerCase();
+    result = result.toLowerCase();
+  
+    // Calculate the Levenshtein distance between the search term and the result
+    let matrix = [];
+    for (let i = 0; i <= result.length; i++) {
+      matrix[i] = [i];
+      for (let j = 0; j <= searchTerm.length; j++) {
+        matrix[0][j] = j;
+        if (i > 0 && j > 0) {
+          let cost = result.charAt(i - 1) === searchTerm.charAt(j - 1) ? 0 : 1;
+          matrix[i][j] = Math.min(
+            matrix[i-1][j] + 1,
+            matrix[i][j-1] + 1,
+            matrix[i-1][j-1] + cost
+          );
+        }
+      }
+    }
+    // Return the Levenshtein distance as the score
+    return matrix[result.length][searchTerm.length];
+  }
+  
+  function filterResults(searchTerm) {
+    setSearch(searchTerm)
+    let tempResults = []
+    for (let i = 0; i < searchData.users.length; i++) {
+      
+      let userName = searchData.users[i].first_name + " " + searchData.users[i].last_name
+
+      let score = calculateScore(searchTerm, userName);
+      if (score < 8) {
+        // Only include results with a low score (less than 3 in this example)
+        tempResults.push(searchData.users[i]);
+      }
+    }
+    setFilteredResults(tempResults);
+    console.log(filteredResults);
+  }
+
 
   const logout = () => {
-    const headers = new Headers()
-    headers.append("Content-Type", "application/json")
-    headers.append("Authorization", cookie)
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
 
     let requestOptions = {
       method: "POST",
       headers: headers,
-    }
+    };
     fetch(`${process.env.REACT_APP_BACKEND}/logout`, requestOptions)
-      .then(response => response.json())
-      .then(data => {
+      .then((response) => response.json())
+      .then((data) => {
         if (data.error) {
         } else {
-          document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
-          navigate("/login")
+          document.cookie =
+            "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
+          navigate("/login");
         }
-      })
-  }
+      });
+  };
 
-
-  //TODO: IMPORT USEEFFECT!!!!!!!!!!!!!!!!!!!
   useEffect(() => {
-    if (cookie){
-      const usersSearch = () => {
-        const headers = new Headers()
-        headers.append("Content-Type", "application/json")
-        headers.append("Authorization", cookie)
-    
-        let requestOptions = {
-          method: "POST",
-          headers: headers,
-        }
-        fetch(`${process.env.REACT_APP_BACKEND}/users-search`, requestOptions)
-          .then(response => response.status === 401 ? navigate('/login') : response.json())
-          .then(data => {
-            if (data.error) {
-    
-            } else {
-              //TODO: data to search bar and link to profile
-            }
-          })
-      }
+    if (cookie) {
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", cookie);
+
+      let requestOptions = {
+        method: "GET",
+        headers: headers,
+      };
+      fetch(`${process.env.REACT_APP_BACKEND}/users-search`, requestOptions)
+        .then((response) =>
+          response.status === 401 ? navigate("/login") : response.json()
+        )
+        .then((data) => {
+          if (data.error) {
+          } else {
+            //TODO: data to search bar and link to profile
+            setSearchData(data);
+            console.log(data);
+          }
+        });
     }
-  }, [cookie])
-
-
+  }, [cookie]);
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
@@ -64,17 +109,28 @@ function Header({ cookie }) {
         <Link to="/" className="navbar-brand">
           Fatseebuuk
         </Link>
-        <form className="d-flex mt-3" role="search">
-          <input
-            className="form-control me-2"
-            type="search"
-            placeholder="Search"
-            aria-label="Search"
-          />
-          <button className="btn btn-primary" type="submit">
-            Search
-          </button>
-        </form>
+        <div className="container d-flex justify-content-center">
+  <div className="col-md-6">
+        <Input
+          className="form-control"
+          type="text"
+          name={"search"}
+          placeholder={"Search"}
+          onChange={(event) => filterResults(event.target.value)}
+          autoComplete={"off"}
+        />
+        {search !== "" && (
+          <div className="card position-absolute " style={{ width: "18rem" }}>
+            <div className="card-header"><strong>Results</strong></div>
+            <ul className="list-group list-group-flush">
+              {filteredResults.length > 0 ? filteredResults.map(result => (
+                <li className="list-group-item">{`${result.first_name} ${result.last_name}`}</li>
+              )) :<div>No results</div>}
+            </ul>
+          </div>
+        )}
+        </div>
+        </div>
         <button
           className="navbar-toggler"
           type="button"
@@ -110,20 +166,19 @@ function Header({ cookie }) {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#!">
+                <Link
+                  className="nav-link"
+                  to={`/profile/${searchData.user_id}`}
+                >
                   Profile
-                </a>
+                </Link>
               </li>
               <li className="nav-item">
                 <a className="nav-link" href="#!!">
-                  <box-icon
-                    color="white"
-                    type="regular"
-                    name="chat"
-                  ></box-icon>
+                  <box-icon color="white" type="regular" name="chat"></box-icon>
                 </a>
               </li>
-              <NotificationsPopup  />
+              <NotificationsPopup />
               <li className="nav-item dropdown">
                 <a
                   className="nav-link dropdown-toggle"
@@ -132,7 +187,15 @@ function Header({ cookie }) {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  <img src={Profile} style={{ height: '30px', borderRadius: '50%', objectFit: 'cover' }} alt="profile pic" />
+                  <img
+                    src={Profile}
+                    style={{
+                      height: "30px",
+                      borderRadius: "50%",
+                      objectFit: "cover",
+                    }}
+                    alt="profile pic"
+                  />
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark">
                   <li>
@@ -145,16 +208,14 @@ function Header({ cookie }) {
                       Logout
                     </Link>
                   </li>
-
                 </ul>
               </li>
             </ul>
-
           </div>
         </div>
       </div>
     </nav>
-  )
+  );
 }
 
-export default Header
+export default Header;
