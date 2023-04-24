@@ -25,6 +25,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/friends", app.FriendsList)
 	mux.HandleFunc("/userssearch", app.UsersSearch)
 	mux.HandleFunc("/createpost", app.CreatePost)
+	mux.HandleFunc("/currentuser", app.CurrentUser)
 
 	mux.HandleFunc("/friends/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for adding friend. Example: /friends/1/add
@@ -66,29 +67,34 @@ func (app *application) routes() http.Handler {
 			app.GroupJoin(w, r)
 			return
 		}
-
+		//Handler to get group requests
 		if regexp.MustCompile(`/groups/\d+/requests$`).MatchString(r.URL.Path) {
 			app.GroupRequests(w, r)
 			return
 		}
-
+		//Handler for rejecting group request
 		if regexp.MustCompile(`/groups/\d+/rejectrequest/\d+$`).MatchString(r.URL.Path) {
 			app.RejectGroupRequest(w, r)
 			return
 		}
-
+		//Handler for approving group request
 		if regexp.MustCompile(`/groups/\d+/approverequest/\d+$`).MatchString(r.URL.Path) {
 			app.ApproveGroupRequest(w, r)
 			return
 		}
-
+		//Handler for leaving group
 		if regexp.MustCompile(`/groups/\d+/leave$`).MatchString(r.URL.Path) {
 			app.LeaveGroup(w, r)
 			return
 		}
-
+		//Handler for creating group post
 		if regexp.MustCompile(`/groups/\d+/createpost$`).MatchString(r.URL.Path) {
 			app.CreateGroupPost(w, r)
+			return
+		}
+		//Handler for creating group
+		if r.URL.Path == "/groups/creategroup" {
+			app.CreateGroup(w, r)
 			return
 		}
 
