@@ -25,9 +25,6 @@ function GroupEvents() {
   }
 
   useEffect(() => {
-
-    console.log("KANAMUNA")
-    
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -39,14 +36,11 @@ function GroupEvents() {
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events`, requestOptions)
       .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
-        console.log("SEEDATA", data)
         if (data.error) {
           throw new Error(data.message)
         }
         setPastEvents(data.past_events)
         setUpcomingEvents(data.upcoming_events)
-
-        console.log("EVENTSI LEHE LAEB ÄRA VA")
       })
       .catch((error) => {
         setError(error)

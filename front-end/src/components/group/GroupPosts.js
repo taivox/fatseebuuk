@@ -109,7 +109,6 @@ function GroupPosts() {
           });
           return;
         }
-        console.log(data)
         setPostContent("");
         setImagePreview("");
         fetchGroup();
@@ -203,7 +202,7 @@ function GroupPosts() {
         </div>
       </div>
 
-      {posts !== [] ? (
+      {posts && posts.length > 0 ? (
         posts.map((p) => (
           <div key={p.post_id} className="card">
             <div className="card-body">

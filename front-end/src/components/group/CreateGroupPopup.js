@@ -34,7 +34,6 @@ function CreateGroupPopup({ post, onClose, cookie, fetchGroups }) {
           throw new Error(data.message)
         }
         setCurrentUser(data)
-        console.log("seeonprofiledata", data)
       })
       .catch((error) => {
         console.log(error)

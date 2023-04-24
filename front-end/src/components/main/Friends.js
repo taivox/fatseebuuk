@@ -9,7 +9,6 @@ function Friends() {
 
 
   function AcceptFriendRequest(friendID) {
-    console.log("Nyyd callis acceptfriend")
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -62,27 +61,6 @@ function Friends() {
         fetchFriendslist()
       }
     })
-
-    // console.log("Nyyd callis removefriend")
-    // const headers = new Headers()
-
-    // headers.append("Content-Type", "application/json")
-    // headers.append("Authorization", cookie)
-
-    // let requestOptions = {
-    //   method: "POST",
-    //   headers: headers,
-    // }
-    // fetch(
-    //   `${process.env.REACT_APP_BACKEND}/friends/${friendID}/remove`, requestOptions)
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     if (data.error) {
-    //       console.log("error tuli", data)
-    //     } else {
-    //       fetchFriendslist()
-    //     }
-    //   })
   }
 
 

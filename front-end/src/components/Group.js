@@ -64,7 +64,6 @@ function Group() {
         setGroup(data)
         setGroupPosts(data.posts)
 
-        console.log("seeon group data",data)
       })
       .catch((error) => {
         setError(error)
@@ -144,9 +143,7 @@ function Group() {
           <div className="row">
             <GroupMenu groupOwner={true} cookie={cookie} />
             <div className="col-md-6">
-              {groupPosts && groupPosts.length > 0 && (
-                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }}/>
-              )}
+                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
             </div>
             <Chats />
           </div>
@@ -197,9 +194,9 @@ function Group() {
                   Leave Group
                 </button>
               </div>
-              {groupPosts.length > 0 && (
-                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }}/>
-              )}
+
+                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
+              
             </div>
             <Chats />
           </div>
