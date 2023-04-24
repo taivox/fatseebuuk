@@ -41,6 +41,10 @@ function Groups() {
         break
       }
     }
+    fetchGroups()
+  }, [cookie, setCookie])
+
+  const fetchGroups = () => {
     if (cookieSet) {
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
@@ -60,7 +64,7 @@ function Groups() {
           console.log(error)
         })
     }
-  }, [cookie, setCookie])
+  }
 
   return (
     <>
@@ -92,7 +96,7 @@ function Groups() {
       </div>
       {createModalShowing && (
         <CreateGroupPopup
-          onClose={handleCreateGroupClose}
+          onClose={handleCreateGroupClose} cookie={cookie} fetchGroups={fetchGroups}
         />
       )}
 

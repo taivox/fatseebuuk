@@ -310,3 +310,16 @@ func (m *SqliteDB) AddNewGroupPost(post *models.Post, userID, groupID int) error
 
 	return nil
 }
+
+func (m *SqliteDB) AddNewGroup(group *models.Group, userID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups (title, description, user_id, image) VALUES (?,?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, group.Title, group.Description, userID, group.Image)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

@@ -84,6 +84,27 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/currentuser" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "GET":
+		currentUser, err := app.DB.GetUserByID(userID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
+			return
+		}
+		_ = app.writeJSON(w, http.StatusOK, currentUser)
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
 // All groups page
 func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
@@ -770,6 +791,43 @@ func (app *application) CreatePost(w http.ResponseWriter, r *http.Request) {
 			Message: "Posted successfully",
 		}
 
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateGroup(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		userID := r.Context().Value("user_id").(int)
+		var group models.Group
+		group.UserID = userID
+		err := app.readJSON(w, r, &group)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		if group.Image != "" {
+			group.Image, err = saveImageToFile(group.Image, "group")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		}
+
+		err = app.DB.AddNewGroup(&group, userID)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Group created successfully",
+		}
 		app.writeJSON(w, http.StatusAccepted, resp)
 
 	default:
