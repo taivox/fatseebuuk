@@ -176,7 +176,6 @@ func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 
 		groupEvents, err := app.DB.GetGroupEvents(groupID)
-
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error getting group events from database"), http.StatusNotFound)
 			return
@@ -802,9 +801,8 @@ func (app *application) CreatePost(w http.ResponseWriter, r *http.Request) {
 func (app *application) CreateGroup(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
-		userID := r.Context().Value("user_id").(int)
 		var group models.Group
-		group.UserID = userID
+		group.UserID = r.Context().Value("user_id").(int)
 		err := app.readJSON(w, r, &group)
 		if err != nil {
 			app.errorJSON(w, err)
@@ -817,9 +815,11 @@ func (app *application) CreateGroup(w http.ResponseWriter, r *http.Request) {
 				app.errorJSON(w, err)
 				return
 			}
+		} else {
+			group.Image = "default_group_image.png"
 		}
 
-		err = app.DB.AddNewGroup(&group, userID)
+		err = app.DB.AddNewGroup(&group)
 		if err != nil {
 			app.errorJSON(w, err)
 			return
@@ -828,6 +828,52 @@ func (app *application) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		resp := JSONResponse{
 			Error:   false,
 			Message: "Group created successfully",
+		}
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateEvent(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		var event models.Event
+		var err error
+		event.Poster.UserID = r.Context().Value("user_id").(int)
+
+		event.GroupID, err = strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createevent$`).FindStringSubmatch(r.URL.Path)[1])
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+			return
+		}
+
+		err = app.readJSON(w, r, &event)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		if event.Image != "" {
+			event.Image, err = saveImageToFile(event.Image, "event")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		} else {
+			event.Image = "default_event_image.png"
+		}
+
+		err = app.DB.AddNewEvent(&event)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Event created successfully",
 		}
 		app.writeJSON(w, http.StatusAccepted, resp)
 

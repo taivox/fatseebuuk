@@ -5,7 +5,7 @@ import Swal from "sweetalert2"
 import Input from "../form/Input"
 import TextArea from "../form/TextArea"
 
-function CreateGroupPopup({ post, onClose, cookie, fetchGroups }) {
+function CreateGroupPopup({ onClose, cookie, fetchGroups }) {
   const [show, setShow] = useState(true)
   const [currentUser, setCurrentUser] = useState({})
   const [title, setTitle] = useState("")

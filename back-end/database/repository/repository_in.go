@@ -311,12 +311,25 @@ func (m *SqliteDB) AddNewGroupPost(post *models.Post, userID, groupID int) error
 	return nil
 }
 
-func (m *SqliteDB) AddNewGroup(group *models.Group, userID int) error {
+func (m *SqliteDB) AddNewGroup(group *models.Group) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
 	stmt := `INSERT INTO groups (title, description, user_id, image) VALUES (?,?,?,?)`
-	_, err := m.DB.ExecContext(ctx, stmt, group.Title, group.Description, userID, group.Image)
+	_, err := m.DB.ExecContext(ctx, stmt, group.Title, group.Description, group.UserID, group.Image)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddNewEvent(event *models.Event) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES (?,?,?,?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, event.Poster.UserID, event.GroupID, event.Title, event.Description, event.Image, event.EventDate)
 	if err != nil {
 		return err
 	}

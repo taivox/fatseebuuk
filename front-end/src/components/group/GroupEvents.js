@@ -25,6 +25,11 @@ function GroupEvents() {
   }
 
   useEffect(() => {
+    fetchEvents()
+  }, [])
+
+
+  function fetchEvents(){
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -45,7 +50,7 @@ function GroupEvents() {
       .catch((error) => {
         setError(error)
       })
-  }, [])
+  }
 
   if (error) {
     return <><ErrorPage error={error} /></>
