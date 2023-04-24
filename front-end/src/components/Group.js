@@ -63,6 +63,8 @@ function Group() {
         setHidden(hasAccess ? "d-none" : "")
         setGroup(data)
         setGroupPosts(data.posts)
+
+        console.log("seeon group data",data)
       })
       .catch((error) => {
         setError(error)

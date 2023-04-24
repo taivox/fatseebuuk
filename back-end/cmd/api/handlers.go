@@ -176,7 +176,10 @@ func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 	case "GET":
 
 		groupEvents, err := app.DB.GetGroupEvents(groupID)
+
+		fmt.Println("grupi evendid", groupEvents)
 		if err != nil {
+			fmt.Println("SELLINE ERROR", err)
 			app.errorJSON(w, fmt.Errorf("error getting group events from database"), http.StatusNotFound)
 			return
 		}
