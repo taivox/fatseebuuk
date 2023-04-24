@@ -100,6 +100,7 @@ function GroupMenu({ groupOwner, cookie }) {
         })
     }
   }, [group_id, groupOwner, cookie])
+
   return (
     <div className="col-md-3">
       <nav>
