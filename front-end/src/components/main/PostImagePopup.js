@@ -1,12 +1,20 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Modal, Container, Row } from "react-bootstrap"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { getTimeElapsedString } from "../../Utils"
+import TextArea from "../form/TextArea"
+import Swal from "sweetalert2"
 
 
-function PostImagePopup({ post, onClose }) {
+
+function PostImagePopup({ post, onClose, cookie }) {
   const [show, setShow] = useState(true)
   const [showFullText, setShowFullText] = useState({})
+  const [commentContent, setCommentContent] = useState("")
+  const textareaRef = useRef();
+  const [errors, setErrors] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate()
   const textLimit = 100
 
   const handleClose = () => {
@@ -20,6 +28,67 @@ function PostImagePopup({ post, onClose }) {
       [postId]: !prevShowFullText[postId],
     }))
   }
+  
+  const handleClick = () => {
+    if (textareaRef && textareaRef.current) {
+      textareaRef.current.focus();
+    }
+  };
+
+
+  function handleCommentSubmit(event) {
+    event.preventDefault()
+
+    let errors = []
+    const payload = {
+      post_id: post.post_id,
+      content: commentContent,
+      current_url: window.location.href,
+    }
+
+    let required = [{ field: payload.content, name: "content" }]
+
+    required.forEach((req) => {
+      if (req.field === "") {
+        errors.push(req.name)
+      }
+    })
+
+    setErrors(errors)
+
+    if (errors.length > 0) {
+      return
+    }
+
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    }
+
+    fetch(`${process.env.REACT_APP_BACKEND}/createcomment`, requestOptions)
+    .then(response => response.status === 401 ? navigate('/login') : response.json())
+      .then((data) => {
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message,
+          })
+          return
+        }
+        setCommentContent("")
+       //fetchGroup()
+      })
+      .catch((error) => {
+        setError(error)
+      })
+  }
+
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
@@ -60,12 +129,55 @@ function PostImagePopup({ post, onClose }) {
               <box-icon name="like" /> Like
             </button>
           </div>
+
+
           <div className="d-flex flex-grow-1 align-items-center justify-content-end">
-            <button className="btn btn-light col-12">
+            <button className="btn btn-light col-12" onClick={handleClick}>
               <box-icon name="comment" /> Comment
             </button>
           </div>
         </div>
+  
+
+
+
+
+<form onSubmit={handleCommentSubmit} className="flex-grow-1">
+<TextArea
+                  textareaRef={textareaRef}
+                  name={""}
+                  rows={"3"}
+                  cols={"12"}
+                  placeholder={"Write something..."}
+                  onChange={(event) => setCommentContent(event.target.value)}
+                  value={commentContent}
+                  // errorDiv={hasError("content") ? "text-danger" : "d-none"}
+                />
+                <div className="form-group m-2">
+                  <button type="submit" className="btn btn-ligth ml-2">
+                    <box-icon
+                      name="envelope"
+                      type="solid"
+                      color="blue"
+                    ></box-icon>
+                   Comment
+                  </button>
+                </div>
+              </form>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

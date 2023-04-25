@@ -336,3 +336,30 @@ func (m *SqliteDB) AddNewEvent(event *models.Event) error {
 
 	return nil
 }
+
+func (m *SqliteDB) AddNewGroupComment(userID, postID int, content string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups_comments (user_id, post_id, content) VALUES (?, ?, ?)`
+	_, err := m.DB.ExecContext(ctx, stmt, userID, postID, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddNewComment(userID, postID int, content string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, userID, postID, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

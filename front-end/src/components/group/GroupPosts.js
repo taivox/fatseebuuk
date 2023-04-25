@@ -302,6 +302,7 @@ function GroupPosts() {
         <PostImagePopup
           post={selectedPost}
           onClose={handlePostImagePopupClose}
+          cookie={cookie}
         />
       )}
     </div>

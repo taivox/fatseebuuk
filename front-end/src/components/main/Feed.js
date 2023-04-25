@@ -141,6 +141,7 @@ function Feed() {
         <PostImagePopup
           post={selectedPost}
           onClose={handlePostImagePopupClose}
+          cookie={cookie}
         />
       )}
     </>

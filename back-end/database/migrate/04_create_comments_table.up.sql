@@ -7,4 +7,3 @@ CREATE TABLE IF NOT EXISTS `comments`(
     FOREIGN KEY (user_id) REFERENCES users (user_id)
     ON DELETE CASCADE
 );
-

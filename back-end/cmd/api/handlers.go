@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"back-end/models"
@@ -923,6 +924,53 @@ func (app *application) CreateGroupPost(w http.ResponseWriter, r *http.Request) 
 
 		app.writeJSON(w, http.StatusAccepted, resp)
 
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateComment(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createcomment" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		payload := struct {
+			PostID     int    `json:"post_id"`
+			Content    string `json:"content"`
+			CurrentURL string `json:"current_url"`
+			UserID     int    `json:"user_id"`
+		}{}
+
+		err := app.readJSON(w, r, &payload)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		payload.UserID = r.Context().Value("user_id").(int)
+
+		if strings.Contains(payload.CurrentURL, "groups") {
+			err = app.DB.AddNewGroupComment(payload.UserID, payload.PostID, payload.Content)
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		} else {
+			err = app.DB.AddNewComment(payload.UserID, payload.PostID, payload.Content)
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Comment posted successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
