@@ -332,6 +332,11 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			&post.Image,
 			&post.Created,
 		)
+
+		query = `SELECT COUNT(*) FROM groups_post_likes WHERE post_id = ?`
+		row = m.DB.QueryRowContext(ctx, query, post.PostID)
+		row.Scan(&post.Likes)
+
 		if err != nil {
 			return nil, err
 		}
@@ -362,6 +367,10 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			query = `SELECT COUNT(*) FROM groups_comment_likes WHERE comment_id = ?`
+			row = m.DB.QueryRowContext(ctx, query, comment.CommentID)
+			row.Scan(&comment.Likes)
 
 			p, err = m.GetUserByID(userID)
 			if err != nil {

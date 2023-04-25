@@ -3,6 +3,7 @@ import { Link, useOutletContext } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import Swal from "sweetalert2"
+import { getTimeElapsedString } from "../../Utils"
 
 function GroupPosts() {
   const { groupPosts, cookie, group_id, fetchGroup } = useOutletContext()
@@ -12,16 +13,19 @@ function GroupPosts() {
   const [selectedPost, setSelectedPost] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [postContent, setPostContent] = useState("")
+  const [postIndex, setPostIndex] = useState(null)
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
 
-  const handleImageClick = (post) => {
+  const handleImageClick = (post,index) => {
     setSelectedPost(post)
+    setPostIndex(index)
   }
 
   const handlePostImagePopupClose = () => {
     setSelectedPost(null)
+    setPostIndex(null)
   }
 
   const hasError = (key) => {
@@ -122,6 +126,9 @@ function GroupPosts() {
 
   useEffect(() => {
     setPosts(groupPosts)
+    if (selectedPost !== null){
+      setSelectedPost(groupPosts[postIndex])
+    }
   }, [groupPosts])
 
   const toggleText = (postId) => {
@@ -203,7 +210,7 @@ function GroupPosts() {
       </div>
 
       {posts && posts.length > 0 ? (
-        posts.map((p) => (
+        posts.map((p,index) => (
           <div key={p.post_id} className="card">
             <div className="card-body">
               <div className="media ">
@@ -230,7 +237,7 @@ function GroupPosts() {
                         {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
                       </Link>
                     </h5>
-                    <small className="text-muted">{p.created}</small>
+                    <small className="text-muted">{getTimeElapsedString(p.created)}</small>
                   </div>
                 </div>
                 <div className="media-body">
@@ -263,18 +270,18 @@ function GroupPosts() {
                         cursor: "pointer",
                       }}
                       alt="..."
-                      onClick={() => handleImageClick(p)}
+                      onClick={() => handleImageClick(p,index)}
                     />
                   )}
                   <div className="d-flex justify-content-between align-items-center">
                     <button className="btn">
-                      <box-icon name="like" /> 23
+                      <box-icon name="like" /> {p.likes}
                     </button>
                     <button
-                      onClick={() => handleImageClick(p)}
+                      onClick={() => handleImageClick(p,index)}
                       className="btn btn"
                     >
-                      23 Comments
+                      {p.comments ? p.comments.length:0} Comments
                     </button>
                   </div>
                   <hr />
@@ -283,7 +290,7 @@ function GroupPosts() {
                       <box-icon name="like" /> Like
                     </button>
                     <button
-                      onClick={() => handleImageClick(p)}
+                      onClick={() => handleImageClick(p,index)}
                       className="btn btn-light"
                     >
                       <box-icon name="comment" /> Comment
@@ -303,6 +310,7 @@ function GroupPosts() {
           post={selectedPost}
           onClose={handlePostImagePopupClose}
           cookie={cookie}
+          fetchGroup={fetchGroup}
         />
       )}
     </div>
