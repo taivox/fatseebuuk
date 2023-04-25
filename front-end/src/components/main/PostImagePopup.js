@@ -35,7 +35,7 @@ function PostImagePopup({ post, onClose }) {
           </button>
           <button className="btn btn">{`${post.comments ? post.comments.length : '0'} Comments`}</button>
         </div>
-        <div><p className="card-text">
+        <div><p className="card-text" style={{ wordBreak: "break-word" }}>
           {showFullText[post.poster.user_id]
             ? post.content
             : post.content.slice(0, textLimit)}
