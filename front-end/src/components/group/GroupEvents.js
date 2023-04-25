@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate, useOutletContext, useParams } from "react-router-dom"
-import TextArea from "../form/TextArea"
-import PostImagePopup from "../main/PostImagePopup"
 import CreateEventPopup from "./CreateEventPopup"
 import { dateFormat } from "../../Utils"
 import ErrorPage from "../common/ErrorPage"
@@ -25,11 +23,6 @@ function GroupEvents() {
   }
 
   useEffect(() => {
-    fetchEvents()
-  }, [])
-
-
-  function fetchEvents(){
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -50,7 +43,7 @@ function GroupEvents() {
       .catch((error) => {
         setError(error)
       })
-  }
+  }, [])
 
   if (error) {
     return <><ErrorPage error={error} /></>
@@ -83,7 +76,7 @@ function GroupEvents() {
                   </Link>
                   <div className="media-body m-3">
                     <p className="mt-0" style={{ color: 'red', fontSize: '12px' }}><strong> {`${new Date(event.event_date).toLocaleString('en-UK', dateFormat).slice(0, -3)}`}</strong></p>
-                    <Link className="Link" to={`${event.event_id}`}><h4 style={{wordBreak:"break-word"}} className="mt-0">{event.title}</h4></Link>
+                    <Link className="Link" to={`${event.event_id}`}><h4 style={{ wordBreak: "break-word" }} className="mt-0">{event.title}</h4></Link>
                     <p className="mt-0">Creator: <Link className="Link" to={`/profile/${event.poster.user_id}`}><strong>{`${event.poster.first_name} ${event.poster.last_name}`}</strong></Link></p>
                   </div>
                 </div>

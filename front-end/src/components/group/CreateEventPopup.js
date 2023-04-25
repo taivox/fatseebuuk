@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react"
 import { Col, Container, Modal, Row } from "react-bootstrap"
-import { Link, useNavigate, useOutletContext } from "react-router-dom"
+import { useNavigate, useOutletContext } from "react-router-dom"
 import Input from "../form/Input"
 import TextArea from "../form/TextArea"
 import Swal from "sweetalert2"
 
-function CreateEventPopup({ onClose}) {
+function CreateEventPopup({ onClose }) {
   const [show, setShow] = useState(true)
-  const {cookie, group_id,fetchEvents} = useOutletContext()
+  const { cookie, group_id } = useOutletContext()
   const [currentUser, setCurrentUser] = useState({})
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [eventDate, setEventDate] = useState(null)
-  const [eventTime, setEventTime] = useState(null)
-  const [imagePreview, setImagePreview] = useState(null)
+  const [eventDate, setEventDate] = useState("")
+  const [eventTime, setEventTime] = useState("")
+  const [imagePreview, setImagePreview] = useState("")
   const [errors, setErrors] = useState([])
   const [error, setError] = useState(null)
   const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -96,7 +96,7 @@ function CreateEventPopup({ onClose}) {
     }
 
     const dateTimeString = eventDate + 'T' + eventTime + ':00'
-    const date = new Date(dateTimeString);
+    const date = new Date(dateTimeString)
 
     payload.event_date = date
 
@@ -105,7 +105,7 @@ function CreateEventPopup({ onClose}) {
       { field: payload.description, name: "description" },
     ]
     const now = new Date()
-    if (payload.event_date.getTime() < now.getTime() || isNaN(payload.event_date)){
+    if (payload.event_date.getTime() < now.getTime() || isNaN(payload.event_date)) {
       errors.push("event_date")
     }
 
@@ -186,7 +186,7 @@ function CreateEventPopup({ onClose}) {
             </div>
           </div>
           <div>
-          <label
+            <label
               htmlFor="post-image"
               className="btn btn-light col-md-12"
               style={{ height: "180px" }}
@@ -205,7 +205,7 @@ function CreateEventPopup({ onClose}) {
               <br />
               <p className="m-2">Add Image (Optional)</p>
             </label>
-          <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="post-image" />
+            <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="post-image" value="" />
             <input type="file" className="form-control-file d-none" id="post-image" />
           </div>
         </div>
@@ -266,15 +266,15 @@ function CreateEventPopup({ onClose}) {
               />
             </Row>
           </Container>
-        <div className="d-flex flex-grow-1 align-items-center">
-          <button
-            style={{ width: "100%", height: "80px" }}
-            className="btn btn-primary"
-            type="submit"
-          >
-            <h6>Create Event</h6>
-          </button>
-        </div>
+          <div className="d-flex flex-grow-1 align-items-center">
+            <button
+              style={{ width: "100%", height: "80px" }}
+              className="btn btn-primary"
+              type="submit"
+            >
+              <h6>Create Event</h6>
+            </button>
+          </div>
         </form>
       </Modal.Body>
     </Modal>

@@ -1,37 +1,37 @@
-import { useEffect, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
-import TextArea from "../form/TextArea";
-import PostImagePopup from "../main/PostImagePopup";
-import Swal from "sweetalert2";
+import { useEffect, useState } from "react"
+import { Link, useOutletContext } from "react-router-dom"
+import TextArea from "../form/TextArea"
+import PostImagePopup from "../main/PostImagePopup"
+import Swal from "sweetalert2"
 
 function GroupPosts() {
-  const { groupPosts, cookie, group_id, fetchGroup } = useOutletContext();
+  const { groupPosts, cookie, group_id, fetchGroup } = useOutletContext()
 
-  const [posts, setPosts] = useState([]);
-  const [showFullText, setShowFullText] = useState({});
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [postContent, setPostContent] = useState("");
-  const MAX_FILE_SIZE = 10 * 1024 * 1024;
-  const [errors, setErrors] = useState([]);
-  const [error, setError] = useState([]);
+  const [posts, setPosts] = useState([])
+  const [showFullText, setShowFullText] = useState({})
+  const [selectedPost, setSelectedPost] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [postContent, setPostContent] = useState("")
+  const MAX_FILE_SIZE = 10 * 1024 * 1024
+  const [errors, setErrors] = useState([])
+  const [error, setError] = useState([])
 
   const handleImageClick = (post) => {
-    setSelectedPost(post);
-  };
+    setSelectedPost(post)
+  }
 
   const handlePostImagePopupClose = () => {
-    setSelectedPost(null);
-  };
+    setSelectedPost(null)
+  }
 
   const hasError = (key) => {
-    return errors.indexOf(key) !== -1;
-  };
+    return errors.indexOf(key) !== -1
+  }
 
   const handleGroupImageUpload = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
     if (!file) {
-      return;
+      return
     }
 
     if (!file.type.startsWith("image/")) {
@@ -39,64 +39,64 @@ function GroupPosts() {
         icon: "error",
         title: "Oops...",
         text: "Please select an image file",
-      });
-      return;
+      })
+      return
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      localStorage.removeItem("image");
-      setImagePreview(null);
+      localStorage.removeItem("image")
+      setImagePreview(null)
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "File size exceeds the limit of 10 MB!",
-      });
-      return;
+      })
+      return
     }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
 
     reader.onload = () => {
-      setImagePreview(reader.result);
-    };
+      setImagePreview(reader.result)
+    }
 
-    localStorage.setItem("image", imagePreview);
-  };
+    localStorage.setItem("image", imagePreview)
+  }
 
   const handleGroupSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    let errors = [];
+    let errors = []
     const payload = {
       content: postContent,
-    };
+    }
 
-    let required = [{ field: payload.content, name: "content" }];
+    let required = [{ field: payload.content, name: "content" }]
 
     required.forEach((req) => {
       if (req.field === "") {
-        errors.push(req.name);
+        errors.push(req.name)
       }
-    });
+    })
 
-    setErrors(errors);
+    setErrors(errors)
 
     if (errors.length > 0) {
-      return;
+      return
     }
 
-    payload.image = imagePreview;
-    localStorage.removeItem("image");
+    payload.image = imagePreview
+    localStorage.removeItem("image")
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/createpost`, requestOptions)
       .then((response) => response.json())
@@ -106,30 +106,30 @@ function GroupPosts() {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
-        setPostContent("");
-        setImagePreview("");
-        fetchGroup();
+        setPostContent("")
+        setImagePreview("")
+        fetchGroup()
       })
       .catch((error) => {
-        setError(error);
-      });
-  };
+        setError(error)
+      })
+  }
 
-  const textLimit = 100;
+  const textLimit = 100
 
   useEffect(() => {
-    setPosts(groupPosts);
-  }, [groupPosts]);
+    setPosts(groupPosts)
+  }, [groupPosts])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,
       [postId]: !prevShowFullText[postId],
-    }));
-  };
+    }))
+  }
 
   return (
     <div className="col-md-12">
@@ -140,7 +140,7 @@ function GroupPosts() {
               <img
                 src="/profile/chad.jpg"
                 className="mr-3 m-2"
-                alt="Your Profile Image"
+                alt=""
                 style={{
                   height: "80px",
                   width: "80px",
@@ -305,7 +305,7 @@ function GroupPosts() {
         />
       )}
     </div>
-  );
+  )
 }
 
-export default GroupPosts;
+export default GroupPosts
