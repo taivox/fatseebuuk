@@ -8,20 +8,23 @@ function Feed() {
   const [posts, setPosts] = useState([])
   const [showFullText, setShowFullText] = useState({})
   const [selectedPost, setSelectedPost] = useState(null)
+  const [postIndex,setPostIndex] = useState(null)
   const { cookie } = useOutletContext()
   const navigate = useNavigate()
 
-  const handleImageClick = (post) => {
+  const handleImageClick = (post,index) => {
     setSelectedPost(post)
+    setPostIndex(index)
   }
 
   const handlePostImagePopupClose = () => {
     setSelectedPost(null)
+    setPostIndex(null)
   }
 
   const textLimit = 100
 
-  useEffect(() => {
+  const fetchFeed = () => {
     const headers = new Headers()
     headers.append('Content-Type', 'application/json')
     headers.append("Authorization", cookie)
@@ -40,7 +43,18 @@ function Feed() {
       .catch(err => {
         console.log(err)
       })
+  }
+
+  useEffect(() => {
+    fetchFeed()
   }, [cookie])
+
+  useEffect(()=>{
+    
+    if(selectedPost !== null){
+      setSelectedPost(posts[postIndex])
+    }
+  },[posts])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
@@ -51,7 +65,7 @@ function Feed() {
 
   return (
     <>
-      {posts && posts.length > 0 ? posts.map((p) => (
+      {posts && posts.length > 0 ? posts.map((p, index) => (
         <div key={p.post_id} className="card">
           <div className="card-body">
             <div className="media ">
@@ -107,14 +121,14 @@ function Feed() {
                     cursor: "pointer"
                   }}
                   alt="..."
-                  onClick={() => handleImageClick(p)}
+                  onClick={() => handleImageClick(p, index)}
                 />}
                 <div className="d-flex justify-content-between align-items-center">
                   <button className="btn">
                     <box-icon name="like" /> {p.likes}
                   </button>
                   <button
-                    onClick={() => handleImageClick(p)}
+                    onClick={() => handleImageClick(p, index)}
                     className="btn btn"
                   >
                     {p.comments ? `${p.comments.length}` : '0'} Comments
@@ -126,7 +140,7 @@ function Feed() {
                     <box-icon name="like" /> Like
                   </button>
                   <button
-                    onClick={() => handleImageClick(p)}
+                    onClick={() => handleImageClick(p, index)}
                     className="btn btn-light"
                   >
                     <box-icon name="comment" /> Comment
@@ -142,6 +156,7 @@ function Feed() {
           post={selectedPost}
           onClose={handlePostImagePopupClose}
           cookie={cookie}
+          updatePosts={fetchFeed}
         />
       )}
     </>

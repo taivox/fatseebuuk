@@ -1,13 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import TextArea from "../form/TextArea";
 import PostImagePopup from "../main/PostImagePopup";
 import Swal from "sweetalert2"
+import { getTimeElapsedString } from "../../Utils";
 
 function ProfilePosts({ props, cookie, updatePosts}) {
   const [showFullText, setShowFullText] = useState({});
   const [selectedPost, setSelectedPost] = useState(null);
   const [imagePreview, setImagePreview] = useState(null)
+  const [postIndex, setPostIndex] = useState(null)
   const [postContent, setPostContent] = useState("")
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
@@ -15,12 +17,14 @@ function ProfilePosts({ props, cookie, updatePosts}) {
   const textLimit = 100;
 
 
-  const handleImageClick = (post) => {
+  const handleImageClick = (post, index) => {
     setSelectedPost(post);
+    setPostIndex(index);
   };
 
   const handlePostImagePopupClose = () => {
     setSelectedPost(null);
+    setPostIndex(null)
   };
 
   const hasError = (key) => {
@@ -121,6 +125,12 @@ function ProfilePosts({ props, cookie, updatePosts}) {
       })
   }
 
+  useEffect(()=>{
+    
+    if(selectedPost !== null){
+      setSelectedPost(props.posts[postIndex])
+    }
+  },[props])
 
 
   const toggleText = (postId) => {
@@ -201,7 +211,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
         </div> 
       )}
 
-      {props.posts && props.posts.length > 0 ? props.posts.map((p) => (
+      {props.posts && props.posts.length > 0 ? props.posts.map((p, index) => (
         <div key={p.post_id} className="card">
           <div className="card-body">
             <div className="media ">
@@ -225,7 +235,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                       {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
                     </Link>
                   </h5>
-                  <small className="text-muted">{p.created}</small>
+                  <small className="text-muted">{getTimeElapsedString(p.created)}</small>
                 </div>
               </div>
               <div className="media-body">
@@ -256,14 +266,14 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                     cursor: "pointer",
                   }}
                   alt="..."
-                  onClick={() => handleImageClick(p)}
+                  onClick={() => handleImageClick(p, index)}
                 />}
                 <div className="d-flex justify-content-between align-items-center">
                   <button className="btn">
                     <box-icon name="like" /> {p.likes}
                   </button>
                   <button
-                    onClick={() => handleImageClick(p)}
+                    onClick={() => handleImageClick(p, index)}
                     className="btn btn"
                   >
                     {p.comments && p.comments.length > 0 ? `${p.comments.length} Comments` : "No comments"}
@@ -275,7 +285,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                     <box-icon name="like" /> Like
                   </button>
                   <button
-                    onClick={() => handleImageClick(p)}
+                    onClick={() => handleImageClick(p, index)}
                     className="btn btn-light"
                   >
                     <box-icon name="comment" /> Comment
@@ -290,6 +300,8 @@ function ProfilePosts({ props, cookie, updatePosts}) {
         <PostImagePopup
           post={selectedPost}
           onClose={handlePostImagePopupClose}
+          cookie={cookie}
+          updatePosts={updatePosts}
         />
       )}
     </div>

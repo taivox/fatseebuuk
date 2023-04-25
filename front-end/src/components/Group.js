@@ -138,7 +138,7 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} />}
+        {group && <GroupHeader group={group} cookie={cookie}/>}
         <div className="container">
           <div className="row">
             <GroupMenu groupOwner={true} cookie={cookie} />
@@ -155,7 +155,7 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} />}
+        {group && <GroupHeader group={group} cookie={cookie} />}
         <div className="container">
           <div className="row">
             <GroupMenu />
@@ -180,7 +180,7 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} />}
+        {group && <GroupHeader group={group} cookie={cookie}/>}
         <div className="container">
           <div className="row">
             <GroupMenu />

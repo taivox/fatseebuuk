@@ -310,7 +310,7 @@ function GroupPosts() {
           post={selectedPost}
           onClose={handlePostImagePopupClose}
           cookie={cookie}
-          fetchGroup={fetchGroup}
+          updatePosts={fetchGroup}
         />
       )}
     </div>

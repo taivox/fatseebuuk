@@ -253,6 +253,56 @@ func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) GroupGetInviteList(w http.ResponseWriter, r *http.Request) {
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/getinvitelist$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "GET":
+
+		users, err := app.DB.GetGroupInviteList(userID, groupID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting group invite list from database"), http.StatusNotFound)
+			return
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, users)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) GroupCreateInvite(w http.ResponseWriter, r *http.Request) {
+	// groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createinvite$`).FindStringSubmatch(r.URL.Path)[1])
+	// if err != nil {
+	// 	app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+	// 	return
+	// }
+
+	// userID := r.Context().Value("user_id").(int)
+
+	// switch r.Method {
+	// case "GET":
+
+	// 	//logic here
+
+	// 	resp := JSONResponse{
+	// 		Error:   false,
+	// 		Message: "User invited join successfully",
+	// 	}
+
+	// 	_ = app.writeJSON(w, http.StatusOK, resp)
+	// default:
+	// 	app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	// }
+}
+
 // Event page
 func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/register" {

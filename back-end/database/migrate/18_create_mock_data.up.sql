@@ -181,9 +181,7 @@ INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pendi
 (2, 2, 0, 0),
 (3, 2, 0, 1),
 (1, 3, 1, 0),
-(3, 3, 0, 0),
-(1, 4, 0, 0),
-(3, 4, 0, 1);
+(3, 3, 0, 0);
 
 
 INSERT INTO `groups_post_likes` (`post_id`, `user_id`)

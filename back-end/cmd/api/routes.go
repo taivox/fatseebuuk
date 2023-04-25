@@ -103,6 +103,16 @@ func (app *application) routes() http.Handler {
 			app.CreateEvent(w, r)
 			return
 		}
+		// Handler for creating event
+		if regexp.MustCompile(`/groups/\d+/getinvitelist$`).MatchString(r.URL.Path) {
+			app.GroupGetInviteList(w, r)
+			return
+		}
+		// Handler for creating event
+		if regexp.MustCompile(`/groups/\d+/createinvite$`).MatchString(r.URL.Path) {
+			app.GroupCreateInvite(w, r)
+			return
+		}
 
 		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
 	})

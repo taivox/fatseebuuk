@@ -5,7 +5,7 @@ import { getTimeElapsedString } from "../../Utils";
 import TextArea from "../form/TextArea";
 import Swal from "sweetalert2";
 
-function PostImagePopup({ post, onClose, cookie, fetchGroup }) {
+function PostImagePopup({ post, onClose, cookie, updatePosts }) {
   const [show, setShow] = useState(true);
   const [showFullText, setShowFullText] = useState({});
   const [commentContent, setCommentContent] = useState("");
@@ -92,7 +92,14 @@ function PostImagePopup({ post, onClose, cookie, fetchGroup }) {
 
   useEffect(() => {
     if (commentSent) {
-      fetchGroup();
+      updatePosts();
+      // if (window.location.href.includes("group")) {
+      // updatePosts();
+      // } else if (window.location.href.includes("profile")) {
+      //   updatePosts();
+      // } else {
+      //   up
+      // }
       console.log("Nyyd fetchis")
       setCommentSent(false)
       console.log("post tuli modalisse",post)
