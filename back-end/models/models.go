@@ -30,6 +30,8 @@ type Group struct {
 	Posts             []GroupPost `json:"posts,omitempty"`
 	UserIsGroupMember bool        `json:"user_is_group_member"`
 	UserIsGroupOwner  bool        `json:"user_is_group_owner"`
+	UserIsInvited     bool        `json:"user_is_invited"`
+	UserHasRequested  bool        `json:"user_has_requested"`
 }
 
 type GroupPost struct {

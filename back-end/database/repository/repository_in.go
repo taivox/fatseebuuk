@@ -154,6 +154,22 @@ func (m *SqliteDB) RemoveGroupMembership(groupID, userID int) error {
 	if err != nil {
 		return err
 	}
+
+	//remove notifications from group owner if there is any
+	var groupOwnerID int
+	query := `SELECT user_id FROM groups WHERE group_id = ?`
+	row := m.DB.QueryRowContext(ctx, query, groupID)
+	err = row.Scan(&groupOwnerID)
+	if err != nil {
+		return err
+	}
+
+	stmt = `DELETE FROM notifications WHERE to_id = ? AND from_id = ? AND type = ? AND link = ?`
+	_, err = m.DB.ExecContext(ctx, stmt, groupOwnerID, userID, "group_request", fmt.Sprintf("/groups/%d", groupID))
+	if err != nil && err != sql.ErrNoRows {
+		return err
+	}
+
 	return nil
 }
 
@@ -447,6 +463,45 @@ func (m *SqliteDB) ToggleCommentLike(like *models.Like) error {
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddGroupInvite(userID, groupID, friendID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pending) VALUES (?,?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, friendID, groupID, false, true)
+	if err != nil {
+		return err
+	}
+
+	stmt = `INSERT INTO notifications (to_id, from_id, type, boxicons_name, link) VALUES (?,?,?,?,?)`
+	_, err = m.DB.ExecContext(ctx, stmt, friendID, userID, "group_invite", "user-plus", fmt.Sprintf("/groups/%d", groupID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) ApproveGroupInvite(userID, groupID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `UPDATE groups_members SET invitation_pending = ?, request_pending = ? WHERE user_id = ? AND group_id = ?`
+	_, err := m.DB.ExecContext(ctx, stmt, false, false, userID, groupID)
+	if err != nil {
+		return err
+	}
+
+	//delete notification
+	stmt = `DELETE FROM notifications WHERE to_id = ? AND type = ? AND link = ?`
+	_, err = m.DB.ExecContext(ctx, stmt, userID, "group_invite", fmt.Sprintf("/groups/%d", groupID))
+	if err != nil {
+		return err
 	}
 
 	return nil

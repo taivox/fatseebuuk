@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { Link, useOutletContext } from "react-router-dom"
 import InviteGroupPopup from "../group/InviteGroupPopup"
 
-function GroupHeader({ group, cookie }) {
+function GroupHeader({ group, cookie, hasAccess }) {
   const [inviteModalShowing, setInviteModalShowing] = useState(false)
 
   const handleInviteGroupClick = () => {
@@ -37,12 +37,15 @@ function GroupHeader({ group, cookie }) {
               <p>{group.description}</p>
             </div>
           </div>
+          {hasAccess && (
           <div className="profile-buttons p-4">
             <button onClick={handleInviteGroupClick} className="btn btn-primary">
               <box-icon name='plus' color="white"  />
               Invite
             </button>
+          
           </div>
+          )}
         </div>
         <hr />
       </div>

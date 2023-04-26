@@ -19,6 +19,8 @@ function Group() {
   const navigate = useNavigate()
   const [hidden, setHidden] = useState("d-none")
   const [isgroupOwner, setIsGroupOwner] = useState(false)
+  const [hasInvite, setHasInvite] = useState(false)
+  const [hasRequest, setHasRequest] = useState(false)
 
   useEffect(() => {
     let cookies = document.cookie.split(";")
@@ -58,8 +60,11 @@ function Group() {
         if (data.error) {
           throw new Error(data.message)
         }
+        console.log(data)
         setHasAccess(data.user_is_group_member)
         setIsGroupOwner(data.user_is_group_owner)
+        setHasInvite(data.user_is_invited)
+        setHasRequest(data.user_has_requested)
         setHidden(hasAccess ? "d-none" : "")
         setGroup(data)
         setGroupPosts(data.posts)
@@ -89,7 +94,30 @@ function Group() {
         if (data.error) {
           console.log("error tuli", data)
         } else {
-          console.log("success tuli ja muuta nupp mittekatiivseks")
+          fetchGroup()
+        }
+      })
+  }
+
+  const acceptInvite = () => {
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
+
+    let requestOptions = {
+      method: "POST",
+      headers: headers,
+    }
+    fetch(
+      `${process.env.REACT_APP_BACKEND}/groups/${group_id}/acceptinvite`,
+      requestOptions
+    )
+      .then(response => response.status === 401 ? navigate('/login') : response.json())
+      .then((data) => {
+        if (data.error) {
+          console.log("error tuli", data)
+        } else {
+          fetchGroup()
         }
       })
   }
@@ -138,12 +166,12 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} cookie={cookie}/>}
+        {group && <GroupHeader group={group} cookie={cookie} hasAccess={true} />}
         <div className="container">
           <div className="row">
             <GroupMenu groupOwner={true} cookie={cookie} />
             <div className="col-md-6">
-                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
+              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
             </div>
             <Chats />
           </div>
@@ -161,13 +189,23 @@ function Group() {
             <GroupMenu />
             <div className="col-md-6">
               <div className="profile-buttons p-4">
-                <button
-                  onClick={joinGroup}
-                  className={`btn btn-primary ${hidden}`}
-                >
-                  <box-icon name="plus" color="white" />
-                  Join Group
-                </button>
+                {hasInvite && (
+                  <button onClick={acceptInvite} className="btn btn-primary">
+                    <box-icon name="check" color="white" />
+                    Accept Invite
+                  </button>
+                )}
+                {!hasRequest ? (
+                  <button onClick={joinGroup} className={`btn btn-primary ${hidden}`}>
+                    <box-icon name="plus" color="white" />
+                    Join Group
+                  </button>
+                ) : (
+                  <button onClick={leaveGroup} className={`btn btn-primary ${hidden}`}>
+                    <box-icon name="x" color="white" />
+                    Cancel Request
+                  </button>
+                )}
               </div>
             </div>
             <Chats />
@@ -180,7 +218,7 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} cookie={cookie}/>}
+        {group && <GroupHeader group={group} cookie={cookie} hasAccess={true} />}
         <div className="container">
           <div className="row">
             <GroupMenu />
@@ -195,8 +233,8 @@ function Group() {
                 </button>
               </div>
 
-                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
-              
+              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
+
             </div>
             <Chats />
           </div>

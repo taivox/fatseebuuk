@@ -109,9 +109,13 @@ func (app *application) routes() http.Handler {
 			app.GroupGetInviteList(w, r)
 			return
 		}
-		// Handler for creating event
+		// Handler for creating an invite
 		if regexp.MustCompile(`/groups/\d+/createinvite$`).MatchString(r.URL.Path) {
 			app.GroupCreateInvite(w, r)
+			return
+		}
+		if regexp.MustCompile(`/groups/\d+/acceptinvite$`).MatchString(r.URL.Path) {
+			app.GroupAcceptInvite(w, r)
 			return
 		}
 
