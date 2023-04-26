@@ -13,7 +13,6 @@ func (app *application) routes() http.Handler {
 	// handlers for unauthenticated routes
 	mux.HandleFunc("/register", app.Register)
 	mux.HandleFunc("/login", app.Login)
-	//	mux.HandleFunc("/validate-login", app.ValidateLogin)
 
 	// handlers for authenticated routes
 	mux.HandleFunc("/", app.Home)
@@ -25,6 +24,10 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/friends", app.FriendsList)
 	mux.HandleFunc("/userssearch", app.UsersSearch)
 	mux.HandleFunc("/createpost", app.CreatePost)
+	mux.HandleFunc("/currentuser", app.CurrentUser)
+	mux.HandleFunc("/createcomment", app.CreateComment)
+	mux.HandleFunc("/createpostlike", app.CreatePostLike)
+	mux.HandleFunc("/createcommentlike", app.CreateCommentLike)
 
 	mux.HandleFunc("/friends/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for adding friend. Example: /friends/1/add
@@ -66,29 +69,49 @@ func (app *application) routes() http.Handler {
 			app.GroupJoin(w, r)
 			return
 		}
-
+		// Handler to get group requests
 		if regexp.MustCompile(`/groups/\d+/requests$`).MatchString(r.URL.Path) {
 			app.GroupRequests(w, r)
 			return
 		}
-
+		// Handler for rejecting group request
 		if regexp.MustCompile(`/groups/\d+/rejectrequest/\d+$`).MatchString(r.URL.Path) {
 			app.RejectGroupRequest(w, r)
 			return
 		}
-
+		// Handler for approving group request
 		if regexp.MustCompile(`/groups/\d+/approverequest/\d+$`).MatchString(r.URL.Path) {
 			app.ApproveGroupRequest(w, r)
 			return
 		}
-
+		// Handler for leaving group
 		if regexp.MustCompile(`/groups/\d+/leave$`).MatchString(r.URL.Path) {
 			app.LeaveGroup(w, r)
 			return
 		}
-
+		// Handler for creating group post
 		if regexp.MustCompile(`/groups/\d+/createpost$`).MatchString(r.URL.Path) {
 			app.CreateGroupPost(w, r)
+			return
+		}
+		// Handler for creating group
+		if r.URL.Path == "/groups/creategroup" {
+			app.CreateGroup(w, r)
+			return
+		}
+		// Handler for creating event
+		if regexp.MustCompile(`/groups/\d+/createevent$`).MatchString(r.URL.Path) {
+			app.CreateEvent(w, r)
+			return
+		}
+		// Handler for creating event
+		if regexp.MustCompile(`/groups/\d+/getinvitelist$`).MatchString(r.URL.Path) {
+			app.GroupGetInviteList(w, r)
+			return
+		}
+		// Handler for creating event
+		if regexp.MustCompile(`/groups/\d+/createinvite$`).MatchString(r.URL.Path) {
+			app.GroupCreateInvite(w, r)
 			return
 		}
 

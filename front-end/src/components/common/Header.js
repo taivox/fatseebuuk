@@ -53,7 +53,6 @@ function Header({ cookie }) {
       }
     }
     setFilteredResults(tempResults);
-    console.log(filteredResults);
   }
 
 
@@ -95,9 +94,7 @@ function Header({ cookie }) {
         .then((data) => {
           if (data.error) {
           } else {
-            //TODO: data to search bar and link to profile
             setSearchData(data);
-            console.log(data);
           }
         });
     }

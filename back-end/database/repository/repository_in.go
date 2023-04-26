@@ -310,3 +310,144 @@ func (m *SqliteDB) AddNewGroupPost(post *models.Post, userID, groupID int) error
 
 	return nil
 }
+
+func (m *SqliteDB) AddNewGroup(group *models.Group) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups (title, description, user_id, image) VALUES (?,?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, group.Title, group.Description, group.UserID, group.Image)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddNewEvent(event *models.Event) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES (?,?,?,?,?,?)`
+	_, err := m.DB.ExecContext(ctx, stmt, event.Poster.UserID, event.GroupID, event.Title, event.Description, event.Image, event.EventDate)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddNewGroupComment(userID, postID int, content string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups_comments (user_id, post_id, content) VALUES (?, ?, ?)`
+	_, err := m.DB.ExecContext(ctx, stmt, userID, postID, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) AddNewComment(userID, postID int, content string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO comments (user_id, post_id, content) VALUES (?, ?, ?)`
+
+	_, err := m.DB.ExecContext(ctx, stmt, userID, postID, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) TogglePostLike(like *models.Like) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var stmt string
+	if like.BelongsToGroup {
+		stmt = `DELETE FROM groups_post_likes WHERE post_id = ? AND user_id = ?`
+
+		_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+		if err != nil && err != sql.ErrNoRows {
+			return err
+		}
+		if err == sql.ErrNoRows {
+			stmt = `INSERT INTO groups_post_likes (post_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		stmt = `DELETE FROM post_likes WHERE post_id = ? AND user_id = ?`
+
+		res, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+		if err != nil {
+			return err
+		}
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
+			stmt = `INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) ToggleCommentLike(like *models.Like) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var stmt string
+	if like.BelongsToGroup {
+		stmt = `DELETE FROM groups_comment_likes WHERE comment_id = ? AND user_id = ?`
+
+		_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+		if err != nil && err != sql.ErrNoRows {
+			return err
+		}
+		if err == sql.ErrNoRows {
+			stmt = `INSERT INTO groups_comment_likes (comment_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		stmt = `DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?`
+
+		res, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+		if err != nil {
+			return err
+		}
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
+			stmt = `INSERT INTO comment_likes (comment_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

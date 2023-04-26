@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"back-end/models"
@@ -79,6 +80,27 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 		}
 
 		_ = app.writeJSON(w, http.StatusOK, user)
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CurrentUser(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/currentuser" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "GET":
+		currentUser, err := app.DB.GetUserByID(userID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
+			return
+		}
+		_ = app.writeJSON(w, http.StatusOK, currentUser)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -229,6 +251,56 @@ func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
+}
+
+func (app *application) GroupGetInviteList(w http.ResponseWriter, r *http.Request) {
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/getinvitelist$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "GET":
+
+		users, err := app.DB.GetGroupInviteList(userID, groupID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting group invite list from database"), http.StatusNotFound)
+			return
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, users)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) GroupCreateInvite(w http.ResponseWriter, r *http.Request) {
+	// groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createinvite$`).FindStringSubmatch(r.URL.Path)[1])
+	// if err != nil {
+	// 	app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+	// 	return
+	// }
+
+	// userID := r.Context().Value("user_id").(int)
+
+	// switch r.Method {
+	// case "GET":
+
+	// 	//logic here
+
+	// 	resp := JSONResponse{
+	// 		Error:   false,
+	// 		Message: "User invited join successfully",
+	// 	}
+
+	// 	_ = app.writeJSON(w, http.StatusOK, resp)
+	// default:
+	// 	app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	// }
 }
 
 // Event page
@@ -777,6 +849,90 @@ func (app *application) CreatePost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (app *application) CreateGroup(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		var group models.Group
+		group.UserID = r.Context().Value("user_id").(int)
+		err := app.readJSON(w, r, &group)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		if group.Image != "" {
+			group.Image, err = saveImageToFile(group.Image, "group")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		} else {
+			group.Image = "default_group_image.png"
+		}
+
+		err = app.DB.AddNewGroup(&group)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Group created successfully",
+		}
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateEvent(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "POST":
+		var event models.Event
+		var err error
+		event.Poster.UserID = r.Context().Value("user_id").(int)
+
+		event.GroupID, err = strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createevent$`).FindStringSubmatch(r.URL.Path)[1])
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+			return
+		}
+
+		err = app.readJSON(w, r, &event)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		if event.Image != "" {
+			event.Image, err = saveImageToFile(event.Image, "event")
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		} else {
+			event.Image = "default_event_image.png"
+		}
+
+		err = app.DB.AddNewEvent(&event)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Event created successfully",
+		}
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
 func (app *application) CreateGroupPost(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "POST":
@@ -814,6 +970,125 @@ func (app *application) CreateGroupPost(w http.ResponseWriter, r *http.Request) 
 		resp := JSONResponse{
 			Error:   false,
 			Message: "Posted successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateComment(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createcomment" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		payload := struct {
+			PostID     int    `json:"post_id"`
+			Content    string `json:"content"`
+			CurrentURL string `json:"current_url"`
+			UserID     int    `json:"user_id"`
+		}{}
+
+		err := app.readJSON(w, r, &payload)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+		payload.UserID = r.Context().Value("user_id").(int)
+
+		if strings.Contains(payload.CurrentURL, "groups") {
+			err = app.DB.AddNewGroupComment(payload.UserID, payload.PostID, payload.Content)
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		} else {
+			err = app.DB.AddNewComment(payload.UserID, payload.PostID, payload.Content)
+			if err != nil {
+				app.errorJSON(w, err)
+				return
+			}
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Comment posted successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreatePostLike(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createpostlike" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		var like models.Like
+
+		err := app.readJSON(w, r, &like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		like.UserID = r.Context().Value("user_id").(int)
+
+		err = app.DB.TogglePostLike(&like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Toggled like successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateCommentLike(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createcommentlike" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		var like models.Like
+
+		like.UserID = r.Context().Value("user_id").(int)
+
+		err := app.readJSON(w, r, &like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		err = app.DB.ToggleCommentLike(&like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Liked successfully",
 		}
 
 		app.writeJSON(w, http.StatusAccepted, resp)

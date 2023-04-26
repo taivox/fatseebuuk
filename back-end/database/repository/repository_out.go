@@ -332,6 +332,11 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			&post.Image,
 			&post.Created,
 		)
+
+		query = `SELECT COUNT(*) FROM groups_post_likes WHERE post_id = ?`
+		row = m.DB.QueryRowContext(ctx, query, post.PostID)
+		row.Scan(&post.Likes)
+
 		if err != nil {
 			return nil, err
 		}
@@ -362,6 +367,10 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			if err != nil {
 				return nil, err
 			}
+
+			query = `SELECT COUNT(*) FROM groups_comment_likes WHERE comment_id = ?`
+			row = m.DB.QueryRowContext(ctx, query, comment.CommentID)
+			row.Scan(&comment.Likes)
 
 			p, err = m.GetUserByID(userID)
 			if err != nil {
@@ -642,7 +651,7 @@ func (m *SqliteDB) GetFriendsList(id int) ([]models.Friend, error) {
 
 	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? AND request_pending = false
 				UNION SELECT user_id, request_pending FROM friends 
-				WHERE friend_id = ?`
+				WHERE friend_id = ? AND request_pending = false`
 
 	rows, err := m.DB.QueryContext(ctx, query, id, id)
 	if err != nil {
@@ -718,5 +727,62 @@ func (m *SqliteDB) GetAllUsers() ([]models.User, error) {
 		}
 		users = append(users, user)
 	}
+	return users, nil
+}
+
+func (m *SqliteDB) GetGroupInviteList(userID, groupID int) ([]models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var friends []int
+	query := `SELECT friend_id FROM friends WHERE user_id = ? AND request_pending = false
+				UNION SELECT user_id FROM friends 
+				WHERE friend_id = ? AND request_pending = false`
+
+	rows, err := m.DB.QueryContext(ctx, query, userID, userID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var friendID int
+		err = rows.Scan(&friendID)
+		if err != nil {
+			return nil, err
+		}
+		friends = append(friends, friendID)
+	}
+
+	//leave out users that are already in the group
+	var friendsNotInGroup []int
+	for _, friend := range friends {
+		query := `SELECT user_id FROM groups_members WHERE user_id = ? AND group_id = ?`
+		row := m.DB.QueryRowContext(ctx, query, friend, groupID)
+		var id int
+		err = row.Scan(&id)
+		if err == sql.ErrNoRows {
+			friendsNotInGroup = append(friendsNotInGroup, friend)
+		}
+		if err != nil && err != sql.ErrNoRows {
+			return nil, err
+		}
+	}
+
+	var users []models.User
+	for _, friend := range friendsNotInGroup {
+		query := `SELECT user_id, first_name, last_name, COALESCE(profile_image,'default_profile_image.png') FROM users WHERE user_id = ?`
+		row := m.DB.QueryRowContext(ctx, query, friend)
+		var user models.User
+		err = row.Scan(
+			&user.UserID,
+			&user.FirstName,
+			&user.LastName,
+			&user.ProfileImage,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
 	return users, nil
 }

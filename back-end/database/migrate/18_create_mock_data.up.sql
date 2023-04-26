@@ -181,9 +181,22 @@ INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pendi
 (2, 2, 0, 0),
 (3, 2, 0, 1),
 (1, 3, 1, 0),
-(3, 3, 0, 0),
-(1, 4, 0, 0),
-(3, 4, 0, 1);
+(3, 3, 0, 0);
+
+
+INSERT INTO `groups_post_likes` (`post_id`, `user_id`)
+VALUES
+(2, 1),
+(2, 2),
+(2, 3);
+
+
+
+INSERT INTO `groups_comment_likes` (`comment_id`, `user_id`) VALUES 
+(3, 1),
+(3, 2),
+(3, 3);
+
 
 INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES 
 (1, 1, 'Charity Run', 'A charity run for local organizations', NULL, '2022-04-15 09:00:00'),

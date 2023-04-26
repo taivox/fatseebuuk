@@ -63,6 +63,7 @@ function Group() {
         setHidden(hasAccess ? "d-none" : "")
         setGroup(data)
         setGroupPosts(data.posts)
+
       })
       .catch((error) => {
         setError(error)
@@ -137,14 +138,12 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} />}
+        {group && <GroupHeader group={group} cookie={cookie}/>}
         <div className="container">
           <div className="row">
             <GroupMenu groupOwner={true} cookie={cookie} />
             <div className="col-md-6">
-              {groupPosts && groupPosts.length > 0 && (
-                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }}/>
-              )}
+                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
             </div>
             <Chats />
           </div>
@@ -156,7 +155,7 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} />}
+        {group && <GroupHeader group={group} cookie={cookie} />}
         <div className="container">
           <div className="row">
             <GroupMenu />
@@ -181,7 +180,7 @@ function Group() {
     return (
       <div>
         <Header cookie={cookie} />
-        {group && <GroupHeader group={group} />}
+        {group && <GroupHeader group={group} cookie={cookie}/>}
         <div className="container">
           <div className="row">
             <GroupMenu />
@@ -195,9 +194,9 @@ function Group() {
                   Leave Group
                 </button>
               </div>
-              {groupPosts.length > 0 && (
-                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }}/>
-              )}
+
+                <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
+              
             </div>
             <Chats />
           </div>

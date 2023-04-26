@@ -1,37 +1,41 @@
-import { useEffect, useState } from "react";
-import { Link, useOutletContext } from "react-router-dom";
-import TextArea from "../form/TextArea";
-import PostImagePopup from "../main/PostImagePopup";
-import Swal from "sweetalert2";
+import { useEffect, useState } from "react"
+import { Link, useOutletContext } from "react-router-dom"
+import TextArea from "../form/TextArea"
+import PostImagePopup from "../main/PostImagePopup"
+import Swal from "sweetalert2"
+import { getTimeElapsedString } from "../../Utils"
 
 function GroupPosts() {
-  const { groupPosts, cookie, group_id, fetchGroup } = useOutletContext();
+  const { groupPosts, cookie, group_id, fetchGroup } = useOutletContext()
 
-  const [posts, setPosts] = useState([]);
-  const [showFullText, setShowFullText] = useState({});
-  const [selectedPost, setSelectedPost] = useState(null);
-  const [imagePreview, setImagePreview] = useState(null);
-  const [postContent, setPostContent] = useState("");
-  const MAX_FILE_SIZE = 10 * 1024 * 1024;
-  const [errors, setErrors] = useState([]);
-  const [error, setError] = useState([]);
+  const [posts, setPosts] = useState([])
+  const [showFullText, setShowFullText] = useState({})
+  const [selectedPost, setSelectedPost] = useState(null)
+  const [imagePreview, setImagePreview] = useState(null)
+  const [postContent, setPostContent] = useState("")
+  const [postIndex, setPostIndex] = useState(null)
+  const MAX_FILE_SIZE = 10 * 1024 * 1024
+  const [errors, setErrors] = useState([])
+  const [error, setError] = useState([])
 
-  const handleImageClick = (post) => {
-    setSelectedPost(post);
-  };
+  const handleImageClick = (post,index) => {
+    setSelectedPost(post)
+    setPostIndex(index)
+  }
 
   const handlePostImagePopupClose = () => {
-    setSelectedPost(null);
-  };
+    setSelectedPost(null)
+    setPostIndex(null)
+  }
 
   const hasError = (key) => {
-    return errors.indexOf(key) !== -1;
-  };
+    return errors.indexOf(key) !== -1
+  }
 
   const handleGroupImageUpload = (event) => {
-    const file = event.target.files[0];
+    const file = event.target.files[0]
     if (!file) {
-      return;
+      return
     }
 
     if (!file.type.startsWith("image/")) {
@@ -39,64 +43,64 @@ function GroupPosts() {
         icon: "error",
         title: "Oops...",
         text: "Please select an image file",
-      });
-      return;
+      })
+      return
     }
 
     if (file.size > MAX_FILE_SIZE) {
-      localStorage.removeItem("image");
-      setImagePreview(null);
+      localStorage.removeItem("image")
+      setImagePreview(null)
       Swal.fire({
         icon: "error",
         title: "Oops...",
         text: "File size exceeds the limit of 10 MB!",
-      });
-      return;
+      })
+      return
     }
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
 
     reader.onload = () => {
-      setImagePreview(reader.result);
-    };
+      setImagePreview(reader.result)
+    }
 
-    localStorage.setItem("image", imagePreview);
-  };
+    localStorage.setItem("image", imagePreview)
+  }
 
   const handleGroupSubmit = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
-    let errors = [];
+    let errors = []
     const payload = {
       content: postContent,
-    };
+    }
 
-    let required = [{ field: payload.content, name: "content" }];
+    let required = [{ field: payload.content, name: "content" }]
 
     required.forEach((req) => {
       if (req.field === "") {
-        errors.push(req.name);
+        errors.push(req.name)
       }
-    });
+    })
 
-    setErrors(errors);
+    setErrors(errors)
 
     if (errors.length > 0) {
-      return;
+      return
     }
 
-    payload.image = imagePreview;
-    localStorage.removeItem("image");
+    payload.image = imagePreview
+    localStorage.removeItem("image")
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/createpost`, requestOptions)
       .then((response) => response.json())
@@ -106,31 +110,33 @@ function GroupPosts() {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
-        console.log(data)
-        setPostContent("");
-        setImagePreview("");
-        fetchGroup();
+        setPostContent("")
+        setImagePreview("")
+        fetchGroup()
       })
       .catch((error) => {
-        setError(error);
-      });
-  };
+        setError(error)
+      })
+  }
 
-  const textLimit = 100;
+  const textLimit = 100
 
   useEffect(() => {
-    setPosts(groupPosts);
-  }, [groupPosts]);
+    setPosts(groupPosts)
+    if (selectedPost !== null){
+      setSelectedPost(groupPosts[postIndex])
+    }
+  }, [groupPosts])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,
       [postId]: !prevShowFullText[postId],
-    }));
-  };
+    }))
+  }
 
   return (
     <div className="col-md-12">
@@ -141,7 +147,7 @@ function GroupPosts() {
               <img
                 src="/profile/chad.jpg"
                 className="mr-3 m-2"
-                alt="Your Profile Image"
+                alt=""
                 style={{
                   height: "80px",
                   width: "80px",
@@ -203,8 +209,8 @@ function GroupPosts() {
         </div>
       </div>
 
-      {posts !== [] ? (
-        posts.map((p) => (
+      {posts && posts.length > 0 ? (
+        posts.map((p,index) => (
           <div key={p.post_id} className="card">
             <div className="card-body">
               <div className="media ">
@@ -231,7 +237,7 @@ function GroupPosts() {
                         {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
                       </Link>
                     </h5>
-                    <small className="text-muted">{p.created}</small>
+                    <small className="text-muted">{getTimeElapsedString(p.created)}</small>
                   </div>
                 </div>
                 <div className="media-body">
@@ -264,18 +270,18 @@ function GroupPosts() {
                         cursor: "pointer",
                       }}
                       alt="..."
-                      onClick={() => handleImageClick(p)}
+                      onClick={() => handleImageClick(p,index)}
                     />
                   )}
                   <div className="d-flex justify-content-between align-items-center">
                     <button className="btn">
-                      <box-icon name="like" /> 23
+                      <box-icon name="like" /> {p.likes}
                     </button>
                     <button
-                      onClick={() => handleImageClick(p)}
+                      onClick={() => handleImageClick(p,index)}
                       className="btn btn"
                     >
-                      23 Comments
+                      {p.comments ? p.comments.length:0} Comments
                     </button>
                   </div>
                   <hr />
@@ -284,7 +290,7 @@ function GroupPosts() {
                       <box-icon name="like" /> Like
                     </button>
                     <button
-                      onClick={() => handleImageClick(p)}
+                      onClick={() => handleImageClick(p,index)}
                       className="btn btn-light"
                     >
                       <box-icon name="comment" /> Comment
@@ -303,10 +309,12 @@ function GroupPosts() {
         <PostImagePopup
           post={selectedPost}
           onClose={handlePostImagePopupClose}
+          cookie={cookie}
+          updatePosts={fetchGroup}
         />
       )}
     </div>
-  );
+  )
 }
 
-export default GroupPosts;
+export default GroupPosts
