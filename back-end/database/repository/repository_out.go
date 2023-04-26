@@ -786,3 +786,35 @@ func (m *SqliteDB) GetGroupInviteList(userID, groupID int) ([]models.User, error
 
 	return users, nil
 }
+
+func (m *SqliteDB) ValidateGroupInviteStatus(userID, groupID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id FROM groups_members WHERE user_id = ? AND group_id = ? AND invitation_pending = true`
+
+	var id int
+	row := m.DB.QueryRowContext(ctx, query, userID, groupID)
+	err := row.Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) ValidateGroupRequestStatus(userID, groupID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id FROM groups_members WHERE user_id = ? AND group_id = ? AND request_pending = true`
+
+	var id int
+	row := m.DB.QueryRowContext(ctx, query, userID, groupID)
+	err := row.Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

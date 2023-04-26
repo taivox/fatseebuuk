@@ -1,6 +1,7 @@
 package main
 
 import (
+	"database/sql"
 	"fmt"
 	"net/http"
 	"regexp"
@@ -142,18 +143,36 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 		var group *models.Group
 		if errNotMember != nil && errNotOwner != nil {
 			group, err = app.DB.GetGroupByIDForNonMember(groupID)
+			if err != nil && err != sql.ErrNoRows {
+				app.errorJSON(w, fmt.Errorf("error getting group from database"), http.StatusNotFound)
+				return
+			}
 			group.UserIsGroupMember = false
 			group.UserIsGroupOwner = false
+
+			err = app.DB.ValidateGroupInviteStatus(userID, groupID)
+			if err == nil {
+				group.UserIsInvited = true
+			} else {
+				group.UserIsInvited = false
+			}
+
+			err = app.DB.ValidateGroupRequestStatus(userID, groupID)
+			if err == nil {
+				group.UserHasRequested = true
+			} else {
+				group.UserHasRequested = false
+			}
+
 		} else if errNotMember == nil {
 			group, err = app.DB.GetGroupByID(groupID)
 			group.UserIsGroupMember = true
 		} else if errNotOwner == nil {
 			group, err = app.DB.GetGroupByID(groupID)
 			group.UserIsGroupOwner = true
-
 		}
 
-		if err != nil {
+		if err != nil && err != sql.ErrNoRows {
 			app.errorJSON(w, fmt.Errorf("error getting group from database"), http.StatusNotFound)
 			return
 		}
@@ -279,28 +298,74 @@ func (app *application) GroupGetInviteList(w http.ResponseWriter, r *http.Reques
 }
 
 func (app *application) GroupCreateInvite(w http.ResponseWriter, r *http.Request) {
-	// groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createinvite$`).FindStringSubmatch(r.URL.Path)[1])
-	// if err != nil {
-	// 	app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
-	// 	return
-	// }
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/createinvite$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
 
-	// userID := r.Context().Value("user_id").(int)
+	userID := r.Context().Value("user_id").(int)
 
-	// switch r.Method {
-	// case "GET":
+	switch r.Method {
+	case "POST":
 
-	// 	//logic here
+		err = app.DB.ValidateGroupMembership(userID, groupID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("user is not in group"), http.StatusNotFound)
+			return
+		}
 
-	// 	resp := JSONResponse{
-	// 		Error:   false,
-	// 		Message: "User invited join successfully",
-	// 	}
+		var friend models.User
+		err := app.readJSON(w, r, &friend)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
 
-	// 	_ = app.writeJSON(w, http.StatusOK, resp)
-	// default:
-	// 	app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
-	// }
+		err = app.DB.AddGroupInvite(userID, groupID, friend.UserID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error creating group invite"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "User invited join successfully",
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) GroupAcceptInvite(w http.ResponseWriter, r *http.Request) {
+	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/acceptinvite$`).FindStringSubmatch(r.URL.Path)[1])
+	if err != nil {
+		app.errorJSON(w, fmt.Errorf("invalid group id"), http.StatusNotFound)
+		return
+	}
+
+	userID := r.Context().Value("user_id").(int)
+
+	switch r.Method {
+	case "POST":
+
+		err = app.DB.ApproveGroupInvite(userID, groupID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error accepting group invite"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Joined group successfully",
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
 }
 
 // Event page
