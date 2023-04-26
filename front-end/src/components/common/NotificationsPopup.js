@@ -97,7 +97,7 @@ function NotificationsPopup() {
       
       
     }
-  }, [cookie, setCookie])
+  }, [cookie])
 
   return (
     <>

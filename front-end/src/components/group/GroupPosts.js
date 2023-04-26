@@ -14,6 +14,7 @@ function GroupPosts() {
   const [imagePreview, setImagePreview] = useState(null)
   const [postContent, setPostContent] = useState("")
   const [postIndex, setPostIndex] = useState(null)
+  const [currentUser, setCurrentUser] = useState({})
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
@@ -177,6 +178,31 @@ function GroupPosts() {
     }))
   }
 
+  useEffect(() => {
+    if(cookie){
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
+  
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      }
+  
+      fetch(`${process.env.REACT_APP_BACKEND}/currentuser`, requestOptions)
+        .then(response => response.status === 401 ? navigate('/login') : response.json())
+        .then((data) => {
+          if (data.error) {
+            throw new Error(data.message)
+          }
+          setCurrentUser(data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  },[])
+
   return (
     <div className="col-md-12">
       <div className="card mt-3">
@@ -184,7 +210,7 @@ function GroupPosts() {
           <div className="media mb-3">
             <div className="media-body d-flex">
               <img
-                src="/profile/chad.jpg"
+                src={`/profile/${currentUser.profile_image}`}
                 className="mr-3 m-2"
                 alt=""
                 style={{

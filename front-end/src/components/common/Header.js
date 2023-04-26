@@ -1,14 +1,14 @@
 import { Link, useNavigate } from "react-router-dom";
-import Profile from "./../../images/profile.webp";
 import { useEffect, useState } from "react";
 import NotificationsPopup from "./NotificationsPopup";
 import Input from "../form/Input";
 
 function Header({ cookie }) {
-  const [notificationsShowing, setNotificationsShowing] = useState(false);
   const [searchData, setSearchData] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
+  const [currentUser, setCurrentUser] = useState({})
+
   // const toggleNotifications = () => {
   //   setNotificationsShowing(!notificationsShowing)
   // }
@@ -55,6 +55,30 @@ function Header({ cookie }) {
     setFilteredResults(tempResults);
   }
 
+  useEffect(() => {
+    if(cookie){
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
+  
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      }
+  
+      fetch(`${process.env.REACT_APP_BACKEND}/currentuser`, requestOptions)
+        .then(response => response.status === 401 ? navigate('/login') : response.json())
+        .then((data) => {
+          if (data.error) {
+            throw new Error(data.message)
+          }
+          setCurrentUser(data)
+        })
+        .catch((error) => {
+          console.log(error)
+        })
+    }
+  },[cookie])
 
   const logout = () => {
     const headers = new Headers();
@@ -197,21 +221,17 @@ function Header({ cookie }) {
                   aria-expanded="false"
                 >
                   <img
-                    src={Profile}
+                    src={`/profile/${currentUser.profile_image}`}
                     style={{
-                      height: "30px",
+                      height: "35px",
+                      width: "35px",
                       borderRadius: "50%",
                       objectFit: "cover",
                     }}
-                    alt="profile pic"
+                    alt=""
                   />
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark">
-                  <li>
-                    <a className="dropdown-item" href="#!">
-                      Action
-                    </a>
-                  </li>
                   <li>
                     <Link onClick={logout} className="dropdown-item" href="#!">
                       Logout

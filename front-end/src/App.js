@@ -9,6 +9,7 @@ function App() {
   const [cookie, setCookie] = useState("")
   const [cookieSet, setCookieSet] = useState(false)
   const navigate = useNavigate()
+  const [currentUser, setCurrentUser] = useState({})
 
   useEffect(() => {
     let cookies = document.cookie.split(";")
