@@ -139,3 +139,11 @@ type SearchData struct {
 	UserID int    `json:"user_id"`
 	Users  []User `json:"users"`
 }
+
+type Like struct {
+	LikeID         int  `json:"like_id"`
+	UserID         int  `json:"user_id"`
+	PostID         int  `json:"post_id"`
+	CommentID      int  `json:"comment_id"`
+	BelongsToGroup bool `json:"belongs_to_group"`
+}

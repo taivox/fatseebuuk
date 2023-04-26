@@ -363,3 +363,91 @@ func (m *SqliteDB) AddNewComment(userID, postID int, content string) error {
 
 	return nil
 }
+
+func (m *SqliteDB) TogglePostLike(like *models.Like) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var stmt string
+	if like.BelongsToGroup {
+		stmt = `DELETE FROM groups_post_likes WHERE post_id = ? AND user_id = ?`
+
+		_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+		if err != nil && err != sql.ErrNoRows {
+			return err
+		}
+		if err == sql.ErrNoRows {
+			stmt = `INSERT INTO groups_post_likes (post_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		stmt = `DELETE FROM post_likes WHERE post_id = ? AND user_id = ?`
+
+		res, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+		if err != nil {
+			return err
+		}
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
+			stmt = `INSERT INTO post_likes (post_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) ToggleCommentLike(like *models.Like) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var stmt string
+	if like.BelongsToGroup {
+		stmt = `DELETE FROM groups_comment_likes WHERE comment_id = ? AND user_id = ?`
+
+		_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+		if err != nil && err != sql.ErrNoRows {
+			return err
+		}
+		if err == sql.ErrNoRows {
+			stmt = `INSERT INTO groups_comment_likes (comment_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	} else {
+		stmt = `DELETE FROM comment_likes WHERE comment_id = ? AND user_id = ?`
+
+		res, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+		if err != nil {
+			return err
+		}
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
+			stmt = `INSERT INTO comment_likes (comment_id, user_id) VALUES (?, ?)`
+			_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	return nil
+}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link, useNavigate, useOutletContext } from "react-router-dom"
 import PostImagePopup from "./PostImagePopup"
 import { getTimeElapsedString } from "../../Utils"
+import Swal from "sweetalert2"
 
 
 function Feed() {
@@ -10,6 +11,7 @@ function Feed() {
   const [selectedPost, setSelectedPost] = useState(null)
   const [postIndex,setPostIndex] = useState(null)
   const { cookie } = useOutletContext()
+  const [error, setError] = useState(null)
   const navigate = useNavigate()
 
   const handleImageClick = (post,index) => {
@@ -43,6 +45,41 @@ function Feed() {
       .catch(err => {
         console.log(err)
       })
+  }
+
+  const handleSubmitLike = (id) => {
+    const payload = {
+      post_id : id,
+      belongs_to_group: window.location.href.includes("groups"),
+    };
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    };
+
+    fetch(`${process.env.REACT_APP_BACKEND}/createpostlike`, requestOptions)
+      .then((response) =>
+        response.status === 401 ? navigate("/login") : response.json()
+      )
+      .then((data) => {
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message,
+          });
+          return;
+        }
+      })
+      .catch((error) => {
+        setError(error);
+      });
   }
 
   useEffect(() => {
@@ -124,7 +161,7 @@ function Feed() {
                   onClick={() => handleImageClick(p, index)}
                 />}
                 <div className="d-flex justify-content-between align-items-center">
-                  <button className="btn">
+                  <button onClick={() => handleSubmitLike(p.post_id)} className="btn">
                     <box-icon name="like" /> {p.likes}
                   </button>
                   <button
@@ -136,7 +173,7 @@ function Feed() {
                 </div>
                 <hr />
                 <div className="d-flex justify-content-between align-items-center m-2">
-                  <button className="btn btn-light">
+                  <button onClick={() => handleSubmitLike(p.post_id)} className="btn btn-light">
                     <box-icon name="like" /> Like
                   </button>
                   <button

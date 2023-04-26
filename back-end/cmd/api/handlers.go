@@ -1025,3 +1025,75 @@ func (app *application) CreateComment(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) CreatePostLike(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createpostlike" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		var like models.Like
+
+		err := app.readJSON(w, r, &like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		like.UserID = r.Context().Value("user_id").(int)
+
+		err = app.DB.TogglePostLike(&like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Toggled like successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) CreateCommentLike(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/createcommentlike" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "POST":
+		var like models.Like
+
+		like.UserID = r.Context().Value("user_id").(int)
+
+		err := app.readJSON(w, r, &like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		err = app.DB.ToggleCommentLike(&like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Liked successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
