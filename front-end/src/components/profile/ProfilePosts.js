@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import TextArea from "../form/TextArea";
 import PostImagePopup from "../main/PostImagePopup";
 import Swal from "sweetalert2"
@@ -11,6 +11,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
   const [imagePreview, setImagePreview] = useState(null)
   const [postIndex, setPostIndex] = useState(null)
   const [postContent, setPostContent] = useState("")
+  const navigate = useNavigate()
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
@@ -123,6 +124,44 @@ function ProfilePosts({ props, cookie, updatePosts}) {
       .catch(error => {
         setError(error)
       })
+  }
+
+  const handleSubmitLike = (id) => {  
+    const payload = {
+      post_id:id,
+      belongs_to_group: window.location.href.includes("groups"),
+    };
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    };
+
+    let fetchURL = `${process.env.REACT_APP_BACKEND}/createpostlike`
+
+    fetch(fetchURL, requestOptions)
+      .then((response) =>
+        response.status === 401 ? navigate("/login") : response.json()
+      )
+      .then((data) => {
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message,
+          });
+          return;
+        }
+        updatePosts()
+      })
+      .catch((error) => {
+        setError(error);
+      });
   }
 
   useEffect(()=>{
@@ -269,7 +308,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                   onClick={() => handleImageClick(p, index)}
                 />}
                 <div className="d-flex justify-content-between align-items-center">
-                  <button className="btn">
+                  <button onClick={() => handleSubmitLike(p.post_id)} className="btn">
                     <box-icon name="like" /> {p.likes}
                   </button>
                   <button
@@ -281,7 +320,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                 </div>
                 <hr />
                 <div className="d-flex justify-content-between align-items-center m-2">
-                  <button className="btn btn-light">
+                  <button onClick={() => handleSubmitLike(p.post_id)} className="btn btn-light">
                     <box-icon name="like" /> Like
                   </button>
                   <button

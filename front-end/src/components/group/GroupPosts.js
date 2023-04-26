@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Link, useOutletContext } from "react-router-dom"
+import { Link, Navigate, useNavigate, useOutletContext } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import Swal from "sweetalert2"
@@ -17,6 +17,7 @@ function GroupPosts() {
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
+  const navigate = useNavigate()
 
   const handleImageClick = (post,index) => {
     setSelectedPost(post)
@@ -123,6 +124,44 @@ function GroupPosts() {
   }
 
   const textLimit = 100
+
+  const handleSubmitLike = (id) => {  
+    const payload = {
+      post_id:id,
+      belongs_to_group: window.location.href.includes("groups"),
+    };
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    };
+
+    let fetchURL = `${process.env.REACT_APP_BACKEND}/createpostlike`
+
+    fetch(fetchURL, requestOptions)
+      .then((response) =>
+        response.status === 401 ? navigate("/login") : response.json()
+      )
+      .then((data) => {
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message,
+          });
+          return;
+        }
+        fetchGroup()
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  }
 
   useEffect(() => {
     setPosts(groupPosts)
@@ -274,19 +313,19 @@ function GroupPosts() {
                     />
                   )}
                   <div className="d-flex justify-content-between align-items-center">
-                    <button className="btn">
+                    <button onClick={() => handleSubmitLike(p.post_id)} className="btn">
                       <box-icon name="like" /> {p.likes}
                     </button>
                     <button
                       onClick={() => handleImageClick(p,index)}
                       className="btn btn"
                     >
-                      {p.comments ? p.comments.length:0} Comments
+                      {p.comments && p.comments.length > 0 ? `${p.comments.length} Comments` : "No comments"}
                     </button>
                   </div>
                   <hr />
                   <div className="d-flex justify-content-between align-items-center m-2">
-                    <button className="btn btn-light">
+                    <button onClick={() => handleSubmitLike(p.post_id)} className="btn btn-light">
                       <box-icon name="like" /> Like
                     </button>
                     <button

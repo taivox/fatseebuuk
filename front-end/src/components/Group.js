@@ -17,7 +17,6 @@ function Group() {
   const [cookie, setCookie] = useState("")
   const [cookieSet, setCookieSet] = useState(false)
   const navigate = useNavigate()
-  const [hidden, setHidden] = useState("d-none")
   const [isgroupOwner, setIsGroupOwner] = useState(false)
   const [hasInvite, setHasInvite] = useState(false)
   const [hasRequest, setHasRequest] = useState(false)
@@ -60,12 +59,10 @@ function Group() {
         if (data.error) {
           throw new Error(data.message)
         }
-        console.log(data)
         setHasAccess(data.user_is_group_member)
         setIsGroupOwner(data.user_is_group_owner)
         setHasInvite(data.user_is_invited)
         setHasRequest(data.user_has_requested)
-        setHidden(hasAccess ? "d-none" : "")
         setGroup(data)
         setGroupPosts(data.posts)
 
@@ -188,23 +185,26 @@ function Group() {
           <div className="row">
             <GroupMenu />
             <div className="col-md-6">
-              <div className="profile-buttons p-4">
-                {hasInvite && (
+            <div className="profile-buttons p-4">
+                {hasInvite ? (
                   <button onClick={acceptInvite} className="btn btn-primary">
                     <box-icon name="check" color="white" />
                     Accept Invite
                   </button>
-                )}
-                {!hasRequest ? (
-                  <button onClick={joinGroup} className={`btn btn-primary ${hidden}`}>
-                    <box-icon name="plus" color="white" />
-                    Join Group
-                  </button>
                 ) : (
-                  <button onClick={leaveGroup} className={`btn btn-primary ${hidden}`}>
-                    <box-icon name="x" color="white" />
-                    Cancel Request
-                  </button>
+                  <>
+                    {hasRequest ? (
+                      <button onClick={leaveGroup} className={`btn btn-primary`}>
+                        <box-icon name="x" color="white" />
+                        Cancel Request
+                      </button>
+                    ) : (
+                      <button onClick={joinGroup} className={`btn btn-primary`}>
+                        <box-icon name="plus" color="white" />
+                        Join Group
+                      </button>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -226,7 +226,7 @@ function Group() {
               <div className="profile-buttons p-4">
                 <button
                   onClick={leaveGroup}
-                  className={`btn btn-danger ${hidden}`}
+                  className={`btn btn-danger`}
                 >
                   <box-icon name="x" color="white" />
                   Leave Group

@@ -47,7 +47,7 @@ function Feed() {
       })
   }
 
-  const handleSubmitLike = (id) => {
+  const handleSubmitLike = (id) => {  
     const payload = {
       post_id : id,
       belongs_to_group: window.location.href.includes("groups"),
@@ -76,6 +76,7 @@ function Feed() {
           });
           return;
         }
+        fetchFeed()
       })
       .catch((error) => {
         setError(error);
@@ -168,7 +169,7 @@ function Feed() {
                     onClick={() => handleImageClick(p, index)}
                     className="btn btn"
                   >
-                    {p.comments ? `${p.comments.length}` : '0'} Comments
+                    {p.comments && p.comments.length > 0 ? `${p.comments.length} Comments` : "No comments"}
                   </button>
                 </div>
                 <hr />

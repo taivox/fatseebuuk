@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+  import { useState, useRef, useEffect } from "react";
 import { Modal, Container, Row } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { getTimeElapsedString } from "../../Utils";
@@ -33,6 +33,45 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
       textareaRef.current.focus();
     }
   };
+
+  const handleSubmitLike = (id,type) => {  
+    const payload = {
+      belongs_to_group: window.location.href.includes("groups"),
+    };
+
+    type === "post" ? payload.post_id = id : payload.comment_id = id
+
+    const headers = new Headers();
+    headers.append("Content-Type", "application/json");
+    headers.append("Authorization", cookie);
+
+    let requestOptions = {
+      body: JSON.stringify(payload),
+      method: "POST",
+      headers: headers,
+    };
+
+    let fetchURL = `${process.env.REACT_APP_BACKEND}/create${type}like`
+
+    fetch(fetchURL, requestOptions)
+      .then((response) =>
+        response.status === 401 ? navigate("/login") : response.json()
+      )
+      .then((data) => {
+        if (data.error) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: data.message,
+          });
+          return;
+        }
+        updatePosts()
+      })
+      .catch((error) => {
+        setError(error);
+      });
+  }
 
   function handleCommentSubmit(event) {
     event.preventDefault();
@@ -113,7 +152,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
           </>
         )}
         <div className="d-flex justify-content-between align-items-center">
-          <button className="btn">
+          <button onClick={() => handleSubmitLike(post.post_id,"post")} className="btn">
             <box-icon name="like" /> {post.likes}
           </button>
           <button className="btn btn">{`${
@@ -144,7 +183,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
       <Modal.Footer className="justify-content-between m-3">
         <div className="d-flex flex-grow-1 col-12">
           <div className="d-flex flex-grow-1 align-items-center">
-            <button className="btn btn-light col-12">
+            <button onClick={() => handleSubmitLike(post.post_id,"post")} className="btn btn-light col-12">
               <box-icon name="like" /> Like
             </button>
           </div>
@@ -196,6 +235,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
                   </div>
                   <div className="d-flex align-items-center">
                     <button
+                      onClick={() => handleSubmitLike(comment.comment_id,"comment")}
                       type="button"
                       className="btn btn-outline-ligth btn-sm m-1"
                     >

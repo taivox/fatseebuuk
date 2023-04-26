@@ -155,7 +155,7 @@ func (m *SqliteDB) RemoveGroupMembership(groupID, userID int) error {
 		return err
 	}
 
-	//remove notifications from group owner if there is any
+	// remove notifications from group owner if there is any
 	var groupOwnerID int
 	query := `SELECT user_id FROM groups WHERE group_id = ?`
 	row := m.DB.QueryRowContext(ctx, query, groupID)
@@ -388,11 +388,17 @@ func (m *SqliteDB) TogglePostLike(like *models.Like) error {
 	if like.BelongsToGroup {
 		stmt = `DELETE FROM groups_post_likes WHERE post_id = ? AND user_id = ?`
 
-		_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
-		if err != nil && err != sql.ErrNoRows {
+		res, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
+		if err != nil {
 			return err
 		}
-		if err == sql.ErrNoRows {
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
 			stmt = `INSERT INTO groups_post_likes (post_id, user_id) VALUES (?, ?)`
 			_, err := m.DB.ExecContext(ctx, stmt, like.PostID, like.UserID)
 			if err != nil {
@@ -432,11 +438,17 @@ func (m *SqliteDB) ToggleCommentLike(like *models.Like) error {
 	if like.BelongsToGroup {
 		stmt = `DELETE FROM groups_comment_likes WHERE comment_id = ? AND user_id = ?`
 
-		_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
-		if err != nil && err != sql.ErrNoRows {
+		res, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
+		if err != nil {
 			return err
 		}
-		if err == sql.ErrNoRows {
+
+		rowsAffected, err := res.RowsAffected()
+		if err != nil {
+			return err
+		}
+
+		if rowsAffected == 0 {
 			stmt = `INSERT INTO groups_comment_likes (comment_id, user_id) VALUES (?, ?)`
 			_, err := m.DB.ExecContext(ctx, stmt, like.CommentID, like.UserID)
 			if err != nil {
@@ -497,7 +509,7 @@ func (m *SqliteDB) ApproveGroupInvite(userID, groupID int) error {
 		return err
 	}
 
-	//delete notification
+	// delete notification
 	stmt = `DELETE FROM notifications WHERE to_id = ? AND type = ? AND link = ?`
 	_, err = m.DB.ExecContext(ctx, stmt, userID, "group_invite", fmt.Sprintf("/groups/%d", groupID))
 	if err != nil {
