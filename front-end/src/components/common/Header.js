@@ -2,16 +2,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import NotificationsPopup from "./NotificationsPopup";
 import Input from "../form/Input";
+import Swal from "sweetalert2"
 
 function Header({ cookie }) {
   const [searchData, setSearchData] = useState([]);
   const [search, setSearch] = useState("");
   const [filteredResults, setFilteredResults] = useState([]);
   const [currentUser, setCurrentUser] = useState({})
-
-  // const toggleNotifications = () => {
-  //   setNotificationsShowing(!notificationsShowing)
-  // }
+  const [isPublic, setIsPublic] = useState(false)
+ 
   const navigate = useNavigate();
 
   function calculateScore(searchTerm, result) {
@@ -56,6 +55,10 @@ function Header({ cookie }) {
   }
 
   useEffect(() => {
+    fetchCurrentUser()
+  },[cookie])
+
+  const fetchCurrentUser = () => {
     if(cookie){
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
@@ -73,12 +76,45 @@ function Header({ cookie }) {
             throw new Error(data.message)
           }
           setCurrentUser(data)
+          setIsPublic(data.is_public)
         })
         .catch((error) => {
           console.log(error)
         })
     }
-  },[cookie])
+  }
+
+  const changePrivacy = () => {
+    if (cookie) {
+      const headers = new Headers();
+      headers.append("Content-Type", "application/json");
+      headers.append("Authorization", cookie);
+  
+      let requestOptions = {
+        method: "PATCH",
+        headers: headers,
+      };
+      fetch(`${process.env.REACT_APP_BACKEND}/changeuserprivacy`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            console.log(data.error)
+            Swal.fire({
+              icon: 'error',
+              title: 'Oops!',
+              text: data.message,
+            })
+            return
+          } 
+          Swal.fire({
+            icon: 'success',
+            title: 'Success!',
+            text: `${isPublic ? 'Account change to Private':'Account change to Public'}`,
+          })
+          fetchCurrentUser()
+        });
+    }
+  }
 
   const logout = () => {
     const headers = new Headers();
@@ -231,10 +267,15 @@ function Header({ cookie }) {
                     alt=""
                   />
                 </a>
-                <ul className="dropdown-menu dropdown-menu-dark">
+                <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                   <li>
                     <Link onClick={logout} className="dropdown-item" href="#!">
                       Logout
+                    </Link>
+                  </li>
+                  <li>
+                    <Link onClick={changePrivacy} className="dropdown-item" href="#!">
+                      {isPublic ? "Make Profile Private":"Make Profile Public"}
                     </Link>
                   </li>
                 </ul>

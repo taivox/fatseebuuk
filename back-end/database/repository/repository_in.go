@@ -240,19 +240,38 @@ func (m *SqliteDB) AddFriend(userID, friendID int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	stmt := `INSERT INTO 
-				friends (user_id, friend_id, request_pending)
-			VALUES
-				(?, ?, ?)`
-
-	_, err := m.DB.ExecContext(ctx, stmt, userID, friendID, true)
+	var isPublic bool
+	stmt := `SELECT is_public FROM users WHERE user_id = ?`
+	err := m.DB.QueryRowContext(ctx, stmt, friendID).Scan(&isPublic)
 	if err != nil {
 		return err
 	}
 
-	err = m.CreateNotification(friendID, userID, "friend_request", "user-plus", "/friends")
-	if err != nil {
-		return err
+	if isPublic {
+		stmt = `INSERT INTO 
+					friends (user_id, friend_id, request_pending)
+				VALUES
+					(?, ?, ?)`
+
+		_, err = m.DB.ExecContext(ctx, stmt, userID, friendID, false)
+		if err != nil {
+			return err
+		}
+	} else {
+		stmt = `INSERT INTO 
+					friends (user_id, friend_id, request_pending)
+				VALUES
+					(?, ?, ?)`
+
+		_, err = m.DB.ExecContext(ctx, stmt, userID, friendID, true)
+		if err != nil {
+			return err
+		}
+
+		err = m.CreateNotification(friendID, userID, "friend_request", "user-plus", "/friends")
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -589,6 +608,19 @@ func (m *SqliteDB) AddEventResponse(userID, eventID, groupID int, responseType s
 
 	stmt = `DELETE FROM notifications WHERE to_id = ? AND link = ?`
 	_, err = m.DB.ExecContext(ctx, stmt, userID, fmt.Sprintf("/groups/%d/events/%d", groupID, eventID))
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) ChangeUserPrivacy(userID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `UPDATE users SET is_public = NOT is_public WHERE user_id = ?`
+	_, err := m.DB.ExecContext(ctx, stmt, userID)
 	if err != nil {
 		return err
 	}

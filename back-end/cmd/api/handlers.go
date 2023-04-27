@@ -1251,3 +1251,32 @@ func (app *application) AddCover(w http.ResponseWriter, r *http.Request) {
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
 }
+
+func (app *application) ChangeUserPrivacy(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/changeuserprivacy" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "PATCH":
+
+		userID := r.Context().Value("user_id").(int)
+
+		err := app.DB.ChangeUserPrivacy(userID)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Privacy changed successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}

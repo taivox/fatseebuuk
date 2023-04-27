@@ -29,6 +29,7 @@ func (app *application) routes() http.Handler {
 	mux.HandleFunc("/createpostlike", app.CreatePostLike)
 	mux.HandleFunc("/createcommentlike", app.CreateCommentLike)
 	mux.HandleFunc("/addcover", app.AddCover)
+	mux.HandleFunc("/changeuserprivacy", app.ChangeUserPrivacy)
 
 	mux.HandleFunc("/friends/", func(w http.ResponseWriter, r *http.Request) {
 		// Handler for adding friend. Example: /friends/1/add
