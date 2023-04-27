@@ -242,6 +242,49 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// Event response handler
+func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request) {
+
+	switch r.Method {
+	case "PATCH":
+		eventID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/events/(\d+)/respondevent`).FindStringSubmatch(r.URL.Path)[2])
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("invalid event id"), http.StatusNotFound)
+			return
+		}
+
+		userID := r.Context().Value("user_id").(int)
+
+		fmt.Println("Kesse evendile respondis? Eventid:", eventID, "userID", userID) //for testing purposes
+
+		payload := struct {
+			ResponseType string `json:"response_type"`
+		}{}
+
+		err = app.readJSON(w, r, &payload)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		err = app.DB.AddEventResponse(userID, eventID, payload.ResponseType)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error adding response to database"), http.StatusNotFound)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: fmt.Sprintf("Responded %s successfully", payload.ResponseType),
+		}
+
+		_ = app.writeJSON(w, http.StatusOK, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
 func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
 	groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/join$`).FindStringSubmatch(r.URL.Path)[1])
 	if err != nil {

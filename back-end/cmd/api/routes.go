@@ -55,6 +55,11 @@ func (app *application) routes() http.Handler {
 			app.GroupEvent(w, r)
 			return
 		}
+		// Handler for accepting/declining events. Example: /groups/1/events/1/respondevent
+		if regexp.MustCompile(`/groups/\d+/events/\d+/respondevent`).MatchString(r.URL.Path) {
+			app.GroupRespondEvent(w, r)
+			return
+		}
 		// Handler for events. Example: /groups/1/events
 		if regexp.MustCompile(`/groups/\d+/events$`).MatchString(r.URL.Path) {
 			app.GroupEvents(w, r)

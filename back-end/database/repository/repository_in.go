@@ -531,3 +531,29 @@ func (m *SqliteDB) UpdateCoverImage(userID int, imageName string) error {
 
 	return nil
 }
+
+func (m *SqliteDB) AddEventResponse(userID, eventID int, responseType string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `UPDATE events_attendance SET is_going = ? WHERE user_id = ? AND event_id = ?`
+	res, err := m.DB.ExecContext(ctx, stmt, responseType == "accept", userID, eventID)
+	if err != nil {
+		return err
+	}
+
+	rowsAffected, err := res.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		stmt = `INSERT INTO events_attendance (user_id, event_id, is_going) VALUES (?, ?, ?)`
+		_, err := m.DB.ExecContext(ctx, stmt, userID, eventID, responseType == "accept")
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}

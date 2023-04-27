@@ -20,6 +20,42 @@ function GroupEvent() {
 
     const textLimit = 100
 
+
+    function respondEvent(type) {
+
+        const headers = new Headers()
+        headers.append("Content-Type", "application/json")
+        headers.append("Authorization", cookie)
+
+        const payload = {
+            response_type: type
+        }
+
+        const requestOptions = {
+            method: "PATCH",
+            headers: headers,
+            body: JSON.stringify(payload),
+        }
+
+        fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events/${event_id}/respondevent`, requestOptions)
+            .then(response => response.status === 401 ? navigate('/login') : response.json())
+            .then((data) => {
+                if (data.error) {
+                    throw new Error(data.message)
+                }
+
+                console.log("response tuli", data)
+                //TODOOOOOOOO
+                // setEvent(data)
+                // setPoster(data.poster)
+                // console.log("seeonposter", data.poster)
+            })
+            .catch((error) => {
+                setError(error)
+            })
+    }
+
+
     useEffect(() => {
 
         const headers = new Headers()
@@ -104,13 +140,10 @@ function GroupEvent() {
                                 />
                                 <hr />
                                 <div className="d-flex justify-content-between align-items-center m-2">
-                                    <button className="btn btn-light">
+                                    <button className="btn btn-light" onClick={() => respondEvent("accept")}>
                                         <box-icon name="calendar" /> Going
                                     </button>
-                                    <button
-
-                                        className="btn btn-light"
-                                    >
+                                    <button className="btn btn-light" onClick={() => respondEvent("decline")} >
                                         <box-icon name="x" /> Not Going
                                     </button>
                                 </div>
