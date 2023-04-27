@@ -43,12 +43,7 @@ function GroupEvent() {
                 if (data.error) {
                     throw new Error(data.message)
                 }
-
-                console.log("response tuli", data)
-                //TODOOOOOOOO
-                // setEvent(data)
-                // setPoster(data.poster)
-                // console.log("seeonposter", data.poster)
+                fetchEvent()
             })
             .catch((error) => {
                 setError(error)
@@ -57,29 +52,34 @@ function GroupEvent() {
 
 
     useEffect(() => {
-
-        const headers = new Headers()
-        headers.append("Content-Type", "application/json")
-        headers.append("Authorization", cookie)
-
-        const requestOptions = {
-            method: "GET",
-            headers: headers,
-        }
-        fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events/${event_id}`, requestOptions)
-            .then(response => response.status === 401 ? navigate('/login') : response.json())
-            .then((data) => {
-                if (data.error) {
-                    throw new Error(data.message)
-                }
-                setEvent(data)
-                setPoster(data.poster)
-                console.log("seeonposter", data.poster)
-            })
-            .catch((error) => {
-                setError(error)
-            })
+        fetchEvent()
     }, [])
+
+    const fetchEvent = () => {
+        if (cookie) {
+            const headers = new Headers()
+            headers.append("Content-Type", "application/json")
+            headers.append("Authorization", cookie)
+
+            const requestOptions = {
+                method: "GET",
+                headers: headers,
+            }
+            fetch(`${process.env.REACT_APP_BACKEND}/groups/${group_id}/events/${event_id}`, requestOptions)
+                .then(response => response.status === 401 ? navigate('/login') : response.json())
+                .then((data) => {
+                    if (data.error) {
+                        throw new Error(data.message)
+                    }
+                    setEvent(data)
+                    setPoster(data.poster)
+                    console.log("seeonposter", data.poster)
+                })
+                .catch((error) => {
+                    setError(error)
+                })
+        }
+    }
 
     const toggleText = (postId) => {
         setShowFullText((prevShowFullText) => ({
@@ -140,13 +140,22 @@ function GroupEvent() {
                                 />
                                 <hr />
                                 <div className="d-flex justify-content-between align-items-center m-2">
-                                    <button className="btn btn-light" onClick={() => respondEvent("accept")}>
+                                    <button
+                                        className="btn btn-light"
+                                        style={{ color: event.current_user_going ? 'blue' : 'gray' }}
+                                        onClick={() => respondEvent('accept')}
+                                    >
                                         <box-icon name="calendar" /> Going
                                     </button>
-                                    <button className="btn btn-light" onClick={() => respondEvent("decline")} >
+                                    <button
+                                        className="btn btn-light"
+                                        style={{ color: !event.current_user_going ? 'blue' : 'gray' }}
+                                        onClick={() => respondEvent('decline')}
+                                    >
                                         <box-icon name="x" /> Not Going
                                     </button>
                                 </div>
+
                             </div>
                         </div>
                     </div>

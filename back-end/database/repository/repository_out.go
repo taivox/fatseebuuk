@@ -818,3 +818,19 @@ func (m *SqliteDB) ValidateGroupRequestStatus(userID, groupID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) ValidateEventAttendanceStatus(userID, eventID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id FROM events_attendance WHERE user_id = ? AND event_id = ? AND is_going = TRUE`
+
+	var id int
+	row := m.DB.QueryRowContext(ctx, query, userID, eventID)
+	err := row.Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
