@@ -98,7 +98,7 @@ function GroupEvent() {
                     <div className="card-body">
                         <div className="media ">
                             <h1>{event.title}</h1>
-                            <p style={{ color: 'red', fontSize: '14px' }}><strong>{`${new Date(event.event_date).toLocaleString('en-UK', dateFormat).slice(0, -3)}`}</strong></p>
+                            <p style={{ color: 'red', fontSize: '14px' }}><strong>{`${new Date(event.event_date).toLocaleString('en-UK', dateFormat)}`}</strong></p>
                             <div className="d-flex align-items-center m-2">
                                 <p>Created by: </p>
                                 <Link to={`/profile/${poster.user_id}`}>
