@@ -83,6 +83,8 @@ type Event struct {
 	EventDate        time.Time `json:"event_date"`
 	Created          time.Time `json:"created"`
 	CurrentUserGoing bool      `json:"current_user_going"`
+	GoingList        []User    `json:"going_list,omitempty"`
+	NotGoingList     []User    `json:"not_going_list,omitempty"`
 }
 
 type Events struct {

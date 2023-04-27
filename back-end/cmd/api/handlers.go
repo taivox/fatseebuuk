@@ -245,6 +245,17 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		event.GoingList, err = app.DB.GetEventGoing(eventID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting event going list"), http.StatusNotFound)
+			return
+		}
+		event.NotGoingList, err = app.DB.GetEventNotGoing(eventID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting event not going list"), http.StatusNotFound)
+			return
+		}
+
 		_ = app.writeJSON(w, http.StatusOK, event)
 
 	default:
@@ -264,8 +275,6 @@ func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request
 		}
 
 		userID := r.Context().Value("user_id").(int)
-
-		fmt.Println("Kesse evendile respondis? Eventid:", eventID, "userID", userID) //for testing purposes
 
 		payload := struct {
 			ResponseType string `json:"response_type"`

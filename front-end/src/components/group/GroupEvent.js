@@ -73,7 +73,6 @@ function GroupEvent() {
                     }
                     setEvent(data)
                     setPoster(data.poster)
-                    console.log("seeonposter", data.poster)
                 })
                 .catch((error) => {
                     setError(error)
@@ -154,6 +153,45 @@ function GroupEvent() {
                                     >
                                         <box-icon name="x" /> Not Going
                                     </button>
+                                </div>
+
+                                <div>
+                                    <div>
+                                        {event.going_list && event.going_list.length > 0 ? <h4>Going:</h4> : null}
+                                        {event.going_list && event.going_list.length > 0 ? event.going_list.map(user => (
+                                            <Link key={user.user_id} to={`/profile/${user.user_id}`}>
+                                                <img
+                                                    className="friend-pic"
+                                                    src={`/profile/${user.profile_image}`}
+                                                    style={{
+                                                        height: "35px",
+                                                        width: "35px",
+                                                        borderRadius: "100%",
+                                                        objectFit: "cover",
+                                                        zIndex: "99999",
+                                                    }}
+                                                    alt="profile" />
+                                            </Link>
+                                        )) : null}
+                                    </div>
+                                    <div>
+                                        {event.not_going_list && event.not_going_list.length > 0 ? <h4>Not going:</h4> : null}
+                                        {event.not_going_list && event.not_going_list.length > 0 ? event.not_going_list.map(user => (
+                                            <Link key={user.user_id} to={`/profile/${user.user_id}`}>
+                                                <img
+                                                    className="friend-pic"
+                                                    src={`/profile/${user.profile_image}`}
+                                                    style={{
+                                                        height: "35px",
+                                                        width: "35px",
+                                                        borderRadius: "100%",
+                                                        objectFit: "cover",
+                                                        zIndex: "99999",
+                                                    }}
+                                                    alt="profile" />
+                                            </Link>
+                                        )) : null}
+                                    </div>
                                 </div>
 
                             </div>
