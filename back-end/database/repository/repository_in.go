@@ -564,7 +564,7 @@ func (m *SqliteDB) UpdateCoverImage(userID int, imageName string) error {
 	return nil
 }
 
-func (m *SqliteDB) AddEventResponse(userID, eventID int, responseType string) error {
+func (m *SqliteDB) AddEventResponse(userID, eventID, groupID int, responseType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
@@ -585,6 +585,12 @@ func (m *SqliteDB) AddEventResponse(userID, eventID int, responseType string) er
 		if err != nil {
 			return err
 		}
+	}
+
+	stmt = `DELETE FROM notifications WHERE to_id = ? AND link = ?`
+	_, err = m.DB.ExecContext(ctx, stmt, userID, fmt.Sprintf("/groups/%d/events/%d", groupID, eventID))
+	if err != nil {
+		return err
 	}
 
 	return nil

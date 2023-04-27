@@ -274,6 +274,12 @@ func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request
 			return
 		}
 
+		groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/events/(\d+)/respondevent`).FindStringSubmatch(r.URL.Path)[1])
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("invalid event id"), http.StatusNotFound)
+			return
+		}
+
 		userID := r.Context().Value("user_id").(int)
 
 		payload := struct {
@@ -286,7 +292,7 @@ func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		err = app.DB.AddEventResponse(userID, eventID, payload.ResponseType)
+		err = app.DB.AddEventResponse(userID, eventID, groupID, payload.ResponseType)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error adding response to database"), http.StatusNotFound)
 			return
