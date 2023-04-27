@@ -235,6 +235,16 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		err = app.DB.ValidateEventAttendanceStatus(r.Context().Value("user_id").(int), eventID)
+		if err == nil {
+			event.CurrentUserGoing = true
+		} else if err == sql.ErrNoRows {
+			event.CurrentUserGoing = false
+		} else {
+			app.errorJSON(w, fmt.Errorf("error getting event attendance status"), http.StatusNotFound)
+			return
+		}
+
 		_ = app.writeJSON(w, http.StatusOK, event)
 
 	default:
