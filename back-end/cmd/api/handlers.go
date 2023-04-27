@@ -476,30 +476,6 @@ func (app *application) Login(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Validate if user is logged in
-// func (app *application) ValidateLogin(w http.ResponseWriter, r *http.Request) {
-// 	if r.URL.Path != "/validate-login" {
-// 		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
-// 		return
-// 	}
-
-// 	switch r.Method {
-// 	case "GET":
-// 		_, err := app.GetTokenFromHeaderAndVerify(w, r)
-// 		if err != nil {
-// 			app.errorJSON(w, err)
-// 			return
-// 		}
-// 		resp := JSONResponse{
-// 			Error: false,
-// 		}
-// 		app.writeJSON(w, http.StatusAccepted, resp)
-
-// 	default:
-// 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
-// 	}
-// }
-
 func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/logout" {
 		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
@@ -1146,6 +1122,51 @@ func (app *application) CreateCommentLike(w http.ResponseWriter, r *http.Request
 		}
 
 		err = app.DB.ToggleCommentLike(&like)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		resp := JSONResponse{
+			Error:   false,
+			Message: "Liked successfully",
+		}
+
+		app.writeJSON(w, http.StatusAccepted, resp)
+
+	default:
+		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
+	}
+}
+
+func (app *application) AddCover(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/addcover" {
+		app.errorJSON(w, fmt.Errorf("not found"), http.StatusNotFound)
+		return
+	}
+
+	switch r.Method {
+	case "PATCH":
+
+		userID := r.Context().Value("user_id").(int)
+
+		payload := struct {
+			Image string `json:"image"`
+		}{}
+
+		err := app.readJSON(w, r, &payload)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		imageName, err := saveImageToFile(payload.Image, "cover")
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
+
+		err = app.DB.UpdateCoverImage(userID, imageName)
 		if err != nil {
 			app.errorJSON(w, err)
 			return

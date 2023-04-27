@@ -518,3 +518,16 @@ func (m *SqliteDB) ApproveGroupInvite(userID, groupID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) UpdateCoverImage(userID int, imageName string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `UPDATE users SET cover_image = ? WHERE user_id = ?`
+	_, err := m.DB.ExecContext(ctx, stmt, imageName, userID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
