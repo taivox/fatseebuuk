@@ -89,7 +89,6 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
         if (data.error) {
           console.log("error tuli", data)
         } else {
-          console.log("success tuli ja muuta nupp")
           onButtonClick()
         }
       })
@@ -111,7 +110,6 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
         if (data.error) {
           console.log("error tuli", data)
         } else {
-          console.log("success tuli ja muuta nupp")
           navigate(`/profile/${props.user_id}`)
           onButtonClick()
         }

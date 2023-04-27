@@ -5,11 +5,12 @@ import PostImagePopup from "../main/PostImagePopup";
 import Swal from "sweetalert2"
 import { getTimeElapsedString } from "../../Utils";
 
-function ProfilePosts({ props, cookie, updatePosts}) {
+function ProfilePosts({ props, cookie, updatePosts }) {
   const [showFullText, setShowFullText] = useState({});
   const [selectedPost, setSelectedPost] = useState(null);
   const [imagePreview, setImagePreview] = useState(null)
   const [postIndex, setPostIndex] = useState(null)
+  const [isChecked, setIsChecked] = useState(false);
   const [postContent, setPostContent] = useState("")
   const navigate = useNavigate()
   const MAX_FILE_SIZE = 10 * 1024 * 1024
@@ -17,6 +18,9 @@ function ProfilePosts({ props, cookie, updatePosts}) {
   const [error, setError] = useState([])
   const textLimit = 100;
 
+  function handleCheckboxChange(event) {
+    setIsChecked(event.target.checked);
+  }
 
   const handleImageClick = (post, index) => {
     setSelectedPost(post);
@@ -93,8 +97,8 @@ function ProfilePosts({ props, cookie, updatePosts}) {
 
     payload.image = imagePreview
     localStorage.removeItem("image")
-    
-    
+
+
     const headers = new Headers()
     headers.append("Content-Type", "application/json")
     headers.append("Authorization", cookie)
@@ -126,9 +130,9 @@ function ProfilePosts({ props, cookie, updatePosts}) {
       })
   }
 
-  const handleSubmitLike = (id) => {  
+  const handleSubmitLike = (id) => {
     const payload = {
-      post_id:id,
+      post_id: id,
       belongs_to_group: window.location.href.includes("groups"),
     };
 
@@ -164,12 +168,12 @@ function ProfilePosts({ props, cookie, updatePosts}) {
       });
   }
 
-  useEffect(()=>{
-    
-    if(selectedPost !== null){
+  useEffect(() => {
+
+    if (selectedPost !== null) {
       setSelectedPost(props.posts[postIndex])
     }
-  },[props])
+  }, [props])
 
 
   const toggleText = (postId) => {
@@ -206,7 +210,7 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                     value={postContent}
                     onChange={(event) => setPostContent(event.target.value)}
                     errorDiv={hasError("post_content") ? "text-danger" : "d-none"}
-                    errorMsg={"Please enter something"} 
+                    errorMsg={"Please enter something"}
                   />
                   <div className="form-group m-2">
                     <label htmlFor="post-image" className="btn btn-ligth mb-0">
@@ -222,32 +226,63 @@ function ProfilePosts({ props, cookie, updatePosts}) {
                       type="file"
                       className="form-control-file d-none"
                       id="post-image"
-                      />
+                    />
                     <button type="submit" className="btn btn-ligth ml-2">
                       <box-icon
                         name="envelope"
                         type="solid"
                         color="blue"
-                        ></box-icon>
+                      ></box-icon>
                       Post
                     </button>
-                        {imagePreview && <img
-                          style={{
-                            borderRadius: "10px",
-                            objectFit: "cover",
-                            height: "130px",
-                            width: "130px",
-                          }}
-                          className="col-md-12"
-                          src={imagePreview && imagePreview}
-                          alt=""
-                        />}
+                    {imagePreview && <img
+                      style={{
+                        borderRadius: "10px",
+                        objectFit: "cover",
+                        height: "130px",
+                        width: "130px",
+                      }}
+                      className="col-md-12"
+                      src={imagePreview && imagePreview}
+                      alt=""
+                    />}
+
+                    <div class="form-check form-switch">
+                      <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked={isChecked} onChange={handleCheckboxChange} />
+                      <label class="form-check-label" htmlFor="flexSwitchCheckDefault">Make Almost Private</label>
+                    </div>
+
+                    {isChecked && <>My niggas!
+                      {props.friends_list.map((friend) => (
+                        <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
+                        <label class="form-check-label" for="flexCheckDefault">
+                        <div>
+                  <img
+                    className="friend-pic"
+                    src={`/profile/${friend.friend.profile_image}`}
+                    style={{
+                      height: "30px",
+                      width: "30px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                      zIndex: "99999",
+                    }}
+                    alt="profile" />                
+                        {`${friend.friend.first_name} ${friend.friend.last_name}`}
+                        </div>
+                        </label>
+                      </div>
+                      ))}
+                    </>}
+
+
                   </div>
                 </form>
               </div>
             </div>
           </div>
-        </div> 
+        </div>
       )}
 
       {props.posts && props.posts.length > 0 ? props.posts.map((p, index) => (
