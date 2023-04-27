@@ -235,6 +235,27 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
+		err = app.DB.ValidateEventAttendanceStatus(r.Context().Value("user_id").(int), eventID)
+		if err == nil {
+			event.CurrentUserGoing = true
+		} else if err == sql.ErrNoRows {
+			event.CurrentUserGoing = false
+		} else {
+			app.errorJSON(w, fmt.Errorf("error getting event attendance status"), http.StatusNotFound)
+			return
+		}
+
+		event.GoingList, err = app.DB.GetEventGoing(eventID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting event going list"), http.StatusNotFound)
+			return
+		}
+		event.NotGoingList, err = app.DB.GetEventNotGoing(eventID)
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("error getting event not going list"), http.StatusNotFound)
+			return
+		}
+
 		_ = app.writeJSON(w, http.StatusOK, event)
 
 	default:
@@ -253,9 +274,13 @@ func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		userID := r.Context().Value("user_id").(int)
+		groupID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/events/(\d+)/respondevent`).FindStringSubmatch(r.URL.Path)[1])
+		if err != nil {
+			app.errorJSON(w, fmt.Errorf("invalid event id"), http.StatusNotFound)
+			return
+		}
 
-		fmt.Println("Kesse evendile respondis? Eventid:", eventID, "userID", userID) //for testing purposes
+		userID := r.Context().Value("user_id").(int)
 
 		payload := struct {
 			ResponseType string `json:"response_type"`
@@ -267,7 +292,7 @@ func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		err = app.DB.AddEventResponse(userID, eventID, payload.ResponseType)
+		err = app.DB.AddEventResponse(userID, eventID, groupID, payload.ResponseType)
 		if err != nil {
 			app.errorJSON(w, fmt.Errorf("error adding response to database"), http.StatusNotFound)
 			return

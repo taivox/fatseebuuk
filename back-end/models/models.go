@@ -74,14 +74,17 @@ type Comment struct {
 }
 
 type Event struct {
-	EventID     int       `json:"event_id"`
-	Poster      User      `json:"poster"`
-	GroupID     int       `json:"group_id"`
-	Title       string    `json:"title"`
-	Description string    `json:"description"`
-	Image       string    `json:"image"`
-	EventDate   time.Time `json:"event_date"`
-	Created     time.Time `json:"created"`
+	EventID          int       `json:"event_id"`
+	Poster           User      `json:"poster"`
+	GroupID          int       `json:"group_id"`
+	Title            string    `json:"title"`
+	Description      string    `json:"description"`
+	Image            string    `json:"image"`
+	EventDate        time.Time `json:"event_date"`
+	Created          time.Time `json:"created"`
+	CurrentUserGoing bool      `json:"current_user_going"`
+	GoingList        []User    `json:"going_list,omitempty"`
+	NotGoingList     []User    `json:"not_going_list,omitempty"`
 }
 
 type Events struct {

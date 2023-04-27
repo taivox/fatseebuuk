@@ -818,3 +818,101 @@ func (m *SqliteDB) ValidateGroupRequestStatus(userID, groupID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) ValidateEventAttendanceStatus(userID, eventID int) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	query := `SELECT user_id FROM events_attendance WHERE user_id = ? AND event_id = ? AND is_going = TRUE`
+
+	var id int
+	row := m.DB.QueryRowContext(ctx, query, userID, eventID)
+	err := row.Scan(&id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *SqliteDB) GetEventGoing(id int) ([]models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var userIDs []int
+	query := `SELECT user_id FROM events_attendance WHERE event_id = ? AND is_going = TRUE`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var userID int
+		err = rows.Scan(&userID)
+		if err != nil {
+			return nil, err
+		}
+		userIDs = append(userIDs, userID)
+	}
+
+	var users []models.User
+	for _, userID := range userIDs {
+		query := `SELECT user_id, first_name, last_name, COALESCE(profile_image,'default_profile_image.png') FROM users WHERE user_id = ?`
+		row := m.DB.QueryRowContext(ctx, query, userID)
+		var user models.User
+		err = row.Scan(
+			&user.UserID,
+			&user.FirstName,
+			&user.LastName,
+			&user.ProfileImage,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}
+
+func (m *SqliteDB) GetEventNotGoing(id int) ([]models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var userIDs []int
+	query := `SELECT user_id FROM events_attendance WHERE event_id = ? AND is_going = FALSE`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		var userID int
+		err = rows.Scan(&userID)
+		if err != nil {
+			return nil, err
+		}
+		userIDs = append(userIDs, userID)
+	}
+
+	var users []models.User
+	for _, userID := range userIDs {
+		query := `SELECT user_id, first_name, last_name, COALESCE(profile_image,'default_profile_image.png') FROM users WHERE user_id = ?`
+		row := m.DB.QueryRowContext(ctx, query, userID)
+		var user models.User
+		err = row.Scan(
+			&user.UserID,
+			&user.FirstName,
+			&user.LastName,
+			&user.ProfileImage,
+		)
+		if err != nil {
+			return nil, err
+		}
+		users = append(users, user)
+	}
+
+	return users, nil
+}

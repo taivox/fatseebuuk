@@ -345,9 +345,41 @@ func (m *SqliteDB) AddNewEvent(event *models.Event) error {
 	defer cancel()
 
 	stmt := `INSERT INTO events (user_id, group_id, title, description, image, event_date) VALUES (?,?,?,?,?,?)`
-	_, err := m.DB.ExecContext(ctx, stmt, event.Poster.UserID, event.GroupID, event.Title, event.Description, event.Image, event.EventDate)
+	result, err := m.DB.ExecContext(ctx, stmt, event.Poster.UserID, event.GroupID, event.Title, event.Description, event.Image, event.EventDate)
 	if err != nil {
 		return err
+	}
+
+	eventID, err := result.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	//get all group members
+	var groupMembers []int
+	query := `SELECT user_id FROM groups_members WHERE group_id = ?`
+	rows, err := m.DB.QueryContext(ctx, query, event.GroupID)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var userID int
+		err = rows.Scan(&userID)
+		if err != nil {
+			return err
+		}
+
+		groupMembers = append(groupMembers, userID)
+	}
+
+	//create notifications for all group members
+	for _, userID := range groupMembers {
+		err = m.CreateNotification(userID, event.Poster.UserID, "event_created", "calendar", fmt.Sprintf("/groups/%d/events/%d", event.GroupID, eventID))
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
@@ -532,7 +564,7 @@ func (m *SqliteDB) UpdateCoverImage(userID int, imageName string) error {
 	return nil
 }
 
-func (m *SqliteDB) AddEventResponse(userID, eventID int, responseType string) error {
+func (m *SqliteDB) AddEventResponse(userID, eventID, groupID int, responseType string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
@@ -553,6 +585,12 @@ func (m *SqliteDB) AddEventResponse(userID, eventID int, responseType string) er
 		if err != nil {
 			return err
 		}
+	}
+
+	stmt = `DELETE FROM notifications WHERE to_id = ? AND link = ?`
+	_, err = m.DB.ExecContext(ctx, stmt, userID, fmt.Sprintf("/groups/%d/events/%d", groupID, eventID))
+	if err != nil {
+		return err
 	}
 
 	return nil
