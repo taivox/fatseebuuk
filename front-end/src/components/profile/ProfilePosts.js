@@ -256,7 +256,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                       {props.friends_list.map((friend) => (
                         <div class="form-check">
                         <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                        <label class="form-check-label" for="flexCheckDefault">
+                        <label class="form-check-label" htmlFor="flexCheckDefault">
                         <div>
                   <img
                     className="friend-pic"
