@@ -324,10 +324,20 @@ func (m *SqliteDB) AddNewPost(post *models.Post, userID int) error {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	stmt := `INSERT INTO posts (user_id, content, image) VALUES (?,?,?)`
-	_, err := m.DB.ExecContext(ctx, stmt, userID, post.Content, post.Image)
-	if err != nil {
-		return err
+	if post.IsAlmostPrivate {
+		selectedUsers := joinIntArray(post.SelectedUsers)
+
+		stmt := `INSERT INTO posts (user_id, content, image, is_almost_private, selected_users) VALUES (?,?,?,true,?)`
+		_, err := m.DB.ExecContext(ctx, stmt, userID, post.Content, post.Image, selectedUsers)
+		if err != nil {
+			return err
+		}
+	} else {
+		stmt := `INSERT INTO posts (user_id, content, image, is_almost_private) VALUES (?,?,?,false)`
+		_, err := m.DB.ExecContext(ctx, stmt, userID, post.Content, post.Image)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil

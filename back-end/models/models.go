@@ -55,13 +55,15 @@ type GroupComment struct {
 }
 
 type Post struct {
-	PostID   int       `json:"post_id"`
-	Poster   User      `json:"poster"`
-	Content  string    `json:"content"`
-	Image    string    `json:"image"`
-	Created  time.Time `json:"created"`
-	Comments []Comment `json:"comments"`
-	Likes    int       `json:"likes"`
+	PostID          int       `json:"post_id"`
+	Poster          User      `json:"poster"`
+	Content         string    `json:"content"`
+	Image           string    `json:"image"`
+	Created         time.Time `json:"created"`
+	Comments        []Comment `json:"comments"`
+	Likes           int       `json:"likes"`
+	IsAlmostPrivate bool      `json:"is_almost_private"`
+	SelectedUsers   []int     `json:"selected_users"`
 }
 
 type Comment struct {

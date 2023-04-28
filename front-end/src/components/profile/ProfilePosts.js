@@ -10,16 +10,18 @@ function ProfilePosts({ props, cookie, updatePosts }) {
   const [selectedPost, setSelectedPost] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [postIndex, setPostIndex] = useState(null)
-  const [isChecked, setIsChecked] = useState(false)
+  const [almostPrivateChecked, setAlmostPrivateChecked] = useState(false)
   const [postContent, setPostContent] = useState("")
   const navigate = useNavigate()
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
   const textLimit = 100
+  const [selectedUsers, setSelectedUsers] = useState([])
+
 
   function handleCheckboxChange(event) {
-    setIsChecked(event.target.checked)
+    setAlmostPrivateChecked(event.target.checked)
   }
 
   const handleImageClick = (post, index) => {
@@ -74,10 +76,26 @@ function ProfilePosts({ props, cookie, updatePosts }) {
   const handleSubmit = (event) => {
     event.preventDefault()
 
+    console.log("checked", selectedUsers)
+
+
+
     let errors = []
-    const payload = {
-      content: postContent,
+
+    let payload = {}
+    if (almostPrivateChecked) {
+      payload = {
+        content: postContent,
+        is_almost_private: almostPrivateChecked,
+        selected_users: [props.user_id, ...selectedUsers],
+      }
+    } else {
+      payload = {
+        content: postContent,
+        is_almost_private: almostPrivateChecked
+      }
     }
+
 
     let required = [
       { field: payload.content, name: "content" },
@@ -248,14 +266,29 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                     />}
 
                     <div className="form-check form-switch">
-                      <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked={isChecked} onChange={handleCheckboxChange} />
+                      <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked={almostPrivateChecked} onChange={handleCheckboxChange} />
                       <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Make Almost Private</label>
                     </div>
 
-                    {isChecked && <>My niggas!
+                    {almostPrivateChecked && <>My niggas!
                       {props.friends_list.map((friend) => (
                         <div className="form-check" key={friend.friend.user_id}>
-                          <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            id={`checkbox-${friend.friend.user_id}`}
+                            checked={selectedUsers.includes(friend.friend.user_id)}
+                            onChange={(event) => {
+                              const id = friend.friend.user_id
+                              const isChecked = event.target.checked
+                              if (isChecked) {
+                                setSelectedUsers([...selectedUsers, id])
+                              } else {
+                                setSelectedUsers(selectedUsers.filter((item) => item !== id))
+                              }
+                            }}
+                          />
+
                           <label className="form-check-label" htmlFor="flexCheckDefault">
                             <div>
                               <img

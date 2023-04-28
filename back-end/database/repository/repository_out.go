@@ -93,12 +93,13 @@ func (m *SqliteDB) GetAllGroups() ([]*models.Group, error) {
 	return groups, nil
 }
 
-func (m *SqliteDB) GetUserPosts(id int) ([]*models.Post, error) {
+func (m *SqliteDB) GetUserPosts(profileID, currentUserID int) ([]*models.Post, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	query := `SELECT post_id, user_id, content, COALESCE(image, ''),created FROM posts WHERE user_id = ? ORDER BY CREATED DESC`
-	rows, err := m.DB.QueryContext(ctx, query, id)
+	query := `SELECT post_id, user_id, content, COALESCE(image, ''),created, is_almost_private, selected_users FROM posts WHERE user_id = ? ORDER BY CREATED DESC`
+
+	rows, err := m.DB.QueryContext(ctx, query, profileID)
 	if err != nil {
 		return nil, err
 	}
@@ -107,13 +108,23 @@ func (m *SqliteDB) GetUserPosts(id int) ([]*models.Post, error) {
 	for rows.Next() {
 		var post models.Post
 		var userID int
+		var selectedUsers string
 		rows.Scan(
 			&post.PostID,
 			&userID,
 			&post.Content,
 			&post.Image,
 			&post.Created,
+			&post.IsAlmostPrivate,
+			&selectedUsers,
 		)
+
+		if post.IsAlmostPrivate {
+			allowedUsersIDs := stringToIntArray(selectedUsers)
+			if !isUserAllowed(allowedUsersIDs, currentUserID) {
+				continue
+			}
+		}
 
 		// Get user for this post
 		var user models.User
@@ -203,7 +214,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 
 	// Get all friends' posts
 	for _, friendID := range friends {
-		query = `SELECT post_id, user_id, content, COALESCE(image, ''),created FROM posts WHERE user_id = ?`
+		query = `SELECT post_id, user_id, content, COALESCE(image, ''),created, is_almost_private, selected_users FROM posts WHERE user_id = ?`
 		rows, err := m.DB.QueryContext(ctx, query, friendID)
 		if err != nil {
 			return nil, err
@@ -211,13 +222,23 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 		for rows.Next() {
 			var post models.Post
 			var userID int
+			var selectedUsers string
 			rows.Scan(
 				&post.PostID,
 				&userID,
 				&post.Content,
 				&post.Image,
 				&post.Created,
+				&post.IsAlmostPrivate,
+				&selectedUsers,
 			)
+
+			if post.IsAlmostPrivate {
+				allowedUsersIDs := stringToIntArray(selectedUsers)
+				if !isUserAllowed(allowedUsersIDs, id) {
+					continue
+				}
+			}
 
 			// Get user for this post
 			var user models.User

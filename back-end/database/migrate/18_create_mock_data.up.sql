@@ -225,5 +225,4 @@ INSERT INTO messages (from_id, to_id, content, is_seen, created) VALUES
 (2, 3, "Long time no see!", 0, "2023-04-05 12:04:00"),
 (3, 2, "Yeah, it's been a while!", 1, "2023-04-05 12:05:00");
 
-INSERT INTO notifications (to_id, from_id, type, boxicons_name, link) VALUES
-(4, 2, "friend_request", "user-plus", "/friends")
+

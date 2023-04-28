@@ -269,13 +269,13 @@ function Header({ cookie }) {
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                   <li>
-                    <Link onClick={logout} className="dropdown-item" href="#!">
-                      Logout
+                    <Link onClick={changePrivacy} className="dropdown-item" href="#!">
+                      {isPublic ? "Make Profile Private":"Make Profile Public"}
                     </Link>
                   </li>
                   <li>
-                    <Link onClick={changePrivacy} className="dropdown-item" href="#!">
-                      {isPublic ? "Make Profile Private":"Make Profile Public"}
+                    <Link onClick={logout} className="dropdown-item" href="#!">
+                      Logout
                     </Link>
                   </li>
                 </ul>

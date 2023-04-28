@@ -73,7 +73,7 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 				app.errorJSON(w, fmt.Errorf("error getting friends list from database"), http.StatusNotFound)
 				return
 			}
-			user.Posts, err = app.DB.GetUserPosts(userID)
+			user.Posts, err = app.DB.GetUserPosts(userID, currentUserID)
 			if err != nil {
 				app.errorJSON(w, fmt.Errorf("error getting user posts from database"), http.StatusNotFound)
 				return
