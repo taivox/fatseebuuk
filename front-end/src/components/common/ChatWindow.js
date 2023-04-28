@@ -2,10 +2,50 @@ import { Modal, Button, Row, Col, ListGroup, Form } from "react-bootstrap"
 import { useState, useEffect, useRef } from "react"
 
 function ChatWindow({ show, setShow, selectedChat }) {
+
   const [selectedFriend, setSelectedFriend] = useState(null)
   const [messageText, setMessageText] = useState("")
   const [scrollToBottom, setScrollToBottom] = useState(false)
   const chatContainerRef = useRef(null)
+
+  const [socket, setSocket] = useState(null)
+
+  useEffect(() => {
+    console.log("kanamuna")
+    if (show) {
+
+      const newSocket = new WebSocket('ws://localhost:8080/ws')
+
+      newSocket.addEventListener('open', () => {
+        console.log('WebSocket connection established')
+      })
+
+      newSocket.addEventListener('message', (event) => {
+        console.log('WebSocket message received:', event.data)
+      })
+
+      setSocket(newSocket)
+
+      return () => {
+        newSocket.close()
+        console.log("closing")
+      }
+    }
+  }, [show])
+
+  const handleClick = (toID, fromID, content) => {
+    if (socket) {
+      console.log("saatsin midagi socketisse")
+
+      const payload = {
+        content: content,
+        to_id: toID,
+        from_id: fromID,
+      }
+
+      socket.send(JSON.stringify(payload))
+    }
+  }
 
 
 
@@ -258,6 +298,7 @@ function ChatWindow({ show, setShow, selectedChat }) {
 
   return (
     <>
+
       <Modal show={show} onHide={setShow}>
         <Modal.Header closeButton>
           <Modal.Title>Chat Window</Modal.Title>
@@ -306,7 +347,7 @@ function ChatWindow({ show, setShow, selectedChat }) {
                       onChange={(e) => setMessageText(e.target.value)}
                     />
                   </Form.Group>
-                  <Button type="submit">Send</Button>
+                  <Button type="submit" onClick={() => handleClick(1, 2, "mingi content")}>Send</Button>
                 </Form>
               )}
             </Col>

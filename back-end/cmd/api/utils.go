@@ -19,6 +19,8 @@ import (
 
 	"back-end/database/repository"
 	"back-end/models"
+
+	"github.com/gorilla/websocket"
 )
 
 type JSONResponse struct {
@@ -206,4 +208,13 @@ func sendEmail(rd *models.RegisterData) {
 		[]string{rd.Email},
 		[]byte(msg),
 	)
+}
+
+func SetUserOffline(conn *websocket.Conn) {
+	for key, val := range models.OnlineUsers {
+		if val == conn {
+			delete(models.OnlineUsers, key)
+			break
+		}
+	}
 }

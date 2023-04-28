@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"github.com/gorilla/websocket"
+)
 
 type User struct {
 	UserID       int       `json:"user_id"`
@@ -154,3 +158,7 @@ type Like struct {
 	CommentID      int  `json:"comment_id"`
 	BelongsToGroup bool `json:"belongs_to_group"`
 }
+
+var Channels = make(map[*websocket.Conn]chan interface{})
+
+var OnlineUsers = make(map[string]*websocket.Conn)

@@ -10,6 +10,9 @@ func (app *application) routes() http.Handler {
 	// create a router mux
 	mux := http.NewServeMux()
 
+	// handler for websocket (live chat)
+	mux.HandleFunc("/ws", app.WebsocketHandler)
+
 	// handlers for unauthenticated routes
 	mux.HandleFunc("/register", app.Register)
 	mux.HandleFunc("/login", app.Login)

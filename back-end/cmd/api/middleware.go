@@ -25,7 +25,7 @@ func (app *application) enableCORS(h http.Handler) http.Handler {
 // auth required handler
 func (app *application) Authorize(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.URL.Path == "/login" || r.URL.Path == "/register" {
+		if r.URL.Path == "/login" || r.URL.Path == "/register" || strings.Contains(r.URL.Path, "ws") {
 			next.ServeHTTP(w, r)
 			return
 		}
