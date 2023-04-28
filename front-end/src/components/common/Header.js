@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import NotificationsPopup from "./NotificationsPopup";
 import Input from "../form/Input";
 import Swal from "sweetalert2"
+import ChatWindow from "./ChatWindow";
 
 function Header({ cookie }) {
   const [searchData, setSearchData] = useState([]);
@@ -10,6 +11,7 @@ function Header({ cookie }) {
   const [filteredResults, setFilteredResults] = useState([]);
   const [currentUser, setCurrentUser] = useState({})
   const [isPublic, setIsPublic] = useState(false)
+  const [chatModalShowing, setChatModalShowing] = useState(true)
  
   const navigate = useNavigate();
 
