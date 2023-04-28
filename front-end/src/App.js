@@ -70,7 +70,6 @@ function App() {
             <Chats friends={friends} />
           </div>
         </div>
-        <ChatWindow />
         <Footer />
       </div>
     )

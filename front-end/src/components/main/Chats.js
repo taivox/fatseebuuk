@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState } from "react"
 import ChatWindow from "../common/ChatWindow"
 
 function Chats({ friends }) {
+  const [showChat, setShowChat] = useState(false)
+  const [selectedChat, setSelectedChat] = useState(null)
+
+  const toggleChat = () => {
+    setShowChat(!showChat)
+  }
 
 
   return (
@@ -17,7 +23,7 @@ function Chats({ friends }) {
               friends.map((friend) => (
                 <li key={friend.friend.user_id} className="list-group-item">
                   <span
-                    // onClick={() => handleClick(friend)}
+                    onClick={() => { setShowChat(true); setSelectedChat(friend) }}
                     style={{ cursor: "pointer" }}
                   >
                     {`${friend.friend.first_name} ${friend.friend.last_name}`}
@@ -29,9 +35,10 @@ function Chats({ friends }) {
             )}
           </ul>
         </div>
+        <ChatWindow show={showChat} setShow={toggleChat} selectedChat={selectedChat} />
       </div>
     </div>
-  );
+  )
 }
 
-export default Chats;
+export default Chats

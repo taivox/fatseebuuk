@@ -1,13 +1,13 @@
 import { Modal, Button, Row, Col, ListGroup, Form } from "react-bootstrap"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 
-function ChatWindow() {
-  const [show, setShow] = useState(true)
+function ChatWindow({ show, setShow, selectedChat }) {
   const [selectedFriend, setSelectedFriend] = useState(null)
   const [messageText, setMessageText] = useState("")
+  const [scrollToBottom, setScrollToBottom] = useState(false)
+  const chatContainerRef = useRef(null)
 
-  const handleClose = () => setShow(false)
-  const handleShow = () => setShow(true)
+
 
   const friends = [
     {
@@ -188,7 +188,7 @@ function ChatWindow() {
       messages: [
         { id: 1, sender: "Ivo Malve", text: "Hey, how are you?" },
         { id: 2, sender: "You", text: "I'm good, thanks for asking. How about you?" },
-        { id: 3, sender: "Ivo Malve", text: "I'm doing great, thanks. What have you been up to?" },
+        { id: 3, sender: "Ivo Malve", text: "I'm doing great, thanks. What have you be<ChatWindow show={false} setShow={toggleChat} />en up to?" },
       ],
     },
     {
@@ -220,85 +220,94 @@ function ChatWindow() {
     },
   ]
 
-  const handleFriendClick = (friend) => {
-    setSelectedFriend(friend)
-  }
 
-  const handleMessageSend = (e) => {
-    e.preventDefault()
-
-    const newMessage = {
-      id: selectedFriend.messages.length + 1,
-      sender: "You",
-      text: messageText,
+  useEffect(() => {
+    if (show) {
+      if (scrollToBottom && chatContainerRef.current) {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+        setScrollToBottom(false)
+      }
     }
+  }, [scrollToBottom, selectedFriend])
 
-    setSelectedFriend({
-      ...selectedFriend,
-      messages: [...selectedFriend.messages, newMessage],
-    })
-
-    setMessageText("")
-
+  const handleFriendClick = (id) => {
+    console.log("friend handlefriendclickis", id)
+    setSelectedFriend(friends[id])
+    setScrollToBottom(true)
   }
+
+  useEffect(() => {
+
+    if (selectedChat) {
+      console.log("useeffectis", selectedFriend)
+      console.log("seeonid", selectedChat.friend.user_id)
+      // setSelectedFriend()
+      handleFriendClick(selectedChat.friend.user_id)
+    }
+  }, [selectedChat])
+
+  const handleSendMessage = (e) => {
+    e.preventDefault()
+    // add message to selectedFriend's messages array
+    setMessageText("")
+    setScrollToBottom(true)
+  }
+
+
+
 
   return (
     <>
-      <Button variant="primary" onClick={handleShow}>
-        Messenger
-      </Button>
-
-      <Modal show={show}
-        onHide={handleClose}
-        dialogClassName="modal-90w"
-        aria-labelledby="contained-modal-title-vcenter"
-        style={{ maxHeight: "95vh", minWidth: "60vw" }}
-        centered>
+      <Modal show={show} onHide={setShow}>
         <Modal.Header closeButton>
-          <Modal.Title id="contained-modal-title-vcenter">
-            Chat with friends
-          </Modal.Title>
+          <Modal.Title>Chat Window</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Row>
             <Col md={4}>
               <div style={{ overflowY: "auto", maxHeight: "40vw" }}>
-
-                <ListGroup >
+                <ListGroup>
                   {friends.map((friend) => (
-                    <ListGroup.Item key={friend.id} action onClick={() => handleFriendClick(friend)} active={selectedFriend?.id === friend.id} style={{ overflowY: "auto" }}>
+                    <ListGroup.Item
+                      key={friend.id}
+                      action
+                      active={friend === selectedFriend}
+                      onClick={() => handleFriendClick(friend.id)}
+                    >
                       {friend.name}
                     </ListGroup.Item>
                   ))}
                 </ListGroup>
               </div>
             </Col>
-            <Col md={8} >
-              {selectedFriend ? (
-                <>
-                  <h5>{selectedFriend.name}</h5>
-                  <hr />
-                  <div style={{ overflowY: 'auto', maxHeight: '40vh' }}>
+            <Col>
+              <div
+                ref={chatContainerRef}
+                style={{ maxHeight: "500px", overflowY: "auto" }}
+              >
+                {selectedFriend ? (
+                  <ListGroup>
                     {selectedFriend.messages.map((message) => (
-                      <div key={message.id} style={{ wordBreak: "break-all" }}>
-                        <p className={`mb-1 ${message.sender === "You" ? "text-right" : ""}`}>{message.text}</p>
-                        <small className={`d-block ${message.sender === "You" ? "text-right" : ""}`}>{message.sender}</small>
-                        <hr className="my-1" />
-                      </div>
+                      <ListGroup.Item key={message.id}>
+                        <strong>{message.sender}</strong>: {message.text}
+                      </ListGroup.Item>
                     ))}
-                  </div>
-                  <Form onSubmit={handleMessageSend}>
-                    <Form.Group controlId="messageText" className="d-flex">
-                      <Form.Control type="text" placeholder="Type a message..." value={messageText} onChange={(e) => setMessageText(e.target.value)} />
-                      <Button variant="primary" type="submit" className="ml-auto" style={{ marginRight: 0 }}>
-                        Send
-                      </Button>
-                    </Form.Group>
-                  </Form>
-
-                </>
-              ) : (
-                <p>Please select a friend to start chatting.</p>
+                  </ListGroup>
+                ) : (
+                  <p>Please select a friend to start chatting</p>
+                )}
+              </div>
+              {selectedFriend && (
+                <Form onSubmit={handleSendMessage}>
+                  <Form.Group>
+                    <Form.Control
+                      type="text"
+                      value={messageText}
+                      onChange={(e) => setMessageText(e.target.value)}
+                    />
+                  </Form.Group>
+                  <Button type="submit">Send</Button>
+                </Form>
               )}
             </Col>
           </Row>
@@ -309,5 +318,6 @@ function ChatWindow() {
     </>
   )
 }
+
 
 export default ChatWindow

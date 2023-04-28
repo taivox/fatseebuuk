@@ -1,76 +1,81 @@
-import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import NotificationsPopup from "./NotificationsPopup";
-import Input from "../form/Input";
+import { Link, useNavigate } from "react-router-dom"
+import { useEffect, useState } from "react"
+import NotificationsPopup from "./NotificationsPopup"
+import Input from "../form/Input"
 import Swal from "sweetalert2"
-import ChatWindow from "./ChatWindow";
+import ChatWindow from "./ChatWindow"
 
 function Header({ cookie }) {
-  const [searchData, setSearchData] = useState([]);
-  const [search, setSearch] = useState("");
-  const [filteredResults, setFilteredResults] = useState([]);
+  const [searchData, setSearchData] = useState([])
+  const [search, setSearch] = useState("")
+  const [filteredResults, setFilteredResults] = useState([])
   const [currentUser, setCurrentUser] = useState({})
   const [isPublic, setIsPublic] = useState(false)
   const [chatModalShowing, setChatModalShowing] = useState(true)
- 
-  const navigate = useNavigate();
+  const [showChat, setShowChat] = useState(false)
+
+  const toggleChat = () => {
+    setShowChat(!showChat)
+  }
+
+  const navigate = useNavigate()
 
   function calculateScore(searchTerm, result) {
     // Convert both strings to lowercase for case-insensitive comparison
-    searchTerm = searchTerm.toLowerCase();
-    result = result.toLowerCase();
-  
+    searchTerm = searchTerm.toLowerCase()
+    result = result.toLowerCase()
+
     // Calculate the Levenshtein distance between the search term and the result
-    let matrix = [];
+    let matrix = []
     for (let i = 0; i <= result.length; i++) {
-      matrix[i] = [i];
+      matrix[i] = [i]
       for (let j = 0; j <= searchTerm.length; j++) {
-        matrix[0][j] = j;
+        matrix[0][j] = j
         if (i > 0 && j > 0) {
-          let cost = result.charAt(i - 1) === searchTerm.charAt(j - 1) ? 0 : 1;
+          let cost = result.charAt(i - 1) === searchTerm.charAt(j - 1) ? 0 : 1
           matrix[i][j] = Math.min(
-            matrix[i-1][j] + 1,
-            matrix[i][j-1] + 1,
-            matrix[i-1][j-1] + cost
-          );
+            matrix[i - 1][j] + 1,
+            matrix[i][j - 1] + 1,
+            matrix[i - 1][j - 1] + cost
+          )
         }
       }
     }
     // Return the Levenshtein distance as the score
-    return matrix[result.length][searchTerm.length];
+    return matrix[result.length][searchTerm.length]
   }
-  
+
   function filterResults(searchTerm) {
     setSearch(searchTerm)
     let tempResults = []
     for (let i = 0; i < searchData.users.length; i++) {
-      
+
       let userName = searchData.users[i].first_name + " " + searchData.users[i].last_name
 
-      let score = calculateScore(searchTerm, userName);
+      let score = calculateScore(searchTerm, userName)
       if (score < 8) {
         // Only include results with a low score (less than 3 in this example)
-        tempResults.push(searchData.users[i]);
+        tempResults.push(searchData.users[i])
       }
     }
-    setFilteredResults(tempResults);
+    setFilteredResults(tempResults)
   }
 
   useEffect(() => {
     fetchCurrentUser()
-  },[cookie])
+  }, [cookie])
 
   const fetchCurrentUser = () => {
-    if(cookie){
+    if (cookie) {
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
       headers.append("Authorization", cookie)
-  
+
       const requestOptions = {
         method: "GET",
         headers: headers,
       }
-  
+
       fetch(`${process.env.REACT_APP_BACKEND}/currentuser`, requestOptions)
         .then(response => response.status === 401 ? navigate('/login') : response.json())
         .then((data) => {
@@ -88,14 +93,14 @@ function Header({ cookie }) {
 
   const changePrivacy = () => {
     if (cookie) {
-      const headers = new Headers();
-      headers.append("Content-Type", "application/json");
-      headers.append("Authorization", cookie);
-  
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
+
       let requestOptions = {
         method: "PATCH",
         headers: headers,
-      };
+      }
       fetch(`${process.env.REACT_APP_BACKEND}/changeuserprivacy`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
@@ -107,48 +112,48 @@ function Header({ cookie }) {
               text: data.message,
             })
             return
-          } 
+          }
           Swal.fire({
             icon: 'success',
             title: 'Success!',
-            text: `${isPublic ? 'Account change to Private':'Account change to Public'}`,
+            text: `${isPublic ? 'Account change to Private' : 'Account change to Public'}`,
           })
           fetchCurrentUser()
-        });
+        })
     }
   }
 
   const logout = () => {
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       method: "POST",
       headers: headers,
-    };
+    }
     fetch(`${process.env.REACT_APP_BACKEND}/logout`, requestOptions)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
         } else {
           document.cookie =
-            "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/";
-          navigate("/login");
+            "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/"
+          navigate("/login")
         }
-      });
-  };
+      })
+  }
 
   useEffect(() => {
     if (cookie) {
-      const headers = new Headers();
-      headers.append("Content-Type", "application/json");
-      headers.append("Authorization", cookie);
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
 
       let requestOptions = {
         method: "GET",
         headers: headers,
-      };
+      }
       fetch(`${process.env.REACT_APP_BACKEND}/userssearch`, requestOptions)
         .then((response) =>
           response.status === 401 ? navigate("/login") : response.json()
@@ -156,11 +161,11 @@ function Header({ cookie }) {
         .then((data) => {
           if (data.error) {
           } else {
-            setSearchData(data);
+            setSearchData(data)
           }
-        });
+        })
     }
-  }, [cookie]);
+  }, [cookie])
 
   return (
     <nav className="navbar navbar-expand-lg navbar-dark sticky-top">
@@ -169,38 +174,38 @@ function Header({ cookie }) {
           Fatseebuuk
         </Link>
         <div className="container d-flex justify-content-center">
-  <div className="col-md-6">
-        <Input
-          className="form-control"
-          type="text"
-          name={"search"}
-          placeholder={"Search"}
-          onChange={(event) => filterResults(event.target.value)}
-          autoComplete={"off"}
-        />
-        {search !== "" && (
-          <div className="card position-absolute " style={{ width: "18rem" }}>
-            <div className="card-header"><strong>Results</strong></div>
-            <ul className="list-group list-group-flush">
-              {filteredResults.length > 0 ? filteredResults.map(result => (
-                <li className="list-group-item">
-                  <a href={`/profile/${result.user_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                    <img src={`/profile/${result.profile_image}`} alt={`${result.first_name} ${result.last_name}`} style={{ width: '45px', height: '45px', borderRadius: "100%", objectFit: "cover", paddingRight: "5px" }} />
-                    {`${result.first_name} ${result.last_name}`}
-                  </a>
-                </li>
-              )) : <div style={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                height: '45px',
-                marginLeft: '10px',
-              }}>No results</div>
-            }
-            </ul>
+          <div className="col-md-6">
+            <Input
+              className="form-control"
+              type="text"
+              name={"search"}
+              placeholder={"Search"}
+              onChange={(event) => filterResults(event.target.value)}
+              autoComplete={"off"}
+            />
+            {search !== "" && (
+              <div className="card position-absolute " style={{ width: "18rem" }}>
+                <div className="card-header"><strong>Results</strong></div>
+                <ul className="list-group list-group-flush">
+                  {filteredResults.length > 0 ? filteredResults.map(result => (
+                    <li className="list-group-item">
+                      <a href={`/profile/${result.user_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+                        <img src={`/profile/${result.profile_image}`} alt={`${result.first_name} ${result.last_name}`} style={{ width: '45px', height: '45px', borderRadius: "100%", objectFit: "cover", paddingRight: "5px" }} />
+                        {`${result.first_name} ${result.last_name}`}
+                      </a>
+                    </li>
+                  )) : <div style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    height: '45px',
+                    marginLeft: '10px',
+                  }}>No results</div>
+                  }
+                </ul>
+              </div>
+            )}
           </div>
-        )}
-        </div>
         </div>
         <button
           className="navbar-toggler"
@@ -245,7 +250,7 @@ function Header({ cookie }) {
                 </Link>
               </li>
               <li className="nav-item">
-                <a className="nav-link" href="#!!">
+                <a className="nav-link" href="#!!" onClick={() => setShowChat(true)}>
                   <box-icon color="white" type="regular" name="chat"></box-icon>
                 </a>
               </li>
@@ -272,7 +277,7 @@ function Header({ cookie }) {
                 <ul className="dropdown-menu dropdown-menu-end dropdown-menu-dark">
                   <li>
                     <Link onClick={changePrivacy} className="dropdown-item" href="#!">
-                      {isPublic ? "Make Profile Private":"Make Profile Public"}
+                      {isPublic ? "Make Profile Private" : "Make Profile Public"}
                     </Link>
                   </li>
                   <li>
@@ -285,9 +290,10 @@ function Header({ cookie }) {
             </ul>
           </div>
         </div>
+        <ChatWindow show={showChat} setShow={toggleChat} />
       </div>
     </nav>
-  );
+  )
 }
 
-export default Header;
+export default Header
