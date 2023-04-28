@@ -34,43 +34,43 @@ function App() {
   }, [navigate, cookie, cookieSet])
 
 
-  useEffect(()=>{
-    if(cookieSet){
+  useEffect(() => {
+    if (cookieSet) {
       const headers = new Headers()
-        headers.append("Content-Type", "application/json")
-        headers.append("Authorization", cookie)
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
 
-        const requestOptions = {
-          method: "GET",
-          headers: headers,
-        }
-        fetch(
-          `${process.env.REACT_APP_BACKEND}/friends`, requestOptions)
-          .then((response) => response.json())
-          .then((data) => {
-            if (data.error) {
-              console.log(data.error)
-            }
-            setFriends(data)
-
-          }).catch((error) => { console.log(error) })
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
       }
-    },[cookie])
+      fetch(
+        `${process.env.REACT_APP_BACKEND}/friends`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            console.log(data.error)
+          }
+          setFriends(data)
 
-  if (cookieSet){
+        }).catch((error) => { console.log(error) })
+    }
+  }, [cookie])
+
+  if (cookieSet) {
     return (
       <div>
         <Header cookie={cookie} friends={friends} />
         <div className="container">
           <div className="row">
-            <Menu cookie={cookie}/>
+            <Menu cookie={cookie} />
             <div className="col-md-6">
               <Outlet context={{ cookie, setCookie }} />
-            </div>  
-            <Chats friends={friends}/>
+            </div>
+            <Chats friends={friends} />
           </div>
         </div>
-        <ChatWindow/>
+        <ChatWindow />
         <Footer />
       </div>
     )
