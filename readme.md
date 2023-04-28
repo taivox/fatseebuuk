@@ -12,7 +12,6 @@ front end:
 cd front-end
 npm install
 npm install sweetalert2
-npm install websocket
 npm start
 
 back end:

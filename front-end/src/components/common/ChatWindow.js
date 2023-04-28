@@ -228,16 +228,16 @@ function ChatWindow({ show, setShow, selectedChat }) {
       messages: [
         { id: 1, sender: "Ivo Malve", text: "Hey, how are you?" },
         { id: 2, sender: "You", text: "I'm good, thanks for asking. How about you?" },
-        { id: 3, sender: "Ivo Malve", text: "I'm doing great, thanks. What have you be<ChatWindow show={false} setShow={toggleChat} />en up to?" },
+        { id: 3, sender: "Ivo Malve", text: "I'm doing great, thanks. What have you been up to?" },
       ],
     },
     {
       id: 18,
-      name: "Talis Pähn",
+      name: "Sten Tamkivi",
       messages: [
-        { id: 1, sender: "Talis Pähn", text: "Hey, how are you?" },
+        { id: 1, sender: "Sten Tamkivi", text: "Hey, how are you?" },
         { id: 2, sender: "You", text: "I'm good, thanks for asking. How about you?" },
-        { id: 3, sender: "Talis Pähn", text: "I'm doing great, thanks. What have you been up to?" },
+        { id: 3, sender: "Sten Tamkivi", text: "I'm doing great, thanks. What have you been up to?" },
       ],
     },
     {
