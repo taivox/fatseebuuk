@@ -1,36 +1,36 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import TextArea from "../form/TextArea";
-import PostImagePopup from "../main/PostImagePopup";
+import { useState, useEffect } from "react"
+import { Link, useNavigate } from "react-router-dom"
+import TextArea from "../form/TextArea"
+import PostImagePopup from "../main/PostImagePopup"
 import Swal from "sweetalert2"
-import { getTimeElapsedString } from "../../Utils";
+import { getTimeElapsedString } from "../../Utils"
 
 function ProfilePosts({ props, cookie, updatePosts }) {
-  const [showFullText, setShowFullText] = useState({});
-  const [selectedPost, setSelectedPost] = useState(null);
+  const [showFullText, setShowFullText] = useState({})
+  const [selectedPost, setSelectedPost] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [postIndex, setPostIndex] = useState(null)
-  const [isChecked, setIsChecked] = useState(false);
+  const [isChecked, setIsChecked] = useState(false)
   const [postContent, setPostContent] = useState("")
   const navigate = useNavigate()
   const MAX_FILE_SIZE = 10 * 1024 * 1024
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
-  const textLimit = 100;
+  const textLimit = 100
 
   function handleCheckboxChange(event) {
-    setIsChecked(event.target.checked);
+    setIsChecked(event.target.checked)
   }
 
   const handleImageClick = (post, index) => {
-    setSelectedPost(post);
-    setPostIndex(index);
-  };
+    setSelectedPost(post)
+    setPostIndex(index)
+  }
 
   const handlePostImagePopupClose = () => {
-    setSelectedPost(null);
+    setSelectedPost(null)
     setPostIndex(null)
-  };
+  }
 
   const hasError = (key) => {
     return errors.indexOf(key) !== -1
@@ -134,17 +134,17 @@ function ProfilePosts({ props, cookie, updatePosts }) {
     const payload = {
       post_id: id,
       belongs_to_group: window.location.href.includes("groups"),
-    };
+    }
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     let fetchURL = `${process.env.REACT_APP_BACKEND}/createpostlike`
 
@@ -158,14 +158,14 @@ function ProfilePosts({ props, cookie, updatePosts }) {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
         updatePosts()
       })
       .catch((error) => {
-        setError(error);
-      });
+        setError(error)
+      })
   }
 
   useEffect(() => {
@@ -180,8 +180,8 @@ function ProfilePosts({ props, cookie, updatePosts }) {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,
       [postId]: !prevShowFullText[postId],
-    }));
-  };
+    }))
+  }
 
   return (
     <div className="col-md-6">
@@ -247,32 +247,32 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                       alt=""
                     />}
 
-                    <div class="form-check form-switch">
-                      <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked={isChecked} onChange={handleCheckboxChange} />
-                      <label class="form-check-label" htmlFor="flexSwitchCheckDefault">Make Almost Private</label>
+                    <div className="form-check form-switch">
+                      <input className="form-check-input" type="checkbox" id="flexSwitchCheckDefault" checked={isChecked} onChange={handleCheckboxChange} />
+                      <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Make Almost Private</label>
                     </div>
 
                     {isChecked && <>My niggas!
                       {props.friends_list.map((friend) => (
-                        <div class="form-check">
-                        <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"/>
-                        <label class="form-check-label" htmlFor="flexCheckDefault">
-                        <div>
-                  <img
-                    className="friend-pic"
-                    src={`/profile/${friend.friend.profile_image}`}
-                    style={{
-                      height: "30px",
-                      width: "30px",
-                      borderRadius: "100%",
-                      objectFit: "cover",
-                      zIndex: "99999",
-                    }}
-                    alt="profile" />                
-                        {`${friend.friend.first_name} ${friend.friend.last_name}`}
+                        <div className="form-check" key={friend.friend.user_id}>
+                          <input className="form-check-input" type="checkbox" value="" id="flexCheckDefault" />
+                          <label className="form-check-label" htmlFor="flexCheckDefault">
+                            <div>
+                              <img
+                                className="friend-pic"
+                                src={`/profile/${friend.friend.profile_image}`}
+                                style={{
+                                  height: "30px",
+                                  width: "30px",
+                                  borderRadius: "100%",
+                                  objectFit: "cover",
+                                  zIndex: "99999",
+                                }}
+                                alt="profile" />
+                              {`${friend.friend.first_name} ${friend.friend.last_name}`}
+                            </div>
+                          </label>
                         </div>
-                        </label>
-                      </div>
                       ))}
                     </>}
 
@@ -379,7 +379,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
         />
       )}
     </div>
-  );
+  )
 }
 
-export default ProfilePosts;
+export default ProfilePosts
