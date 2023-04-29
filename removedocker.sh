@@ -1,12 +1,15 @@
-echo Stopped back-end container
-docker stop back-end
-echo Removed back-end container
-docker rm back-end
+#!/bin/bash
 
-echo Stopped front-end container
-docker stop front-end
-echo Removed front-end container
-docker rm front-end
+BACKEND_CONTAINER_NAME="back-end"
+FRONTEND_CONTAINER_NAME="front-end"
+
+echo Stopped ${BACKEND_CONTAINER_NAME} container
+echo Removed ${BACKEND_CONTAINER_NAME} container
+docker container rm --force ${BACKEND_CONTAINER_NAME}
+
+echo Stopped ${FRONTEND_CONTAINER_NAME} container
+echo Removed ${FRONTEND_CONTAINER_NAME} container
+docker container rm --force ${FRONTEND_CONTAINER_NAME}
 
 docker container prune --filter until=30m
-docker system prune -a
+docker system prune --all --force
