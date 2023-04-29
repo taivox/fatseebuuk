@@ -5,7 +5,7 @@ import Input from "../form/Input"
 import Swal from "sweetalert2"
 import ChatWindow from "./ChatWindow"
 
-function Header({ cookie }) {
+function Header({ cookie, friends }) {
   const [searchData, setSearchData] = useState([])
   const [search, setSearch] = useState("")
   const [filteredResults, setFilteredResults] = useState([])
@@ -290,7 +290,7 @@ function Header({ cookie }) {
             </ul>
           </div>
         </div>
-        <ChatWindow show={showChat} setShow={toggleChat} />
+        <ChatWindow show={showChat} setShow={toggleChat} cookie={cookie} friends={friends} />
       </div>
     </nav>
   )

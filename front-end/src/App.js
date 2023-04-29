@@ -67,7 +67,7 @@ function App() {
             <div className="col-md-6">
               <Outlet context={{ cookie, setCookie }} />
             </div>
-            <Chats friends={friends} />
+            <Chats friends={friends} cookie={cookie} />
           </div>
         </div>
         <Footer />

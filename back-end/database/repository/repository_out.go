@@ -937,3 +937,33 @@ func (m *SqliteDB) GetEventNotGoing(id int) ([]models.User, error) {
 
 	return users, nil
 }
+
+func (m *SqliteDB) GetAllMessages(userID int) ([]models.Message, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var messages []models.Message
+
+	query := `SELECT message_id, from_id, to_id, content, created FROM messages WHERE to_id = ? OR from_id = ? ORDER BY created ASC`
+
+	rows, err := m.DB.QueryContext(ctx, query, userID, userID)
+	if err != nil {
+		return nil, err
+	}
+	for rows.Next() {
+		var message models.Message
+		err = rows.Scan(
+			&message.MessageID,
+			&message.FromID,
+			&message.ToID,
+			&message.Content,
+			&message.Created,
+		)
+		if err != nil {
+			return nil, err
+		}
+		messages = append(messages, message)
+	}
+
+	return messages, nil
+}

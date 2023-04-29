@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS `messages`(
     `from_id` INTEGER NOT NULL,  
     `to_id` INTEGER NOT NULL,  
     `content` TEXT NOT NULL, 
-    `is_seen` BOOLEAN NOT NULL DEFAULT FALSE, 
     `created` DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 

@@ -637,3 +637,16 @@ func (m *SqliteDB) ChangeUserPrivacy(userID int) error {
 
 	return nil
 }
+
+func (m *SqliteDB) AddMessage(fromID, toID int, content string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO messages (from_id, to_id, content) VALUES (?, ?, ?)`
+	_, err := m.DB.ExecContext(ctx, stmt, fromID, toID, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

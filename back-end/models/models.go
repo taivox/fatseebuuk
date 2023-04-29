@@ -2,8 +2,6 @@ package models
 
 import (
 	"time"
-
-	"github.com/gorilla/websocket"
 )
 
 type User struct {
@@ -100,10 +98,9 @@ type Events struct {
 
 type Message struct {
 	MessageID int       `json:"message_id"`
-	FromUser  User      `json:"from_user"`
-	ToUser    User      `json:"to_user"`
+	FromID    int       `json:"from_id"`
+	ToID      int       `json:"to_id"`
 	Content   string    `json:"content"`
-	IsSeen    bool      `json:"is_seen"`
 	Created   time.Time `json:"created"`
 }
 
@@ -158,7 +155,3 @@ type Like struct {
 	CommentID      int  `json:"comment_id"`
 	BelongsToGroup bool `json:"belongs_to_group"`
 }
-
-var Channels = make(map[*websocket.Conn]chan interface{})
-
-var OnlineUsers = make(map[string]*websocket.Conn)

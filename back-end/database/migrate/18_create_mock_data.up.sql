@@ -217,12 +217,19 @@ INSERT INTO events_attendance (event_id, user_id, is_going) VALUES
 (3, 2, false),
 (3, 3, true);
 
-INSERT INTO messages (from_id, to_id, content, is_seen, created) VALUES
-(1, 2, "Hi there!", 0, "2023-04-05 12:00:00"),
-(2, 1, "Hello!", 1, "2023-04-05 12:01:00"),
-(1, 3, "Hey, how's it going?", 0, "2023-04-05 12:02:00"),
-(3, 1, "Pretty good, thanks for asking!", 0, "2023-04-05 12:03:00"),
-(2, 3, "Long time no see!", 0, "2023-04-05 12:04:00"),
-(3, 2, "Yeah, it's been a while!", 1, "2023-04-05 12:05:00");
+INSERT INTO messages (from_id, to_id, content, created) VALUES
+(1, 2, "Hi there!", "2023-04-05 12:00:00"),
+(2, 1, "Hello!", "2023-04-05 12:01:00"),
+(1, 3, "Hey, how's it going?", "2023-04-05 12:02:00"),
+(3, 1, "Pretty good, thanks for asking!", "2023-04-05 12:03:00"),
+(2, 3, "Long time no see!", "2023-04-05 12:04:00"),
+(3, 2, "Yeah, it's been a while!", "2023-04-05 12:05:00"),
+(4, 2, "Hi there!", "2023-04-05 12:00:00"),
+(2, 4, "Hello!", "2023-04-05 12:01:00"),
+(4, 4, "Hey, how's it going?", "2023-04-05 12:02:00"),
+(3, 4, "Pretty good, thanks for asking!", "2023-04-05 12:03:00"),
+(4, 3, "Long time no see!", "2023-04-05 12:04:00"),
+(3, 4, "Yeah, it's been a while!", "2023-04-05 12:05:00");
+
 
 

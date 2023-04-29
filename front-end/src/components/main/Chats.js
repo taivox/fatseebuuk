@@ -1,7 +1,7 @@
 import React, { useState } from "react"
 import ChatWindow from "../common/ChatWindow"
 
-function Chats({ friends }) {
+function Chats({ friends, cookie }) {
   const [showChat, setShowChat] = useState(false)
   const [selectedChat, setSelectedChat] = useState(null)
 
@@ -35,7 +35,7 @@ function Chats({ friends }) {
             )}
           </ul>
         </div>
-        <ChatWindow show={showChat} setShow={toggleChat} selectedChat={selectedChat} />
+        <ChatWindow show={showChat} setShow={toggleChat} cookie={cookie} friends={friends} selectedChat={selectedChat}/>
       </div>
     </div>
   )
