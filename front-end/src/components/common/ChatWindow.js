@@ -116,7 +116,7 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
                           (message.from_id === selectedFriend.friend.user_id && message.to_id === currentUser)
                         )
                           .map((message) => (
-                            <ListGroup.Item key={message.message_id}>
+                            <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
                               <strong>{message.from_id === currentUser ? "You" : selectedFriend.friend.first_name}</strong>: {message.content}
                             </ListGroup.Item>
                           ))}
