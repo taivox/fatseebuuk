@@ -5,6 +5,7 @@ import PostImagePopup from "../main/PostImagePopup"
 import Swal from "sweetalert2"
 import { getTimeElapsedString } from "../../Utils"
 import { Row, Col, ListGroup, Form, Button } from 'react-bootstrap'
+import React, { useMemo } from 'react' //emoji
 
 function GroupPosts() {
   const { groupPosts, cookie, group_id, fetchGroup, group } = useOutletContext()
@@ -25,6 +26,8 @@ function GroupPosts() {
   const [messages, setMessages] = useState([])
   const chatContainerRef = useRef(null)
   const [socket, setSocket] = useState(null)
+
+  const emoji = useMemo(() => String.fromCodePoint(0x1F600), []) //emoji
 
   const handleImageClick = (post, index) => {
     setSelectedPost(post)
@@ -290,6 +293,12 @@ function GroupPosts() {
                   messages.map((message) => (
                     <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
                       <strong>{message.from_id === currentUser.user_id ? "You" : (() => getSenderName(message.from_id))()}</strong>: {message.content}
+
+                      <div>
+                        <span role="img" >asdasdasdasdasd{emoji}kjaasdasd</span>
+                        {/* emoji */}
+                      </div>
+
                     </ListGroup.Item>
                   ))}
               </ListGroup>
