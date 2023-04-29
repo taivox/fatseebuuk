@@ -255,6 +255,7 @@ function GroupPosts() {
       }
       console.log("selle saadame socketisse", payload)
 
+      setMessageText('')
       socket.send(JSON.stringify(payload))
     }
   }
@@ -267,12 +268,6 @@ function GroupPosts() {
   }, [scrollToBottom])
 
 
-  const handleSendMessage = (e) => {
-    e.preventDefault()
-    // add message to selectedFriend's messages array
-    setMessageText('')
-    setScrollToBottom(true)
-  }
 
   // const getSenderName = (userID) => {
 
@@ -294,7 +289,7 @@ function GroupPosts() {
         <Row>
 
           <Col>
-            <div style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
+            <div  ref={chatContainerRef} style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
 
               <ListGroup>
                 {messages && messages.length > 0 &&
@@ -311,7 +306,7 @@ function GroupPosts() {
               <Form.Group>
                 <Form.Control type="text"  value={messageText} onChange={(e) => setMessageText(e.target.value)} />
               </Form.Group>
-              <Button type="submit" className="m-2" onClick={() => handleClick(messageText)}>
+              <Button type="submit" className="m-2" onClick={(e) => {e.preventDefault(); handleClick(messageText)}}>
                 Send
               </Button>
             </Form>
