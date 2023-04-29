@@ -6,6 +6,12 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ### LIVE version is available &#9755;[HERE](http://176.112.158.22:8090/)&#9756;
 
+### Pre registered demo users:
+
+Email: `qwe@gmail.com` Password: `asd`
+Email: `asd@gmail.com` Password: `asd`
+Email: `zxc@gmail.com` Password: `asd`
+
 ### Option 1
 
 To run the project using docker, use `bash rundocker.sh` in the project root directory.
