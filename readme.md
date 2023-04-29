@@ -8,9 +8,9 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ### Pre registered demo users:
 
-Email: `qwe@gmail.com` Password: `asd`
-Email: `asd@gmail.com` Password: `asd`
-Email: `zxc@gmail.com` Password: `asd`
+Email: `qwe@gmail.com` Password: `asd` <br>
+Email: `asd@gmail.com` Password: `asd` <br>
+Email: `zxc@gmail.com` Password: `asd` <br>
 
 ### Option 1
 
