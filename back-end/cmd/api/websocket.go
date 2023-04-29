@@ -44,6 +44,7 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 		Cookie  string `json:"cookie"`
 		ToID    int    `json:"to_id"`
 		Content string `json:"content"`
+		GroupID int    `json:"group_id"`
 	}{}
 
 	// Start a goroutine to write data from the channel to the connection
@@ -76,6 +77,9 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 			log.Println("unmarshalides tuli mingi error:", err)
 		}
 
+		if payload.Cookie == "" {
+			return
+		}
 		cookie := strings.Split(payload.Cookie, " ")[1]
 
 		userID, err := app.DB.ValidateUUID(cookie)
@@ -87,35 +91,63 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 
 		addConnection(userID, conn)
 
-		//kui payloadis content eksisteerib, siis lisame uue data andmebaasi
-		if payload.Content != "" {
-			err = app.DB.AddMessage(userID, payload.ToID, payload.Content)
+		if payload.GroupID == -1 {
+			//Users chat
+			if payload.Content != "" {
+				err = app.DB.AddMessage(userID, payload.ToID, payload.Content)
+				if err != nil {
+					_ = conn.WriteJSON(err)
+					return
+				}
+			}
+
+			data, err := app.DB.GetAllMessages(userID)
 			if err != nil {
 				_ = conn.WriteJSON(err)
 				return
 			}
-		}
+			SendToUser(userID, data)
 
-		data, err := app.DB.GetAllMessages(userID)
-		if err != nil {
-			_ = conn.WriteJSON(err)
+			if payload.ToID != 0 {
+				recieverData, err := app.DB.GetAllMessages(payload.ToID)
+				if err != nil {
+					_ = conn.WriteJSON(err)
+					return
+				}
+				SendToUser(payload.ToID, recieverData)
+			}
+		} else if payload.GroupID > 0 {
+			//Group chat
+			if payload.Content != "" {
+				err = app.DB.GroupAddMessage(userID, payload.GroupID, payload.Content)
+				if err != nil {
+					_ = conn.WriteJSON(err)
+					return
+				}
+			}
+
+			data, groupUserIDs, err := app.DB.GroupGetAllMessages(payload.GroupID)
+			if err != nil {
+				_ = conn.WriteJSON(err)
+				return
+			}
+
+			SendToGroup(groupUserIDs, data)
+		} else {
+			_ = conn.WriteJSON("error: something went wrong")
 			return
-		}
-		SendToUser(userID, data)
-
-		if payload.ToID != 0 {
-			recieverData, err := app.DB.GetAllMessages(payload.ToID)
-			if err != nil {
-				_ = conn.WriteJSON(err)
-				return
-			}
-			SendToUser(payload.ToID, recieverData)
 		}
 
 		fmt.Println("JSON data go-s", payload)
 
 		fmt.Println("onlineusers:", OnlineUsers)
 
+	}
+}
+
+func SendToGroup(groupUserIDs []int, data []models.Message) {
+	for _, id := range groupUserIDs {
+		SendToUser(id, data)
 	}
 }
 

@@ -34,6 +34,7 @@ type Group struct {
 	UserIsGroupOwner  bool        `json:"user_is_group_owner"`
 	UserIsInvited     bool        `json:"user_is_invited"`
 	UserHasRequested  bool        `json:"user_has_requested"`
+	Members           []User      `json:"members,omitempty"`
 }
 
 type GroupPost struct {
@@ -99,7 +100,8 @@ type Events struct {
 type Message struct {
 	MessageID int       `json:"message_id"`
 	FromID    int       `json:"from_id"`
-	ToID      int       `json:"to_id"`
+	ToID      int       `json:"to_id,omitempty"`
+	GroupID   int       `json:"group_id,omitempty"`
 	Content   string    `json:"content"`
 	Created   time.Time `json:"created"`
 }

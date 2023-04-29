@@ -83,6 +83,7 @@ function Group() {
         if (data.error) {
           throw new Error(data.message)
         }
+        console.log(data)
         setHasAccess(data.user_is_group_member)
         setIsGroupOwner(data.user_is_group_owner)
         setHasInvite(data.user_is_invited)
@@ -192,7 +193,7 @@ function Group() {
           <div className="row">
             <GroupMenu groupOwner={true} cookie={cookie} />
             <div className="col-md-6">
-              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
+              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup, group }} />
             </div>
             <Chats friends={friends} cookie={cookie} />
           </div>
@@ -257,7 +258,7 @@ function Group() {
                 </button>
               </div>
 
-              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
+              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup, group}} />
 
             </div>
             <Chats friends={friends} cookie={cookie} />

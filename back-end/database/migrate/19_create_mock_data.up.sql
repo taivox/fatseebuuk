@@ -232,4 +232,20 @@ INSERT INTO messages (from_id, to_id, content, created) VALUES
 (3, 4, "Yeah, it's been a while!", "2023-04-05 12:05:00");
 
 
+INSERT INTO groups_messages (from_id, group_id, content, created) VALUES
+(1, 1, "Hi there! user 1 grupp1", "2023-04-05 12:00:00"),
+(2, 1, "Hello!user2 grupp1", "2023-04-05 12:01:00"),
+(3, 1, "Hey, how's it going? user3 grupp 1", "2023-04-05 12:02:00"),
+(4, 1, "Pretty good, thanks for asking!user4 grupp1", "2023-04-05 12:03:00"),
+(1, 1, "Long time no see!", "2023-04-05 12:04:00"),
+(2, 1, "Yeah, it's been a while!", "2023-04-05 12:05:00"),
+(3, 1, "Hi there!", "2023-04-05 12:00:00"),
+(4, 1, "Hello!", "2023-04-05 12:01:00"),
+(1, 1, "Hey, how's it going?", "2023-04-05 12:02:00"),
+(2, 1, "Pretty good, thanks for asking!", "2023-04-05 12:03:00"),
+(3, 1, "Long time no see!", "2023-04-05 12:04:00"),
+(4, 1, "Yeah, it's been a while!", "2023-04-05 12:05:00");
+
+
+
 

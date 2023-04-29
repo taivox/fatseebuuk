@@ -404,6 +404,30 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 
 		group.Posts = append(group.Posts, post)
 	}
+
+	query = `SELECT user_id FROM groups_members WHERE group_id = ?`
+	mRows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, err
+	}
+	defer mRows.Close()
+
+	for mRows.Next() {
+		var userID int
+		err := mRows.Scan(
+			&userID,
+		)
+		if err != nil {
+			return nil, err
+		}
+
+		p, err := m.GetUserByID(userID)
+		if err != nil {
+			return nil, err
+		}
+		group.Members = append(group.Members, *p)
+	}
+
 	return &group, nil
 }
 
@@ -966,4 +990,50 @@ func (m *SqliteDB) GetAllMessages(userID int) ([]models.Message, error) {
 	}
 
 	return messages, nil
+}
+
+func (m *SqliteDB) GroupGetAllMessages(id int) ([]models.Message, []int, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	var messages []models.Message
+	var groupUserIDs []int
+
+	query := `SELECT message_id, from_id, group_id, content, created FROM groups_messages WHERE group_id = ? ORDER BY created ASC`
+
+	rows, err := m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, groupUserIDs, err
+	}
+	for rows.Next() {
+		var message models.Message
+		err = rows.Scan(
+			&message.MessageID,
+			&message.FromID,
+			&message.GroupID,
+			&message.Content,
+			&message.Created,
+		)
+		if err != nil {
+			return nil, groupUserIDs, err
+		}
+		messages = append(messages, message)
+	}
+
+	query = `SELECT user_id FROM groups_members WHERE group_id = ?`
+
+	rows, err = m.DB.QueryContext(ctx, query, id)
+	if err != nil {
+		return nil, groupUserIDs, err
+	}
+	for rows.Next() {
+		var userID int
+		err = rows.Scan(&userID)
+		if err != nil {
+			return nil, groupUserIDs, err
+		}
+		groupUserIDs = append(groupUserIDs, userID)
+	}
+
+	return messages, groupUserIDs, nil
 }

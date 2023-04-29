@@ -21,6 +21,7 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
         console.log('WebSocket connection established')
         const payload = {
           cookie: cookie,
+          group_id: -1,
         }
         newSocket.send(JSON.stringify(payload))
       })
@@ -47,6 +48,7 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
         cookie: cookie,
         content: content,
         to_id: toID,
+        group_id: -1,
       }
 
       socket.send(JSON.stringify(payload))

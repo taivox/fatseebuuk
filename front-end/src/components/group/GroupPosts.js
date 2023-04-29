@@ -1,12 +1,13 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { Link, Navigate, useNavigate, useOutletContext } from "react-router-dom"
 import TextArea from "../form/TextArea"
 import PostImagePopup from "../main/PostImagePopup"
 import Swal from "sweetalert2"
 import { getTimeElapsedString } from "../../Utils"
+import { Row, Col, ListGroup, Form, Button } from 'react-bootstrap'
 
 function GroupPosts() {
-  const { groupPosts, cookie, group_id, fetchGroup } = useOutletContext()
+  const { groupPosts, cookie, group_id, fetchGroup, group} = useOutletContext()
 
   const [posts, setPosts] = useState([])
   const [showFullText, setShowFullText] = useState({})
@@ -19,8 +20,13 @@ function GroupPosts() {
   const [errors, setErrors] = useState([])
   const [error, setError] = useState([])
   const navigate = useNavigate()
+  const [messageText, setMessageText] = useState('')
+  const [scrollToBottom, setScrollToBottom] = useState(false)
+  const [messages, setMessages] = useState([])
+  const chatContainerRef = useRef(null)
+  const [socket, setSocket] = useState(null)
 
-  const handleImageClick = (post,index) => {
+  const handleImageClick = (post, index) => {
     setSelectedPost(post)
     setPostIndex(index)
   }
@@ -126,21 +132,21 @@ function GroupPosts() {
 
   const textLimit = 100
 
-  const handleSubmitLike = (id) => {  
+  const handleSubmitLike = (id) => {
     const payload = {
-      post_id:id,
+      post_id: id,
       belongs_to_group: window.location.href.includes("groups"),
-    };
+    }
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     let fetchURL = `${process.env.REACT_APP_BACKEND}/createpostlike`
 
@@ -154,19 +160,19 @@ function GroupPosts() {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
         fetchGroup()
       })
       .catch((error) => {
-        setError(error);
-      });
+        setError(error)
+      })
   }
 
   useEffect(() => {
     setPosts(groupPosts)
-    if (selectedPost !== null){
+    if (selectedPost !== null) {
       setSelectedPost(groupPosts[postIndex])
     }
   }, [groupPosts])
@@ -179,16 +185,16 @@ function GroupPosts() {
   }
 
   useEffect(() => {
-    if(cookie){
+    if (cookie) {
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
       headers.append("Authorization", cookie)
-  
+
       const requestOptions = {
         method: "GET",
         headers: headers,
       }
-  
+
       fetch(`${process.env.REACT_APP_BACKEND}/currentuser`, requestOptions)
         .then(response => response.status === 401 ? navigate('/login') : response.json())
         .then((data) => {
@@ -201,10 +207,119 @@ function GroupPosts() {
           console.log(error)
         })
     }
-  },[])
+  }, [])
+
+
+
+  //SIIT EDASI WEBSOCKETI STUFF
+  useEffect(() => {
+    if (cookie) {
+      const newSocket = new WebSocket('ws://localhost:8080/ws')
+
+      setSocket(newSocket)
+
+      newSocket.addEventListener('open', () => {
+        console.log('WebSocket connection established')
+        const payload = {
+          cookie: cookie,
+          group_id: parseInt(group_id),
+        }
+
+        console.log("payload", payload)
+        newSocket.send(JSON.stringify(payload))
+      })
+
+      newSocket.addEventListener('message', (event) => {
+        const jsonData = JSON.parse(event.data)
+        setMessages(jsonData)
+        setScrollToBottom(true)
+        console.log("socketist tuli:", jsonData)
+      })
+
+      return () => {
+        newSocket.close()
+        console.log('closing')
+        setSocket(null)
+      }
+    }
+  }, [cookie])
+
+  const handleClick = (content) => {
+    if (socket && content !== "") {
+      console.log('saatsin midagi socketisse')
+
+      const payload = {
+        cookie: cookie,
+        content: content,
+        group_id: parseInt(group_id),
+      }
+      console.log("selle saadame socketisse", payload)
+
+      socket.send(JSON.stringify(payload))
+    }
+  }
+
+  useEffect(() => {
+    if (scrollToBottom && chatContainerRef.current) {
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight
+      setScrollToBottom(false)
+    }
+  }, [scrollToBottom])
+
+
+  const handleSendMessage = (e) => {
+    e.preventDefault()
+    // add message to selectedFriend's messages array
+    setMessageText('')
+    setScrollToBottom(true)
+  }
+
+  // const getSenderName = (userID) => {
+
+  //  return  group.members.forEach(member => {
+  //     if (member.user_id = userID) {
+  //       console.log("minginimi",member.first_name + ' ' + member.last_name)
+  //       return member.first_name + ' ' + member.last_name
+  //     }
+  
+  //   })
+
+  // }
+
 
   return (
     <div className="col-md-12">
+      <div className="card" >
+        <h2 className="m-3">Group chat</h2>
+        <Row>
+
+          <Col>
+            <div style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
+
+              <ListGroup>
+                {messages && messages.length > 0 &&
+                  messages.map((message) => (
+                    <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
+                      <strong>{message.from_id === currentUser ? "You" :  "keegi teine"}</strong>: {message.content}
+                    </ListGroup.Item>
+                  ))}
+              </ListGroup>
+
+
+            </div>
+            <Form >
+              <Form.Group>
+                <Form.Control type="text"  value={messageText} onChange={(e) => setMessageText(e.target.value)} />
+              </Form.Group>
+              <Button type="submit" className="m-2" onClick={() => handleClick(messageText)}>
+                Send
+              </Button>
+            </Form>
+          </Col>
+        </Row>
+      </div>
+
+
       <div className="card mt-3">
         <div className="card-body">
           <div className="media mb-3">
@@ -275,7 +390,7 @@ function GroupPosts() {
       </div>
 
       {posts && posts.length > 0 ? (
-        posts.map((p,index) => (
+        posts.map((p, index) => (
           <div key={p.post_id} className="card">
             <div className="card-body">
               <div className="media ">
@@ -335,7 +450,7 @@ function GroupPosts() {
                         cursor: "pointer",
                       }}
                       alt="..."
-                      onClick={() => handleImageClick(p,index)}
+                      onClick={() => handleImageClick(p, index)}
                     />
                   )}
                   <div className="d-flex justify-content-between align-items-center">
@@ -343,7 +458,7 @@ function GroupPosts() {
                       <box-icon name="like" /> {p.likes}
                     </button>
                     <button
-                      onClick={() => handleImageClick(p,index)}
+                      onClick={() => handleImageClick(p, index)}
                       className="btn btn"
                     >
                       {p.comments && p.comments.length > 0 ? `${p.comments.length} Comments` : "No comments"}
@@ -355,7 +470,7 @@ function GroupPosts() {
                       <box-icon name="like" /> Like
                     </button>
                     <button
-                      onClick={() => handleImageClick(p,index)}
+                      onClick={() => handleImageClick(p, index)}
                       className="btn btn-light"
                     >
                       <box-icon name="comment" /> Comment

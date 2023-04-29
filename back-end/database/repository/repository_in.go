@@ -650,3 +650,16 @@ func (m *SqliteDB) AddMessage(fromID, toID int, content string) error {
 
 	return nil
 }
+
+func (m *SqliteDB) GroupAddMessage(fromID, groupID int, content string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
+	defer cancel()
+
+	stmt := `INSERT INTO groups_messages (from_id, group_id, content) VALUES (?, ?, ?)`
+	_, err := m.DB.ExecContext(ctx, stmt, fromID, groupID, content)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
