@@ -27,9 +27,8 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
 
       newSocket.addEventListener('message', (event) => {
         const jsonData = JSON.parse(event.data)
-        // Use the jsonData object here
-        console.log(jsonData)
         setMessages(jsonData)
+        setScrollToBottom(true)
       })
 
       return () => {
@@ -41,7 +40,7 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
   }, [show])
 
   const handleClick = (toID, content) => {
-    if (socket) {
+    if (socket && content !== "") {
       console.log('saatsin midagi socketisse')
 
       const payload = {

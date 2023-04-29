@@ -20,6 +20,7 @@ function Group() {
   const [isgroupOwner, setIsGroupOwner] = useState(false)
   const [hasInvite, setHasInvite] = useState(false)
   const [hasRequest, setHasRequest] = useState(false)
+  const [friends, setFriends] = useState([])
 
   useEffect(() => {
     let cookies = document.cookie.split(";")
@@ -41,6 +42,29 @@ function Group() {
 
     if (cookieSet) {
       fetchGroup()
+    }
+  }, [cookie])
+
+  useEffect(() => {
+    if (cookieSet) {
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
+
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      }
+      fetch(
+        `${process.env.REACT_APP_BACKEND}/friends`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            console.log(data.error)
+          }
+          setFriends(data)
+
+        }).catch((error) => { console.log(error) })
     }
   }, [cookie])
 
@@ -162,7 +186,7 @@ function Group() {
   } else if (isgroupOwner) {
     return (
       <div>
-        <Header cookie={cookie} />
+        <Header cookie={cookie} friends={friends} />
         {group && <GroupHeader group={group} cookie={cookie} hasAccess={true} />}
         <div className="container">
           <div className="row">
@@ -170,7 +194,7 @@ function Group() {
             <div className="col-md-6">
               <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
             </div>
-            <Chats />
+            <Chats friends={friends} cookie={cookie} />
           </div>
         </div>
         <Footer />
@@ -179,13 +203,13 @@ function Group() {
   } else if (!hasAccess && cookieSet) {
     return (
       <div>
-        <Header cookie={cookie} />
+        <Header cookie={cookie} friends={friends} />
         {group && <GroupHeader group={group} cookie={cookie} />}
         <div className="container">
           <div className="row">
             <GroupMenu />
             <div className="col-md-6">
-            <div className="profile-buttons p-4">
+              <div className="profile-buttons p-4">
                 {hasInvite ? (
                   <button onClick={acceptInvite} className="btn btn-primary">
                     <box-icon name="check" color="white" />
@@ -208,7 +232,7 @@ function Group() {
                 )}
               </div>
             </div>
-            <Chats />
+            <Chats friends={friends} cookie={cookie} />
           </div>
         </div>
         <Footer />
@@ -217,7 +241,7 @@ function Group() {
   } else {
     return (
       <div>
-        <Header cookie={cookie} />
+        <Header cookie={cookie} friends={friends} />
         {group && <GroupHeader group={group} cookie={cookie} hasAccess={true} />}
         <div className="container">
           <div className="row">
@@ -236,7 +260,7 @@ function Group() {
               <Outlet context={{ groupPosts, cookie, group_id, fetchGroup }} />
 
             </div>
-            <Chats />
+            <Chats friends={friends} cookie={cookie} />
           </div>
         </div>
         <Footer />

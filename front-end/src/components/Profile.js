@@ -15,6 +15,7 @@ function Profile() {
   const [cookie, setCookie] = useState("")
   const [cookieSet, setCookieSet] = useState(false)
   const navigate = useNavigate()
+  const [friends, setFriends] = useState([])
 
   useEffect(() => {
     let cookies = document.cookie.split(";")
@@ -58,6 +59,29 @@ function Profile() {
       })
   }
 
+  useEffect(() => {
+    if (cookieSet) {
+      const headers = new Headers()
+      headers.append("Content-Type", "application/json")
+      headers.append("Authorization", cookie)
+
+      const requestOptions = {
+        method: "GET",
+        headers: headers,
+      }
+      fetch(
+        `${process.env.REACT_APP_BACKEND}/friends`, requestOptions)
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.error) {
+            console.log(data.error)
+          }
+          setFriends(data)
+
+        }).catch((error) => { console.log(error) })
+    }
+  }, [cookie])
+
 
 
 
@@ -66,7 +90,7 @@ function Profile() {
   } else {
     return (
       <div>
-        <Header cookie={cookie} />
+        <Header cookie={cookie} friends={friends}/>
 
         <ProfileHeader props={profile} cookie={cookie} onButtonClick={fetchProfileData} />
         <div>
