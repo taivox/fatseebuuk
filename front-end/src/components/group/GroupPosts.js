@@ -7,7 +7,7 @@ import { getTimeElapsedString } from "../../Utils"
 import { Row, Col, ListGroup, Form, Button } from 'react-bootstrap'
 
 function GroupPosts() {
-  const { groupPosts, cookie, group_id, fetchGroup, group} = useOutletContext()
+  const { groupPosts, cookie, group_id, fetchGroup, group } = useOutletContext()
 
   const [posts, setPosts] = useState([])
   const [showFullText, setShowFullText] = useState({})
@@ -273,7 +273,7 @@ function GroupPosts() {
     const member = group.members.find(member => member.user_id === userID)
     return member ? `${member.first_name} ${member.last_name}` : "Deleted user"
   }
-  
+
 
 
   return (
@@ -283,13 +283,13 @@ function GroupPosts() {
         <Row>
 
           <Col>
-            <div  ref={chatContainerRef} style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
+            <div ref={chatContainerRef} style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
 
               <ListGroup>
                 {messages && messages.length > 0 &&
                   messages.map((message) => (
                     <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
-                      <strong>{message.from_id === currentUser.user_id ? "You" :  (() => getSenderName(message.from_id))()}</strong>: {message.content}
+                      <strong>{message.from_id === currentUser.user_id ? "You" : (() => getSenderName(message.from_id))()}</strong>: {message.content}
                     </ListGroup.Item>
                   ))}
               </ListGroup>
@@ -298,9 +298,9 @@ function GroupPosts() {
             </div>
             <Form >
               <Form.Group>
-                <Form.Control type="text"  value={messageText} onChange={(e) => setMessageText(e.target.value)} />
+                <Form.Control type="text" value={messageText} onChange={(e) => setMessageText(e.target.value)} />
               </Form.Group>
-              <Button type="submit" className="m-2" onClick={(e) => {e.preventDefault(); handleClick(messageText)}}>
+              <Button type="submit" className="m-2" onClick={(e) => { e.preventDefault(); handleClick(messageText) }}>
                 Send
               </Button>
             </Form>
