@@ -269,17 +269,11 @@ function GroupPosts() {
 
 
 
-  // const getSenderName = (userID) => {
-
-  //  return  group.members.forEach(member => {
-  //     if (member.user_id = userID) {
-  //       console.log("minginimi",member.first_name + ' ' + member.last_name)
-  //       return member.first_name + ' ' + member.last_name
-  //     }
+  const getSenderName = (userID) => {
+    const member = group.members.find(member => member.user_id === userID)
+    return member ? `${member.first_name} ${member.last_name}` : "Deleted user"
+  }
   
-  //   })
-
-  // }
 
 
   return (
@@ -295,7 +289,7 @@ function GroupPosts() {
                 {messages && messages.length > 0 &&
                   messages.map((message) => (
                     <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
-                      <strong>{message.from_id === currentUser ? "You" :  "keegi teine"}</strong>: {message.content}
+                      <strong>{message.from_id === currentUser.user_id ? "You" :  (() => getSenderName(message.from_id))()}</strong>: {message.content}
                     </ListGroup.Item>
                   ))}
               </ListGroup>
