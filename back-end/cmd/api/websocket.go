@@ -11,10 +11,10 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-var Channels = make(map[*websocket.Conn]chan interface{})
-
-// map [userID] []usersWebsocketConnections
-var OnlineUsers = make(map[int][]*websocket.Conn)
+// TODO: add these to application struct so they're not global
+var channels = make(map[*websocket.Conn]chan interface{})
+var onlineUsers = make(map[int][]*websocket.Conn)
+var groupOnlineUsers = make(map[int][]*websocket.Conn)
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
@@ -35,10 +35,15 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 
 	// Create a new channel for this connection
 	ch := make(chan interface{})
-	Channels[conn] = ch
+	channels[conn] = ch
+
+	defer delete(channels, conn)
 
 	ip := conn.RemoteAddr().String()
-	fmt.Println(len(Channels), "connections =>", ip, "joined")
+	fmt.Println(len(channels), "connections =>", ip, "joined") //for testing purposes
+
+	defer fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
+	defer fmt.Println(len(channels), "connections =>", ip, "left")                       //for testing purposes
 
 	payload := struct {
 		Cookie  string `json:"cookie"`
@@ -54,10 +59,6 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 
 			err = conn.WriteJSON(data)
 			if err != nil {
-				RemoveConnection(conn)
-				fmt.Println(len(Channels), "connections =>", ip, "left")
-				fmt.Println("onlineusers:", OnlineUsers)
-
 				return
 			}
 		}
@@ -66,15 +67,13 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 	for {
 		_, p, err := conn.ReadMessage()
 		if err != nil {
-			RemoveConnection(conn)
-			fmt.Println(len(Channels), "connections =>", ip, "left")
-			fmt.Println("onlineusers:", OnlineUsers)
 			return
 		}
 
 		err = json.Unmarshal(p, &payload)
 		if err != nil {
-			log.Println("unmarshalides tuli mingi error:", err)
+			log.Println("error: could not unmarshal payload", err)
+			return
 		}
 
 		if payload.Cookie == "" {
@@ -85,14 +84,15 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 		userID, err := app.DB.ValidateUUID(cookie)
 		if err != nil {
 			_ = conn.WriteJSON(err)
-			fmt.Println(len(Channels), "connections =>", ip, "left")
 			return
 		}
 
-		addConnection(userID, conn)
-
 		if payload.GroupID == -1 {
 			//Users chat
+			addConnection(userID, conn)
+			defer removeConnection(conn)
+			fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
+
 			if payload.Content != "" {
 				err = app.DB.AddMessage(userID, payload.ToID, payload.Content)
 				if err != nil {
@@ -106,7 +106,7 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 				_ = conn.WriteJSON(err)
 				return
 			}
-			SendToUser(userID, data)
+			sendToUser(userID, data)
 
 			if payload.ToID != 0 {
 				recieverData, err := app.DB.GetAllMessages(payload.ToID)
@@ -114,10 +114,14 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 					_ = conn.WriteJSON(err)
 					return
 				}
-				SendToUser(payload.ToID, recieverData)
+				sendToUser(payload.ToID, recieverData)
 			}
 		} else if payload.GroupID > 0 {
 			//Group chat
+			addGroupConnection(payload.GroupID, conn)
+			defer removeGroupConnection(conn)
+			fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
+
 			if payload.Content != "" {
 				err = app.DB.GroupAddMessage(userID, payload.GroupID, payload.Content)
 				if err != nil {
@@ -126,48 +130,48 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 				}
 			}
 
-			data, groupUserIDs, err := app.DB.GroupGetAllMessages(payload.GroupID)
+			data, err := app.DB.GroupGetAllMessages(payload.GroupID)
 			if err != nil {
 				_ = conn.WriteJSON(err)
 				return
 			}
 
-			SendToGroup(groupUserIDs, data)
+			sendToGroup(payload.GroupID, data)
 		} else {
 			_ = conn.WriteJSON("error: something went wrong")
 			return
 		}
 
-		fmt.Println("JSON data go-s", payload)
-
-		fmt.Println("onlineusers:", OnlineUsers)
-
+		fmt.Println("JSON data go-s", payload) //for testing purposes
 	}
 }
 
-func SendToGroup(groupUserIDs []int, data []models.Message) {
-	for _, id := range groupUserIDs {
-		SendToUser(id, data)
+// send data to all active group sockets
+func sendToGroup(groupID int, data []models.Message) {
+	groupConnections := groupOnlineUsers[groupID]
+	for _, conn := range groupConnections {
+		channels[conn] <- data
 	}
 }
 
-// seda peame saatma saajale ja saatjale
-func SendToUser(userID int, data []models.Message) {
-	userConnections := OnlineUsers[userID]
+// send data to all active user sockets
+func sendToUser(userID int, data []models.Message) {
+	userConnections := onlineUsers[userID]
 	for _, conn := range userConnections {
-		Channels[conn] <- data
+		channels[conn] <- data
 	}
 }
 
-func RemoveConnection(conn *websocket.Conn) {
-	for userID, connections := range OnlineUsers {
+// remove user websocket connection from onlineUsers
+func removeConnection(conn *websocket.Conn) {
+	for userID, connections := range onlineUsers {
 		for i, c := range connections {
 			if c == conn {
 				// Found matching connection, remove it
-				OnlineUsers[userID] = append(connections[:i], connections[i+1:]...)
-				if len(OnlineUsers[userID]) == 0 {
-					delete(OnlineUsers, userID)
-					delete(Channels, conn)
+				onlineUsers[userID] = append(connections[:i], connections[i+1:]...)
+				if len(onlineUsers[userID]) == 0 {
+					delete(onlineUsers, userID)
+					delete(channels, conn)
 				}
 				return
 			}
@@ -175,15 +179,46 @@ func RemoveConnection(conn *websocket.Conn) {
 	}
 }
 
+// add user websocket connection to onlineUsers
 func addConnection(userID int, conn *websocket.Conn) {
 	// Check if the slice of connections for this user already contains the connection
-	for _, existingConn := range OnlineUsers[userID] {
+	for _, existingConn := range onlineUsers[userID] {
 		if existingConn == conn {
 			// Connection already exists, return without adding it again
 			return
 		}
 	}
 	// Connection doesn't exist, add it to the slice
-	OnlineUsers[userID] = append(OnlineUsers[userID], conn)
+	onlineUsers[userID] = append(onlineUsers[userID], conn)
 
+}
+
+// remove user websocket connection from groupOnlineUsers
+func removeGroupConnection(conn *websocket.Conn) {
+	for groupID, connections := range groupOnlineUsers {
+		for i, c := range connections {
+			if c == conn {
+				// Found matching connection, remove it
+				groupOnlineUsers[groupID] = append(connections[:i], connections[i+1:]...)
+				if len(groupOnlineUsers[groupID]) == 0 {
+					delete(groupOnlineUsers, groupID)
+					delete(channels, conn)
+				}
+				return
+			}
+		}
+	}
+}
+
+// add user websocket connection to groupOnlineUsers
+func addGroupConnection(groupID int, conn *websocket.Conn) {
+	// Check if the slice of connections for this user already contains the connection
+	for _, existingConn := range groupOnlineUsers[groupID] {
+		if existingConn == conn {
+			// Connection already exists, return without adding it again
+			return
+		}
+	}
+	// Connection doesn't exist, add it to the slice
+	groupOnlineUsers[groupID] = append(groupOnlineUsers[groupID], conn)
 }

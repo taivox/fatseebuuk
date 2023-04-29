@@ -361,7 +361,19 @@ func (m *SqliteDB) AddNewGroup(group *models.Group) error {
 	defer cancel()
 
 	stmt := `INSERT INTO groups (title, description, user_id, image) VALUES (?,?,?,?)`
-	_, err := m.DB.ExecContext(ctx, stmt, group.Title, group.Description, group.UserID, group.Image)
+	result, err := m.DB.ExecContext(ctx, stmt, group.Title, group.Description, group.UserID, group.Image)
+	if err != nil {
+		return err
+	}
+
+	groupID, err := result.LastInsertId()
+	if err != nil {
+		return nil
+	}
+
+	//add group owner to group members
+	stmt = `INSERT INTO groups_members (user_id, group_id, invitation_pending, request_pending) VALUES (?,?,?,?)`
+	_, err = m.DB.ExecContext(ctx, stmt, group.UserID, groupID, false, false)
 	if err != nil {
 		return err
 	}

@@ -181,6 +181,9 @@ INSERT INTO groups_members (user_id, group_id, request_pending, invitation_pendi
 (2, 2, 0, 0),
 (3, 2, 0, 1),
 (1, 2, 0, 0),
+(3, 3, 0, 0),
+(5, 1, 0, 0),
+(2, 2, 0, 0),
 (3, 3, 0, 0);
 
 

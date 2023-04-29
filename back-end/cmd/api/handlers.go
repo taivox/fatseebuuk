@@ -164,7 +164,7 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 				group.UserHasRequested = false
 			}
 
-		} else if errNotMember == nil {
+		} else if errNotMember == nil && errNotOwner != nil {
 			group, err = app.DB.GetGroupByID(groupID)
 			group.UserIsGroupMember = true
 		} else if errNotOwner == nil {

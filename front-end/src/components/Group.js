@@ -201,7 +201,7 @@ function Group() {
         <Footer />
       </div>
     )
-  } else if (!hasAccess && cookieSet) {
+  } else if (!hasAccess && cookieSet && !isgroupOwner) {
     return (
       <div>
         <Header cookie={cookie} friends={friends} />
@@ -258,7 +258,7 @@ function Group() {
                 </button>
               </div>
 
-              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup, group}} />
+              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup, group  }} />
 
             </div>
             <Chats friends={friends} cookie={cookie} />
