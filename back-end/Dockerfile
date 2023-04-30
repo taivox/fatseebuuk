@@ -13,9 +13,9 @@ EXPOSE 8080
 ENTRYPOINT ["/back-end"]
 
 # Add a terminal
-RUN apt-get update && apt-get install -y \
-    bash \
-    && rm -rf /var/lib/apt/lists/*
+# RUN apt-get update && apt-get install -y \
+#     bash \
+#     && rm -rf /var/lib/apt/lists/*
 
-CMD ["/bin/bash"]
+# CMD ["/bin/bash"]
 
