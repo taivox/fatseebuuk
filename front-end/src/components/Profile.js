@@ -52,6 +52,7 @@ function Profile() {
         if (data.error) {
           throw new Error(data.message)
         }
+        console.log("mis pildid siin on?", data)
         setProfile(data)
       })
       .catch((error) => {
@@ -90,7 +91,7 @@ function Profile() {
   } else {
     return (
       <div>
-        <Header cookie={cookie} friends={friends}/>
+        <Header cookie={cookie} friends={friends} />
 
         <ProfileHeader props={profile} cookie={cookie} onButtonClick={fetchProfileData} />
         <div>
@@ -98,7 +99,7 @@ function Profile() {
             <div className="container">
               <div className="row">
                 <ProfileLeft props={profile} />
-                <ProfilePosts props={profile} cookie={cookie} updatePosts={fetchProfileData}/>
+                <ProfilePosts props={profile} cookie={cookie} updatePosts={fetchProfileData} />
               </div>
             </div>
           </div>

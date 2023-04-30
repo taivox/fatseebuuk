@@ -319,7 +319,7 @@ function GroupPosts() {
           <div className="media mb-3">
             <div className="media-body d-flex">
               <img
-                src={`/profile/${currentUser.profile_image}`}
+                src={`/profileimages/${currentUser.profile_image}`}
                 className="mr-3 m-2"
                 alt=""
                 style={{
@@ -391,7 +391,7 @@ function GroupPosts() {
                 <div className="d-flex align-items-center m-2">
                   <Link to={`/profile/${p.poster.user_id}`}>
                     <img
-                      src={`/profile/${p.poster.profile_image}`}
+                      src={`/profileimages/${p.poster.profile_image}`}
                       className="mr-3 rounded-circle"
                       style={{
                         height: "60px",
@@ -435,7 +435,7 @@ function GroupPosts() {
                   </p>
                   {p.image !== "" && (
                     <img
-                      src={`/post/${p.image}`}
+                      src={`/postimages/${p.image}`}
                       className="img-fluid mb-2"
                       style={{
                         height: "300px",

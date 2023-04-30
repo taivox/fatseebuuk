@@ -38,7 +38,7 @@ function ProfileLeft({ props }) {
                   {post.image !== "" && (
                     <div className="col-md-4">
                       <img
-                        src={`/post/${post.image}`}
+                        src={`/postimages/${post.image}`}
                         alt=""
                         className="img-fluid"
                         style={{  
@@ -72,7 +72,7 @@ function ProfileLeft({ props }) {
             <div  className="col-md-4">
               <Link to={`/profile/${friend.friend.user_id}`}>
                 <img
-                  src={`/profile/${friend.friend.profile_image}`}
+                  src={`/profileimages/${friend.friend.profile_image}`}
                   alt=""
                   className="img-fluid"
                   style={{

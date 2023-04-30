@@ -99,7 +99,7 @@ function InviteGroupPopup({ onClose, cookie, group }) {
                             <div key={f.user_id} className="list-group-item list-group-item-action d-flex align-items-center">
                                 <Link to={`/profile/${f.user_id}`} className="Link d-flex align-items-center">
                                     <img
-                                        src={`/profile/${f.profile_image}`}
+                                        src={`/profileimages/${f.profile_image}`}
                                         style={{
                                             height: "60px",
                                             width: "60px",

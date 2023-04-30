@@ -171,7 +171,7 @@ function CreateEventPopup({ onClose }) {
         <div className="d-flex justify-content-between align-items-center">
           <div className="d-flex align-items-center m-2">
             <img
-              src={`/profile/${currentUser.profile_image}`}
+              src={`/profileimages/${currentUser.profile_image}`}
               className="mr-3 rounded-circle"
               style={{
                 height: "60px",

@@ -77,7 +77,7 @@ function Groups() {
           {groups.map(g => (
             <Link key={g.group_id} to={`/groups/${g.group_id}`} className="list-group-item list-group-item-action d-flex align-items-center">
               <img
-                src={`/group/${g.image}`}
+                src={`/groupimages/${g.image}`}
                 style={{
                   height: "65px",
                   borderRadius: "20%",

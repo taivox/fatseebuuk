@@ -41,26 +41,26 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
     }
   }
 
-  useEffect(()=>{
-    if(cookie){
+  useEffect(() => {
+    if (cookie) {
 
       let payload = {
-        image:imagePreview,
+        image: imagePreview,
       }
-  
+
       const headers = new Headers()
       headers.append("Content-Type", "application/json")
       headers.append("Authorization", cookie)
-  
-  
+
+
       let requestOptions = {
         method: "PATCH",
         headers: headers,
         body: JSON.stringify(payload)
       }
-  
-      console.log("SEENPAYLOAD: ",payload)
-  
+
+      console.log("SEENPAYLOAD: ", payload)
+
       fetch(
         `${process.env.REACT_APP_BACKEND}/addcover`, requestOptions)
         .then((response) => response.json())
@@ -70,7 +70,7 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
           }
         })
     }
-  },[imagePreview])
+  }, [imagePreview])
 
   function AddFriend() {
     const headers = new Headers()
@@ -121,23 +121,23 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
   return (
     <div className="container">
       <div className="cover-container">
-      {props.is_owner ? <> <label
-         htmlFor="cover-photo"
-         className="btn btn-light col-md-12"
-         >
-        <img
+        {props.is_owner ? <> <label
+          htmlFor="cover-photo"
+          className="btn btn-light col-md-12"
+        >
+          <img
+            className="cover-photo"
+            src={imagePreview ? imagePreview : `/coverimages/${props.cover_image}`}
+            alt="cover"
+            style={{
+              height: "400px",
+              width: "95%",
+              objectFit: "cover",
+            }} />
+        </label>
+          <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="cover-photo" /> </> : <img
           className="cover-photo"
-          src={imagePreview ? imagePreview:`/cover/${props.cover_image}`}
-          alt="cover"
-          style={{
-            height: "400px",
-            width: "95%",
-            objectFit: "cover",
-          }} />
-            </label>
-            <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="cover-photo" /> </>: <img
-          className="cover-photo"
-          src={`/cover/${props.cover_image}`}
+          src={`/coverimages/${props.cover_image}`}
           alt="cover"
           style={{
             height: "400px",
@@ -152,7 +152,7 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
             <div className="profile-pic-wrapper">
               <img
                 className="profile-pic m-3"
-                src={`/profile/${props.profile_image}`}
+                src={`/profileimages/${props.profile_image}`}
                 style={{
                   height: "155px",
                   width: "155px",
@@ -169,21 +169,21 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
             <div className="friend-info">
               <div className="friend-count">{`${props.friends_list ? props.friends_list.length : `No friends, okay`} friends`}</div>
               <div className="friend-list">
-                {props.friends_list && props.friends_list.length > 0 ? props.friends_list.slice(0,6).map(friend => (
+                {props.friends_list && props.friends_list.length > 0 ? props.friends_list.slice(0, 6).map(friend => (
                   <Link key={friend.friend.user_id} to={`/profile/${friend.friend.user_id}`}>
-                  <img
-                    className="friend-pic"
-                    src={`/profile/${friend.friend.profile_image}`}
-                    style={{
-                      height: "55px",
-                      width: "55px",
-                      borderRadius: "100%",
-                      objectFit: "cover",
-                      zIndex: "99999",
-                    }}
-                    alt="profile" />
+                    <img
+                      className="friend-pic"
+                      src={`/profileimages/${friend.friend.profile_image}`}
+                      style={{
+                        height: "55px",
+                        width: "55px",
+                        borderRadius: "100%",
+                        objectFit: "cover",
+                        zIndex: "99999",
+                      }}
+                      alt="profile" />
                   </Link>
-                )):null}
+                )) : null}
 
               </div>
             </div>

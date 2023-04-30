@@ -103,7 +103,7 @@ function GroupEvent() {
                                 <p>Created by: </p>
                                 <Link to={`/profile/${poster.user_id}`}>
                                     <img
-                                        src={`/profile/${poster.profile_image}`}
+                                        src={`/profileimages/${poster.profile_image}`}
                                         className="mr-3 rounded-circle"
                                         style={{
                                             height: "40px",
@@ -127,7 +127,7 @@ function GroupEvent() {
                                     {event.description}
                                 </p>
                                 <img
-                                    src={`/event/${event.image}`}
+                                    src={`/eventimages/${event.image}`}
                                     className="img-fluid mb-2"
                                     style={{
                                         height: "300px",
@@ -162,7 +162,7 @@ function GroupEvent() {
                                             <Link key={user.user_id} to={`/profile/${user.user_id}`}>
                                                 <img
                                                     className="friend-pic"
-                                                    src={`/profile/${user.profile_image}`}
+                                                    src={`/profileimages/${user.profile_image}`}
                                                     style={{
                                                         height: "35px",
                                                         width: "35px",
@@ -180,7 +180,7 @@ function GroupEvent() {
                                             <Link key={user.user_id} to={`/profile/${user.user_id}`}>
                                                 <img
                                                     className="friend-pic"
-                                                    src={`/profile/${user.profile_image}`}
+                                                    src={`/profileimages/${user.profile_image}`}
                                                     style={{
                                                         height: "35px",
                                                         width: "35px",

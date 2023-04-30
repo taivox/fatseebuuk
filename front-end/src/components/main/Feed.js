@@ -9,12 +9,12 @@ function Feed() {
   const [posts, setPosts] = useState([])
   const [showFullText, setShowFullText] = useState({})
   const [selectedPost, setSelectedPost] = useState(null)
-  const [postIndex,setPostIndex] = useState(null)
+  const [postIndex, setPostIndex] = useState(null)
   const { cookie } = useOutletContext()
   const [error, setError] = useState(null)
   const navigate = useNavigate()
 
-  const handleImageClick = (post,index) => {
+  const handleImageClick = (post, index) => {
     setSelectedPost(post)
     setPostIndex(index)
   }
@@ -47,21 +47,21 @@ function Feed() {
       })
   }
 
-  const handleSubmitLike = (id) => {  
+  const handleSubmitLike = (id) => {
     const payload = {
-      post_id : id,
+      post_id: id,
       belongs_to_group: window.location.href.includes("groups"),
-    };
+    }
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     fetch(`${process.env.REACT_APP_BACKEND}/createpostlike`, requestOptions)
       .then((response) =>
@@ -73,26 +73,26 @@ function Feed() {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
         fetchFeed()
       })
       .catch((error) => {
-        setError(error);
-      });
+        setError(error)
+      })
   }
 
   useEffect(() => {
     fetchFeed()
   }, [cookie])
 
-  useEffect(()=>{
-    
-    if(selectedPost !== null){
+  useEffect(() => {
+
+    if (selectedPost !== null) {
       setSelectedPost(posts[postIndex])
     }
-  },[posts])
+  }, [posts])
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
@@ -110,7 +110,7 @@ function Feed() {
               <div className="d-flex align-items-center m-2">
                 <Link to={`/profile/${p.poster.user_id}`}>
                   <img
-                    src={`/profile/${p.poster.profile_image}`}
+                    src={`/profileimages/${p.poster.profile_image}`}
                     className="mr-3 rounded-circle"
                     style={{
                       height: "60px",
@@ -150,7 +150,7 @@ function Feed() {
                   )}
                 </p>
                 {p.image && <img
-                  src={`/post/${p.image}`}
+                  src={`/postimages/${p.image}`}
                   className="img-fluid mb-2"
                   style={{
                     height: "300px",
@@ -188,7 +188,7 @@ function Feed() {
             </div>
           </div>
         </div>
-      )):<div className="card m-2 align-items-center"><h3>No posts.</h3></div>}
+      )) : <div className="card m-2 align-items-center"><h3>No posts.</h3></div>}
       {selectedPost && (
         <PostImagePopup
           post={selectedPost}

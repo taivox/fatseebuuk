@@ -21,7 +21,7 @@ function GroupHeader({ group, cookie, hasAccess }) {
         <div className="cover-container">
           <img
             className="cover-photo"
-            src={`/group/${group.image}`}
+            src={`/groupimages/${group.image}`}
             alt=""
             style={{
               height: "400px",
@@ -38,20 +38,20 @@ function GroupHeader({ group, cookie, hasAccess }) {
             </div>
           </div>
           {hasAccess && (
-          <div className="profile-buttons p-4">
-            <button onClick={handleInviteGroupClick} className="btn btn-primary">
-              <box-icon name='plus' color="white"  />
-              Invite
-            </button>
-          
-          </div>
+            <div className="profile-buttons p-4">
+              <button onClick={handleInviteGroupClick} className="btn btn-primary">
+                <box-icon name='plus' color="white" />
+                Invite
+              </button>
+
+            </div>
           )}
         </div>
         <hr />
       </div>
       {inviteModalShowing && (
         <InviteGroupPopup
-          onClose={handleInviteGroupClose} 
+          onClose={handleInviteGroupClose}
           cookie={cookie}
           group={group}
         />

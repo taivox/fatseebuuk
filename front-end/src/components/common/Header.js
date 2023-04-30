@@ -190,7 +190,7 @@ function Header({ cookie, friends }) {
                   {filteredResults.length > 0 ? filteredResults.map(result => (
                     <li className="list-group-item">
                       <a href={`/profile/${result.user_id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                        <img src={`/profile/${result.profile_image}`} alt={`${result.first_name} ${result.last_name}`} style={{ width: '45px', height: '45px', borderRadius: "100%", objectFit: "cover", paddingRight: "5px" }} />
+                        <img src={`/profileimages/${result.profile_image}`} alt={`${result.first_name} ${result.last_name}`} style={{ width: '45px', height: '45px', borderRadius: "100%", objectFit: "cover", paddingRight: "5px" }} />
                         {`${result.first_name} ${result.last_name}`}
                       </a>
                     </li>
@@ -264,7 +264,7 @@ function Header({ cookie, friends }) {
                   aria-expanded="false"
                 >
                   <img
-                    src={`/profile/${currentUser.profile_image}`}
+                    src={`/profileimages/${currentUser.profile_image}`}
                     style={{
                       height: "35px",
                       width: "35px",

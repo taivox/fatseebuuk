@@ -64,7 +64,7 @@ function GroupEvents() {
                     to={`${event.event_id}`}
                   >
                     <img
-                      src={`/event/${event.image}`}
+                      src={`/eventimages/${event.image}`}
                       style={{
                         height: "130px",
                         width: "130px",
@@ -99,7 +99,7 @@ function GroupEvents() {
                     to={`${event.event_id}`}
                   >
                     <img
-                      src={`/event/${event.image}`}
+                      src={`/eventimages/${event.image}`}
                       style={{
                         height: "130px",
                         width: "130px",

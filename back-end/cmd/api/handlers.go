@@ -455,7 +455,7 @@ func (app *application) Register(w http.ResponseWriter, r *http.Request) {
 
 		var imageName string
 		if rd.ProfileImage != "" {
-			imageName, err = saveImageToFile(rd.ProfileImage, "profile")
+			imageName, err = saveImageToFile(rd.ProfileImage, "profileimages")
 			if err != nil {
 				app.errorJSON(w, err)
 				return
@@ -932,7 +932,7 @@ func (app *application) CreatePost(w http.ResponseWriter, r *http.Request) {
 
 		var imageName string
 		if post.Image != "" {
-			imageName, err = saveImageToFile(post.Image, "post")
+			imageName, err = saveImageToFile(post.Image, "postimages")
 			if err != nil {
 				app.errorJSON(w, err)
 				return
@@ -970,7 +970,7 @@ func (app *application) CreateGroup(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if group.Image != "" {
-			group.Image, err = saveImageToFile(group.Image, "group")
+			group.Image, err = saveImageToFile(group.Image, "groupimages")
 			if err != nil {
 				app.errorJSON(w, err)
 				return
@@ -1016,7 +1016,7 @@ func (app *application) CreateEvent(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if event.Image != "" {
-			event.Image, err = saveImageToFile(event.Image, "event")
+			event.Image, err = saveImageToFile(event.Image, "eventimages")
 			if err != nil {
 				app.errorJSON(w, err)
 				return
@@ -1062,7 +1062,7 @@ func (app *application) CreateGroupPost(w http.ResponseWriter, r *http.Request) 
 
 		var imageName string
 		if post.Image != "" {
-			imageName, err = saveImageToFile(post.Image, "post")
+			imageName, err = saveImageToFile(post.Image, "postimages")
 			if err != nil {
 				app.errorJSON(w, err)
 				return
@@ -1228,7 +1228,7 @@ func (app *application) AddCover(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		imageName, err := saveImageToFile(payload.Image, "cover")
+		imageName, err := saveImageToFile(payload.Image, "coverimages")
 		if err != nil {
 			app.errorJSON(w, err)
 			return

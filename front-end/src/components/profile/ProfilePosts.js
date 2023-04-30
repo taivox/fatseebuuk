@@ -209,7 +209,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
             <div className="media mb-3">
               <div className="media-body d-flex">
                 <img
-                  src={props.profile_image}
+                  src={`/profileimages/${props.profile_image}`}
                   className="mr-3 m-2"
                   alt="Your Profile Image"
                   style={{
@@ -293,7 +293,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                             <div>
                               <img
                                 className="friend-pic"
-                                src={`/profile/${friend.friend.profile_image}`}
+                                src={`/profileimages/${friend.friend.profile_image}`}
                                 style={{
                                   height: "30px",
                                   width: "30px",
@@ -328,7 +328,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                 <div className="d-flex align-items-center m-2">
                   <Link to={`/profile/${p.poster.user_id}`}>
                     <img
-                      src={p.poster.profile_image}
+                      src={`/profileimages/${p.poster.profile_image}`}
                       className="mr-3 rounded-circle"
                       style={{
                         height: "60px",
@@ -367,7 +367,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                     )}
                   </p>
                   {p.image && <img
-                    src={`/post/${p.image}`}
+                    src={`/postimages/${p.image}`}
                     className="img-fluid mb-2"
                     style={{
                       height: "300px",

@@ -1,55 +1,55 @@
-  import { useState, useRef, useEffect } from "react";
-import { Modal, Container, Row } from "react-bootstrap";
-import { Link, useNavigate } from "react-router-dom";
-import { getTimeElapsedString } from "../../Utils";
-import TextArea from "../form/TextArea";
-import Swal from "sweetalert2";
+import { useState, useRef, useEffect } from "react"
+import { Modal, Container, Row } from "react-bootstrap"
+import { Link, useNavigate } from "react-router-dom"
+import { getTimeElapsedString } from "../../Utils"
+import TextArea from "../form/TextArea"
+import Swal from "sweetalert2"
 
 function PostImagePopup({ post, onClose, cookie, updatePosts }) {
-  const [show, setShow] = useState(true);
-  const [showFullText, setShowFullText] = useState({});
-  const [commentContent, setCommentContent] = useState("");
-  const textareaRef = useRef();
-  const [errors, setErrors] = useState(null);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
-  const textLimit = 100;
+  const [show, setShow] = useState(true)
+  const [showFullText, setShowFullText] = useState({})
+  const [commentContent, setCommentContent] = useState("")
+  const textareaRef = useRef()
+  const [errors, setErrors] = useState(null)
+  const [error, setError] = useState(null)
+  const navigate = useNavigate()
+  const textLimit = 100
   const [commentSent, setCommentSent] = useState(false)
 
   const handleClose = () => {
-    setShow(false);
-    onClose();
-  };
+    setShow(false)
+    onClose()
+  }
 
   const toggleText = (postId) => {
     setShowFullText((prevShowFullText) => ({
       ...prevShowFullText,
       [postId]: !prevShowFullText[postId],
-    }));
-  };
+    }))
+  }
 
   const handleClick = () => {
     if (textareaRef && textareaRef.current) {
-      textareaRef.current.focus();
+      textareaRef.current.focus()
     }
-  };
+  }
 
-  const handleSubmitLike = (id,type) => {  
+  const handleSubmitLike = (id, type) => {
     const payload = {
       belongs_to_group: window.location.href.includes("groups"),
-    };
+    }
 
     type === "post" ? payload.post_id = id : payload.comment_id = id
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     let fetchURL = `${process.env.REACT_APP_BACKEND}/create${type}like`
 
@@ -63,49 +63,49 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
         updatePosts()
       })
       .catch((error) => {
-        setError(error);
-      });
+        setError(error)
+      })
   }
 
   function handleCommentSubmit(event) {
-    event.preventDefault();
+    event.preventDefault()
 
-    let errors = [];
+    let errors = []
     const payload = {
       post_id: post.post_id,
       content: commentContent,
       current_url: window.location.href,
-    };
+    }
 
-    let required = [{ field: payload.content, name: "content" }];
+    let required = [{ field: payload.content, name: "content" }]
 
     required.forEach((req) => {
       if (req.field === "") {
-        errors.push(req.name);
+        errors.push(req.name)
       }
-    });
+    })
 
-    setErrors(errors);
+    setErrors(errors)
 
     if (errors.length > 0) {
-      return;
+      return
     }
 
-    const headers = new Headers();
-    headers.append("Content-Type", "application/json");
-    headers.append("Authorization", cookie);
+    const headers = new Headers()
+    headers.append("Content-Type", "application/json")
+    headers.append("Authorization", cookie)
 
     let requestOptions = {
       body: JSON.stringify(payload),
       method: "POST",
       headers: headers,
-    };
+    }
 
     fetch(`${process.env.REACT_APP_BACKEND}/createcomment`, requestOptions)
       .then((response) =>
@@ -117,25 +117,25 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
             icon: "error",
             title: "Oops...",
             text: data.message,
-          });
-          return;
+          })
+          return
         }
-        setCommentContent("");
+        setCommentContent("")
         setCommentSent(true)
-        
+
       })
       .catch((error) => {
-        setError(error);
-      });
+        setError(error)
+      })
   }
 
   useEffect(() => {
     if (commentSent) {
-      updatePosts();
+      updatePosts()
       setCommentSent(false)
     }
 
-  }, [commentContent]);
+  }, [commentContent])
 
   return (
     <Modal show={show} onHide={handleClose} size="lg">
@@ -148,16 +148,15 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
         {post.image !== "" && (
           <>
             {" "}
-            <img src={`/post/${post.image}`} alt="" className="w-100" />
+            <img src={`/postimages/${post.image}`} alt="" className="w-100" />
           </>
         )}
         <div className="d-flex justify-content-between align-items-center">
-          <button onClick={() => handleSubmitLike(post.post_id,"post")} className="btn">
+          <button onClick={() => handleSubmitLike(post.post_id, "post")} className="btn">
             <box-icon name="like" /> {post.likes}
           </button>
-          <button className="btn btn">{`${
-            post.comments ? post.comments.length : "0"
-          } Comments`}</button>
+          <button className="btn btn">{`${post.comments ? post.comments.length : "0"
+            } Comments`}</button>
         </div>
         <div>
           <p className="card-text" style={{ wordBreak: "break-word" }}>
@@ -183,7 +182,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
       <Modal.Footer className="justify-content-between m-3">
         <div className="d-flex flex-grow-1 col-12">
           <div className="d-flex flex-grow-1 align-items-center">
-            <button onClick={() => handleSubmitLike(post.post_id,"post")} className="btn btn-light col-12">
+            <button onClick={() => handleSubmitLike(post.post_id, "post")} className="btn btn-light col-12">
               <box-icon name="like" /> Like
             </button>
           </div>
@@ -206,7 +205,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
                     <Link to={`/profile/${comment.poster.user_id}`}>
                       <img
                         className="rounded-circle mr-3"
-                        src={`/profile/${comment.poster.profile_image}`}
+                        src={`/profileimages/${comment.poster.profile_image}`}
                         style={{
                           width: "80px",
                           height: "80px",
@@ -235,7 +234,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
                   </div>
                   <div className="d-flex align-items-center">
                     <button
-                      onClick={() => handleSubmitLike(comment.comment_id,"comment")}
+                      onClick={() => handleSubmitLike(comment.comment_id, "comment")}
                       type="button"
                       className="btn btn-outline-ligth btn-sm m-1"
                     >
@@ -265,7 +264,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
               placeholder={"Write something..."}
               onChange={(event) => setCommentContent(event.target.value)}
               value={commentContent}
-              // errorDiv={hasError("content") ? "text-danger" : "d-none"}
+            // errorDiv={hasError("content") ? "text-danger" : "d-none"}
             />
             <div className="form-group m-2">
               <button type="submit" className="btn btn-ligth ml-2">
@@ -277,7 +276,7 @@ function PostImagePopup({ post, onClose, cookie, updatePosts }) {
         </Container>
       </Modal.Footer>
     </Modal>
-  );
+  )
 }
 
-export default PostImagePopup;
+export default PostImagePopup

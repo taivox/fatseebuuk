@@ -8,7 +8,7 @@ function NotificationsPopup() {
   const [error, setError] = useState()
   const [notificationsAmount, setNotificationsAmount] = useState(999999)
   const notificationsAmountRef = useRef(notificationsAmount)
-  const lastResponseStatus = useRef(null);
+  const lastResponseStatus = useRef(null)
 
 
   const printNotification = (notification) => {
@@ -70,8 +70,8 @@ function NotificationsPopup() {
         try {
           const response = await fetch(url, requestOptions)
           if (response.status === 401) {
-            lastResponseStatus.current = 401;
-            throw new Error('Unauthorized');
+            lastResponseStatus.current = 401
+            throw new Error('Unauthorized')
           }
           const data = await response.json()
           if (data === null) {
@@ -94,8 +94,8 @@ function NotificationsPopup() {
         }
       }
       fetchNotifications()
-      
-      
+
+
     }
   }, [cookie])
 
@@ -117,7 +117,7 @@ function NotificationsPopup() {
               <Link to={notification.link} className="dropdown-item" href="#!">
                 <div className="d-flex">
 
-                  <img src={`profile/${notification.from.profile_image}`}
+                  <img src={`profileimages/${notification.from.profile_image}`}
                     className={"m-2"}
                     style={{
                       height: "45px",
