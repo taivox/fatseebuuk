@@ -27,9 +27,6 @@ volumes:
   public_data:
 
 
-
-
-
 # For ONLINE SERVER
 # version: '3'
 
