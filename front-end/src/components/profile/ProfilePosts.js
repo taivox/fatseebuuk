@@ -270,7 +270,7 @@ function ProfilePosts({ props, cookie, updatePosts }) {
                       <label className="form-check-label" htmlFor="flexSwitchCheckDefault">Make Almost Private</label>
                     </div>
 
-                    {almostPrivateChecked && <>My niggas!
+                    {almostPrivateChecked && <>
                       {props.friends_list.map((friend) => (
                         <div className="form-check" key={friend.friend.user_id}>
                           <input

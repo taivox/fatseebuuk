@@ -8,9 +8,28 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ### Pre registered demo users:
 
-Email: `qwe@gmail.com` Password: `asd` <br>
+Email: `alice@gmail.com` Password: `asd` <br>
+Email: `bob@gmail.com` Password: `asd` <br>
+Email: `charlie@gmail.com` Password: `asd` <br>
 Email: `asd@gmail.com` Password: `asd` <br>
-Email: `zxc@gmail.com` Password: `asd` <br>
+Email: `chad@gmail.com` Password: `asd` <br>
+Email: `kopli@gmail.com` Password: `asd` <br>
+Email: `john@gmail.com` Password: `asd` <br>
+Email: `jane@gmail.com` Password: `asd` <br>
+
+You can format this nicely in a markdown table like this:
+
+| Email             | Password |
+| ----------------- | -------- |
+| alice@gmail.com   | asd      |
+| bob@gmail.com     | asd      |
+| charlie@gmail.com | asd      |
+| asd@gmail.com     | asd      |
+| chad@gmail.com    | asd      |
+| kopli@gmail.com   | asd      |
+| john@gmail.com    | asd      |
+| jane@gmail.com    | asd      |
+| ----------------- | -------- |
 
 ### Option 1
 
