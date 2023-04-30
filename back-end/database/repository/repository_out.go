@@ -694,9 +694,9 @@ func (m *SqliteDB) GetFriendsList(id int) ([]models.Friend, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), DbTimeout)
 	defer cancel()
 
-	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? AND request_pending = false
+	query := `SELECT friend_id, request_pending FROM friends WHERE user_id = ? 
 				UNION SELECT user_id, request_pending FROM friends 
-				WHERE friend_id = ? AND request_pending = false`
+				WHERE friend_id = ? `
 
 	rows, err := m.DB.QueryContext(ctx, query, id, id)
 	if err != nil {

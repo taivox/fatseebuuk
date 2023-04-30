@@ -83,6 +83,7 @@ function Friends() {
     )
       .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
+        console.log("friends list", data)
         setFriendList(data)
       })
   }
@@ -130,7 +131,7 @@ function Friends() {
                   <box-icon color="red" name="x" />
                 </button></div>}
             </div>
-          )):<div className="m-2">You got no friends, buddy!</div>}
+          )) : <div className="m-2">You got no friends, buddy!</div>}
         </div>
       </div>
     </>
