@@ -93,113 +93,117 @@ function GroupEvent() {
         )
     } else {
         return (
-            <div className="col-md-12">
-                <div key={event.event_id} className="card">
-                    <div className="card-body">
-                        <div className="media ">
-                            <h1>{event.title}</h1>
-                            <p style={{ color: 'red', fontSize: '14px' }}><strong>{`${new Date(event.event_date).toLocaleString('en-UK', dateFormat)}`}</strong></p>
-                            <div className="d-flex align-items-center m-2">
-                                <p>Created by: </p>
-                                <Link to={`/profile/${poster.user_id}`}>
-                                    <img
-                                        src={`/profileimages/${poster.profile_image}`}
-                                        className="mr-3 rounded-circle"
-                                        style={{
-                                            height: "40px",
-                                            width: "40px",
-                                            objectFit: "cover",
-                                            cursor: "pointer"
-                                        }}
-                                        alt="..."
-                                    />
-                                </Link>
-                                <div className="m-3">
-                                    <h5 className="mt-0" style={{ cursor: "pointer" }}>
-                                        <Link className="Link" to={`/profile/1`}>
-                                            {`${poster.first_name} ${poster.last_name}`}{" "}
+            <>
+                {poster.profile_image && event.image && (
+                    <div className="col-md-12">
+                        <div key={event.event_id} className="card">
+                            <div className="card-body">
+                                <div className="media ">
+                                    <h1>{event.title}</h1>
+                                    <p style={{ color: 'red', fontSize: '14px' }}><strong>{`${new Date(event.event_date).toLocaleString('en-UK', dateFormat)}`}</strong></p>
+                                    <div className="d-flex align-items-center m-2">
+                                        <p>Created by: </p>
+                                        <Link to={`/profile/${poster.user_id}`}>
+                                            <img
+                                                src={`/profileimages/${poster.profile_image}`}
+                                                className="mr-3 rounded-circle"
+                                                style={{
+                                                    height: "40px",
+                                                    width: "40px",
+                                                    objectFit: "cover",
+                                                    cursor: "pointer"
+                                                }}
+                                                alt="..."
+                                            />
                                         </Link>
-                                    </h5>
-                                </div>
-                            </div>
-                            <div className="media-body">
-                                <p className="card-text">
-                                    {event.description}
-                                </p>
-                                <img
-                                    src={`/eventimages/${event.image}`}
-                                    className="img-fluid mb-2"
-                                    style={{
-                                        height: "300px",
-                                        width: "600px",
-                                        objectFit: "cover",
-                                        cursor: "pointer"
-                                    }}
-                                    alt="..."
-                                />
-                                <hr />
-                                <div className="d-flex justify-content-between align-items-center m-2">
-                                    <button
-                                        className="btn btn-light"
-                                        style={{ color: event.current_user_going ? 'blue' : 'gray' }}
-                                        onClick={() => respondEvent('accept')}
-                                    >
-                                        <box-icon name="calendar" /> Going
-                                    </button>
-                                    <button
-                                        className="btn btn-light"
-                                        style={{ color: !event.current_user_going ? 'blue' : 'gray' }}
-                                        onClick={() => respondEvent('decline')}
-                                    >
-                                        <box-icon name="x" /> Not Going
-                                    </button>
-                                </div>
-
-                                <div>
-                                    <div>
-                                        {event.going_list && event.going_list.length > 0 ? <h4>Going:</h4> : null}
-                                        {event.going_list && event.going_list.length > 0 ? event.going_list.map(user => (
-                                            <Link key={user.user_id} to={`/profile/${user.user_id}`}>
-                                                <img
-                                                    className="friend-pic"
-                                                    src={`/profileimages/${user.profile_image}`}
-                                                    style={{
-                                                        height: "35px",
-                                                        width: "35px",
-                                                        borderRadius: "100%",
-                                                        objectFit: "cover",
-                                                        zIndex: "99999",
-                                                    }}
-                                                    alt="profile" />
-                                            </Link>
-                                        )) : null}
+                                        <div className="m-3">
+                                            <h5 className="mt-0" style={{ cursor: "pointer" }}>
+                                                <Link className="Link" to={`/profile/1`}>
+                                                    {`${poster.first_name} ${poster.last_name}`}{" "}
+                                                </Link>
+                                            </h5>
+                                        </div>
                                     </div>
-                                    <div>
-                                        {event.not_going_list && event.not_going_list.length > 0 ? <h4>Not going:</h4> : null}
-                                        {event.not_going_list && event.not_going_list.length > 0 ? event.not_going_list.map(user => (
-                                            <Link key={user.user_id} to={`/profile/${user.user_id}`}>
-                                                <img
-                                                    className="friend-pic"
-                                                    src={`/profileimages/${user.profile_image}`}
-                                                    style={{
-                                                        height: "35px",
-                                                        width: "35px",
-                                                        borderRadius: "100%",
-                                                        objectFit: "cover",
-                                                        zIndex: "99999",
-                                                    }}
-                                                    alt="profile" />
-                                            </Link>
-                                        )) : null}
+                                    <div className="media-body">
+                                        <p className="card-text">
+                                            {event.description}
+                                        </p>
+                                        <img
+                                            src={`/eventimages/${event.image}`}
+                                            className="img-fluid mb-2"
+                                            style={{
+                                                height: "300px",
+                                                width: "600px",
+                                                objectFit: "cover",
+                                                cursor: "pointer"
+                                            }}
+                                            alt="..."
+                                        />
+                                        <hr />
+                                        <div className="d-flex justify-content-between align-items-center m-2">
+                                            <button
+                                                className="btn btn-light"
+                                                style={{ color: event.current_user_going ? 'blue' : 'gray' }}
+                                                onClick={() => respondEvent('accept')}
+                                            >
+                                                <box-icon name="calendar" /> Going
+                                            </button>
+                                            <button
+                                                className="btn btn-light"
+                                                style={{ color: !event.current_user_going ? 'blue' : 'gray' }}
+                                                onClick={() => respondEvent('decline')}
+                                            >
+                                                <box-icon name="x" /> Not Going
+                                            </button>
+                                        </div>
+
+                                        <div>
+                                            <div>
+                                                {event.going_list && event.going_list.length > 0 ? <h4>Going:</h4> : null}
+                                                {event.going_list && event.going_list.length > 0 ? event.going_list.map(user => (
+                                                    <Link key={user.user_id} to={`/profile/${user.user_id}`}>
+                                                        <img
+                                                            className="friend-pic"
+                                                            src={`/profileimages/${user.profile_image}`}
+                                                            style={{
+                                                                height: "35px",
+                                                                width: "35px",
+                                                                borderRadius: "100%",
+                                                                objectFit: "cover",
+                                                                zIndex: "99999",
+                                                            }}
+                                                            alt="profile" />
+                                                    </Link>
+                                                )) : null}
+                                            </div>
+                                            <div>
+                                                {event.not_going_list && event.not_going_list.length > 0 ? <h4>Not going:</h4> : null}
+                                                {event.not_going_list && event.not_going_list.length > 0 ? event.not_going_list.map(user => (
+                                                    <Link key={user.user_id} to={`/profile/${user.user_id}`}>
+                                                        <img
+                                                            className="friend-pic"
+                                                            src={`/profileimages/${user.profile_image}`}
+                                                            style={{
+                                                                height: "35px",
+                                                                width: "35px",
+                                                                borderRadius: "100%",
+                                                                objectFit: "cover",
+                                                                zIndex: "99999",
+                                                            }}
+                                                            alt="profile" />
+                                                    </Link>
+                                                )) : null}
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
-
                             </div>
                         </div>
-                    </div>
-                </div>
 
-            </div>
+                    </div>
+                )}
+            </>
         )
     }
 }

@@ -239,7 +239,7 @@ function GroupPosts() {
 
       return () => {
         newSocket.close()
-        console.log('closing')
+        console.log('Websocket connection closed')
         setSocket(null)
       }
     }
@@ -275,213 +275,219 @@ function GroupPosts() {
 
 
   return (
-    <div className="col-md-12">
-      <div className="card" >
-        <h2 className="m-3">Group chat</h2>
-        <Row>
+    <>
+      {currentUser.profile_image && (
+        <div className="col-md-12">
+          <div className="card" >
+            <h2 className="m-3">Group chat</h2>
+            <Row>
 
-          <Col>
-            <div ref={chatContainerRef} style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
+              <Col>
+                <div ref={chatContainerRef} style={{ maxHeight: '500px', minHeight: '250px', overflowY: 'auto' }}>
 
-              <ListGroup>
-                {messages && messages.length > 0 &&
-                  messages.map((message) => (
-                    <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
-                      <strong>{message.from_id === currentUser.user_id ? "You" : (() => getSenderName(message.from_id))()}</strong>:
-                      {message.content.replace(regex, (match) => unicodeEmojis[match])}
-                    </ListGroup.Item>
-                  ))}
-              </ListGroup>
-
-
-            </div>
-            <Form >
-              <Form.Group>
-                <Form.Control type="text" value={messageText} onChange={(e) => setMessageText(e.target.value)} />
-              </Form.Group>
-              <Button type="submit" className="m-2" onClick={(e) => { e.preventDefault(); handleClick(messageText) }}>
-                Send
-              </Button>
-            </Form>
-          </Col>
-        </Row>
-      </div>
+                  <ListGroup>
+                    {messages && messages.length > 0 &&
+                      messages.map((message) => (
+                        <ListGroup.Item key={message.message_id} style={{ wordBreak: "break-all" }}>
+                          <strong>{message.from_id === currentUser.user_id ? "You" : (() => getSenderName(message.from_id))()}</strong>:
+                          {message.content.replace(regex, (match) => unicodeEmojis[match])}
+                        </ListGroup.Item>
+                      ))}
+                  </ListGroup>
 
 
-      <div className="card mt-3">
-        <div className="card-body">
-          <div className="media mb-3">
-            <div className="media-body d-flex">
-              <img
-                src={`/profileimages/${currentUser.profile_image}`}
-                className="mr-3 m-2"
-                alt=""
-                style={{
-                  height: "80px",
-                  width: "80px",
-                  borderRadius: "100%",
-                  objectFit: "cover",
-                }}
-              />
-              <form onSubmit={handleGroupSubmit} className="flex-grow-1">
-                <TextArea
-                  title={""}
-                  name={""}
-                  rows={"3"}
-                  placeholder={"Write something..."}
-                  onChange={(event) => setPostContent(event.target.value)}
-                  value={postContent}
-                  errorDiv={hasError("content") ? "text-danger" : "d-none"}
-                  errorMsg={"Please enter something"}
-                />
-                <div className="form-group m-2">
-                  <label htmlFor="post-image" className="btn btn-ligth mb-0">
-                    <box-icon
-                      name="photo-album"
-                      type="solid"
-                      color="green"
-                    ></box-icon>{" "}
-                    Add Image
-                  </label>
-                  <input
-                    onChange={handleGroupImageUpload}
-                    type="file"
-                    className="form-control-file d-none"
-                    id="post-image"
-                  />
-                  <button type="submit" className="btn btn-ligth ml-2">
-                    <box-icon
-                      name="envelope"
-                      type="solid"
-                      color="blue"
-                    ></box-icon>
-                    Post
-                  </button>
                 </div>
-                {imagePreview && (
-                  <img
-                    style={{
-                      borderRadius: "10px",
-                      objectFit: "cover",
-                      height: "130px",
-                      width: "130px",
-                    }}
-                    className="col-md-12"
-                    src={imagePreview && imagePreview}
-                    alt=""
-                  />
-                )}
-              </form>
-            </div>
+                <Form >
+                  <Form.Group>
+                    <Form.Control type="text" value={messageText} onChange={(e) => setMessageText(e.target.value)} />
+                  </Form.Group>
+                  <Button type="submit" className="m-2" onClick={(e) => { e.preventDefault(); handleClick(messageText) }}>
+                    Send
+                  </Button>
+                </Form>
+              </Col>
+            </Row>
           </div>
-        </div>
-      </div>
 
-      {posts && posts.length > 0 ? (
-        posts.map((p, index) => (
-          <div key={p.post_id} className="card">
+
+          <div className="card mt-3">
             <div className="card-body">
-              <div className="media ">
-                <div className="d-flex align-items-center m-2">
-                  <Link to={`/profile/${p.poster.user_id}`}>
-                    <img
-                      src={`/profileimages/${p.poster.profile_image}`}
-                      className="mr-3 rounded-circle"
-                      style={{
-                        height: "60px",
-                        width: "60px",
-                        objectFit: "cover",
-                        cursor: "pointer",
-                      }}
-                      alt="..."
+              <div className="media mb-3">
+                <div className="media-body d-flex">
+                  <img
+                    src={`/profileimages/${currentUser.profile_image}`}
+                    className="mr-3 m-2"
+                    alt=""
+                    style={{
+                      height: "80px",
+                      width: "80px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                    }}
+                  />
+                  <form onSubmit={handleGroupSubmit} className="flex-grow-1">
+                    <TextArea
+                      title={""}
+                      name={""}
+                      rows={"3"}
+                      placeholder={"Write something..."}
+                      onChange={(event) => setPostContent(event.target.value)}
+                      value={postContent}
+                      errorDiv={hasError("content") ? "text-danger" : "d-none"}
+                      errorMsg={"Please enter something"}
                     />
-                  </Link>
-                  <div key={p.poster.user_id} className="m-3">
-                    <h5 className="mt-0" style={{ cursor: "pointer" }}>
-                      <Link
-                        className="Link"
-                        to={`/profile/${p.poster.user_id}`}
-                      >
-                        {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
-                      </Link>
-                    </h5>
-                    <small className="text-muted">{getTimeElapsedString(p.created)}</small>
-                  </div>
-                </div>
-                <div className="media-body">
-                  <p className="card-text">
-                    {showFullText[p.poster.user_id]
-                      ? p.content
-                      : p.content.slice(0, textLimit)}
-                    {p.content.length > textLimit &&
-                      !showFullText[p.poster.user_id] && (
-                        <span>
-                          ...{" "}
-                          <span
-                            className="show-more-link"
-                            href="#!"
-                            onClick={() => toggleText(p.poster.user_id)}
-                          >
-                            See more
-                          </span>
-                        </span>
-                      )}
-                  </p>
-                  {p.image !== "" && (
-                    <img
-                      src={`/postimages/${p.image}`}
-                      className="img-fluid mb-2"
-                      style={{
-                        height: "300px",
-                        width: "600px",
-                        objectFit: "cover",
-                        cursor: "pointer",
-                      }}
-                      alt="..."
-                      onClick={() => handleImageClick(p, index)}
-                    />
-                  )}
-                  <div className="d-flex justify-content-between align-items-center">
-                    <button onClick={() => handleSubmitLike(p.post_id)} className="btn">
-                      <box-icon name="like" /> {p.likes}
-                    </button>
-                    <button
-                      onClick={() => handleImageClick(p, index)}
-                      className="btn btn"
-                    >
-                      {p.comments && p.comments.length > 0 ? `${p.comments.length} Comments` : "No comments"}
-                    </button>
-                  </div>
-                  <hr />
-                  <div className="d-flex justify-content-between align-items-center m-2">
-                    <button onClick={() => handleSubmitLike(p.post_id)} className="btn btn-light">
-                      <box-icon name="like" /> Like
-                    </button>
-                    <button
-                      onClick={() => handleImageClick(p, index)}
-                      className="btn btn-light"
-                    >
-                      <box-icon name="comment" /> Comment
-                    </button>
-                  </div>
+                    <div className="form-group m-2">
+                      <label htmlFor="post-image" className="btn btn-ligth mb-0">
+                        <box-icon
+                          name="photo-album"
+                          type="solid"
+                          color="green"
+                        ></box-icon>{" "}
+                        Add Image
+                      </label>
+                      <input
+                        onChange={handleGroupImageUpload}
+                        type="file"
+                        className="form-control-file d-none"
+                        id="post-image"
+                      />
+                      <button type="submit" className="btn btn-ligth ml-2">
+                        <box-icon
+                          name="envelope"
+                          type="solid"
+                          color="blue"
+                        ></box-icon>
+                        Post
+                      </button>
+                    </div>
+                    {imagePreview && (
+                      <img
+                        style={{
+                          borderRadius: "10px",
+                          objectFit: "cover",
+                          height: "130px",
+                          width: "130px",
+                        }}
+                        className="col-md-12"
+                        src={imagePreview && imagePreview}
+                        alt=""
+                      />
+                    )}
+                  </form>
                 </div>
               </div>
             </div>
           </div>
-        ))
-      ) : (
-        <div>No Posts yet!</div>
-      )}
 
-      {selectedPost && (
-        <PostImagePopup
-          post={selectedPost}
-          onClose={handlePostImagePopupClose}
-          cookie={cookie}
-          updatePosts={fetchGroup}
-        />
-      )}
-    </div>
+
+          {posts && posts.length > 0 ? (
+            posts.map((p, index) => (
+              <div key={p.post_id} className="card">
+                <div className="card-body">
+                  <div className="media ">
+                    <div className="d-flex align-items-center m-2">
+                      <Link to={`/profile/${p.poster.user_id}`}>
+                        <img
+                          src={`/profileimages/${p.poster.profile_image}`}
+                          className="mr-3 rounded-circle"
+                          style={{
+                            height: "60px",
+                            width: "60px",
+                            objectFit: "cover",
+                            cursor: "pointer",
+                          }}
+                          alt="..."
+                        />
+                      </Link>
+                      <div key={p.poster.user_id} className="m-3">
+                        <h5 className="mt-0" style={{ cursor: "pointer" }}>
+                          <Link
+                            className="Link"
+                            to={`/profile/${p.poster.user_id}`}
+                          >
+                            {`${p.poster.first_name} ${p.poster.last_name}`}{" "}
+                          </Link>
+                        </h5>
+                        <small className="text-muted">{getTimeElapsedString(p.created)}</small>
+                      </div>
+                    </div>
+                    <div className="media-body">
+                      <p className="card-text">
+                        {showFullText[p.poster.user_id]
+                          ? p.content
+                          : p.content.slice(0, textLimit)}
+                        {p.content.length > textLimit &&
+                          !showFullText[p.poster.user_id] && (
+                            <span>
+                              ...{" "}
+                              <span
+                                className="show-more-link"
+                                href="#!"
+                                onClick={() => toggleText(p.poster.user_id)}
+                              >
+                                See more
+                              </span>
+                            </span>
+                          )}
+                      </p>
+                      {p.image !== "" && (
+                        <img
+                          src={`/postimages/${p.image}`}
+                          className="img-fluid mb-2"
+                          style={{
+                            height: "300px",
+                            width: "600px",
+                            objectFit: "cover",
+                            cursor: "pointer",
+                          }}
+                          alt="..."
+                          onClick={() => handleImageClick(p, index)}
+                        />
+                      )}
+                      <div className="d-flex justify-content-between align-items-center">
+                        <button onClick={() => handleSubmitLike(p.post_id)} className="btn">
+                          <box-icon name="like" /> {p.likes}
+                        </button>
+                        <button
+                          onClick={() => handleImageClick(p, index)}
+                          className="btn btn"
+                        >
+                          {p.comments && p.comments.length > 0 ? `${p.comments.length} Comments` : "No comments"}
+                        </button>
+                      </div>
+                      <hr />
+                      <div className="d-flex justify-content-between align-items-center m-2">
+                        <button onClick={() => handleSubmitLike(p.post_id)} className="btn btn-light">
+                          <box-icon name="like" /> Like
+                        </button>
+                        <button
+                          onClick={() => handleImageClick(p, index)}
+                          className="btn btn-light"
+                        >
+                          <box-icon name="comment" /> Comment
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div>No Posts yet!</div>
+          )}
+
+          {selectedPost && (
+            <PostImagePopup
+              post={selectedPost}
+              onClose={handlePostImagePopupClose}
+              cookie={cookie}
+              updatePosts={fetchGroup}
+            />
+          )}
+        </div >
+      )
+      }
+    </>
   )
 }
 

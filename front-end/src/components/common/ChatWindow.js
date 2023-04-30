@@ -35,7 +35,7 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
 
       return () => {
         newSocket.close()
-        console.log('closing')
+        console.log('Websocket connection closed')
         setSocket(null)
       }
     }
