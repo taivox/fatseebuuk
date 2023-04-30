@@ -6,8 +6,16 @@ RUN go mod download
 COPY . ./
 RUN go build -o /bin/back-end ./cmd/api
 
-FROM gcr.io/distroless/base-debian11
+FROM debian:11
 COPY --from=build /bin/back-end/ /back-end
 COPY database/ /database
 EXPOSE 8080
 ENTRYPOINT ["/back-end"]
+
+# Add a terminal
+RUN apt-get update && apt-get install -y \
+    bash \
+    && rm -rf /var/lib/apt/lists/*
+
+CMD ["/bin/bash"]
+
