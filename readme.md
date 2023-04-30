@@ -21,6 +21,8 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ### Option 1 - Recommended
 
+For Linux systems if you don't have Docker compose installed use `sudo apt install docker-compose`
+
 To run the project using docker, use `docker-compose up --detach`
 
 To view running containers, use `docker ps`

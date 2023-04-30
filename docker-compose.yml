@@ -30,3 +30,35 @@ volumes:
 
 
 
+# For ONLINE SERVER
+# version: '3'
+
+# services:
+#   frontend:
+#     image: taivox/front-end:latest
+#     ports:
+#       - '3000:3000'
+#     networks:
+#       - app_network
+#     volumes:
+#       - public_data:/usr/share/nginx/html/public
+
+#   backend:
+#     image: taivox/back-end:latest
+#     ports:
+#       - '8080:8080'
+#     networks:
+#       - app_network
+#     volumes:
+#       - public_data:/app/public
+
+# networks:
+#   app_network:
+#     driver: bridge
+
+# volumes:
+#   public_data:
+
+
+
+
