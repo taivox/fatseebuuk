@@ -299,20 +299,13 @@ function Register() {
           </form>
         </div>
         <div className="justify-content-between">
-          <div className="d-flex  align-items-center m-2">
-          </div>
           <div className="d-flex  align-items-center">
             <button
-              style={{ width: "100%", height: "60px" }}
+              onClick={() => navigate("/login")}
+              style={{ width: "100%", height: "80px" }}
               className="btn btn-primary m-2"
             >
-              <box-icon type="logo"  size="lg" color="white" name="github"  ></box-icon>
-            </button>
-            <button
-              style={{ width: "100%", height: "60px" }}
-              className="btn btn-primary m-2"
-            >
-              <box-icon type='logo' size="lg" color="white"  name='google'   ></box-icon>
+              Already have an account? Click here to log in!
             </button>
           </div>
         </div>

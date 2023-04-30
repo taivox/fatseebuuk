@@ -2,7 +2,7 @@ import Swal from "sweetalert2"
 import Footer from "./common/Footer"
 import Input from "./form/Input"
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 
 function Login() {
@@ -149,22 +149,17 @@ function Login() {
           </form>
           <div className="d-flex  align-items-center">
             <button
+              onClick={() => navigate("/register")}
               style={{ width: "100%", height: "80px" }}
               className="btn btn-primary m-2"
             >
-              <box-icon type='logo' size="lg" color="white" name='github'></box-icon>
-            </button>
-            <button
-              style={{ width: "100%", height: "80px" }}
-              className="btn btn-primary m-2"
-            >
-              <box-icon type='logo' size="lg" color="white" name='google'   ></box-icon>
+              Dont have an account? Click here to register!
             </button>
           </div>
         </div>
       </div>
       <Footer />
-    </div>
+    </div >
   )
 }
 
