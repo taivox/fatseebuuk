@@ -6,7 +6,7 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 
 ### LIVE version is available &#9755;[HERE](http://176.112.158.22:3000/)&#9756;
 
-### Pre registered demo users:
+#### Pre registered demo users:
 
 | Email             | Password |
 | ----------------- | -------- |
