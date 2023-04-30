@@ -43,8 +43,6 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
 
   const handleClick = (toID, content) => {
     if (socket && content !== "") {
-      console.log('saatsin midagi socketisse')
-
       const payload = {
         cookie: cookie,
         content: content,
@@ -66,16 +64,12 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
   }, [scrollToBottom, selectedFriend])
 
   const handleFriendClick = (id) => {
-    console.log('friend handlefriendclickis', id)
     setSelectedFriend(friends.find((friend) => friend.friend.user_id === id))
     setScrollToBottom(true)
-    console.log('selectedfriend', selectedFriend)
   }
 
   useEffect(() => {
     if (selectedChat) {
-      console.log('useeffectis', selectedFriend)
-      console.log('seeonid', selectedChat.friend.user_id)
       // setSelectedFriend()
       handleFriendClick(selectedChat.friend.user_id)
     }

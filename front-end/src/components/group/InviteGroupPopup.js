@@ -29,7 +29,6 @@ function InviteGroupPopup({ onClose, cookie, group }) {
                 if (data.error) {
                     throw new Error(data.message)
                 }
-                console.log(data)
                 setInviteList(data)
             })
             .catch((error) => {
@@ -43,9 +42,6 @@ function InviteGroupPopup({ onClose, cookie, group }) {
     }
 
     const handleInvite = (friendID) => {
-        console.log(friendID)
-
-
         const headers = new Headers()
         headers.append("Content-Type", "application/json")
         headers.append("Authorization", cookie)

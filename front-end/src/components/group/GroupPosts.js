@@ -228,8 +228,6 @@ function GroupPosts() {
           cookie: cookie,
           group_id: parseInt(group_id),
         }
-
-        console.log("payload", payload)
         newSocket.send(JSON.stringify(payload))
       })
 
@@ -237,7 +235,6 @@ function GroupPosts() {
         const jsonData = JSON.parse(event.data)
         setMessages(jsonData)
         setScrollToBottom(true)
-        console.log("socketist tuli:", jsonData)
       })
 
       return () => {
@@ -250,15 +247,12 @@ function GroupPosts() {
 
   const handleClick = (content) => {
     if (socket && content !== "") {
-      console.log('saatsin midagi socketisse')
 
       const payload = {
         cookie: cookie,
         content: content,
         group_id: parseInt(group_id),
       }
-      console.log("selle saadame socketisse", payload)
-
       setMessageText('')
       socket.send(JSON.stringify(payload))
     }

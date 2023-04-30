@@ -59,14 +59,12 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
         body: JSON.stringify(payload)
       }
 
-      console.log("SEENPAYLOAD: ", payload)
-
       fetch(
         `${process.env.REACT_APP_BACKEND}/addcover`, requestOptions)
         .then((response) => response.json())
         .then((data) => {
           if (data.error) {
-            console.log("error tuli", data)
+            console.log("error", data)
           }
         })
     }
@@ -87,7 +85,7 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-          console.log("error tuli", data)
+          console.log("error", data)
         } else {
           onButtonClick()
         }
@@ -108,7 +106,7 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-          console.log("error tuli", data)
+          console.log("error", data)
         } else {
           navigate(`/profile/${props.user_id}`)
           onButtonClick()
@@ -119,115 +117,118 @@ function ProfileHeader({ props, cookie, onButtonClick }) {
 
 
   return (
-    <div className="container">
-      <div className="cover-container">
-        {props.is_owner ? <> <label
-          htmlFor="cover-photo"
-          className="btn btn-light col-md-12"
-        >
-          <img
-            className="cover-photo"
-            src={imagePreview ? imagePreview : `/coverimages/${props.cover_image}`}
-            alt="cover"
-            style={{
-              height: "400px",
-              width: "95%",
-              objectFit: "cover",
-            }} />
-        </label>
-          <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="cover-photo" /> </> : <img
-          className="cover-photo"
-          src={`/coverimages/${props.cover_image}`}
-          alt="cover"
-          style={{
-            height: "400px",
-            width: "95%",
-            objectFit: "cover",
-          }} />}
-
-      </div>
-      <div className="d-flex justify-content-between align-items-center">
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="profile-pic-container">
-            <div className="profile-pic-wrapper">
+    <>
+      {props.cover_image && props.profile_image && (
+        <div className="container">
+          <div className="cover-container">
+            {props.is_owner ? <> <label
+              htmlFor="cover-photo"
+              className="btn btn-light col-md-12"
+            >
               <img
-                className="profile-pic m-3"
-                src={`/profileimages/${props.profile_image}`}
+                className="cover-photo"
+                src={imagePreview ? imagePreview : `/coverimages/${props.cover_image}`}
+                alt="cover"
                 style={{
-                  height: "155px",
-                  width: "155px",
-                  borderRadius: "100%",
+                  height: "400px",
+                  width: "95%",
                   objectFit: "cover",
-                  zIndex: "99999",
-                }}
-                alt="profile" />
-            </div>
+                }} />
+            </label>
+              <input onChange={handleImageUpload} type="file" className="form-control-file d-none" id="cover-photo" /> </> : <img
+              className="cover-photo"
+              src={`/coverimages/${props.cover_image}`}
+              alt="cover"
+              style={{
+                height: "400px",
+                width: "95%",
+                objectFit: "cover",
+              }} />}
           </div>
-          <div></div>
-          <div className="profile-info">
-            <h1>{`${props.first_name} ${props.last_name}`} {props.nickname && `(${props.nickname})`}</h1>
-            <div className="friend-info">
-              <div className="friend-count">{`${props.friends_list ? props.friends_list.length : `No friends, okay`} friends`}</div>
-              <div className="friend-list">
-                {props.friends_list && props.friends_list.length > 0 ? props.friends_list.slice(0, 6).map(friend => (
-                  <Link key={friend.friend.user_id} to={`/profile/${friend.friend.user_id}`}>
-                    <img
-                      className="friend-pic"
-                      src={`/profileimages/${friend.friend.profile_image}`}
-                      style={{
-                        height: "55px",
-                        width: "55px",
-                        borderRadius: "100%",
-                        objectFit: "cover",
-                        zIndex: "99999",
-                      }}
-                      alt="profile" />
-                  </Link>
-                )) : null}
+          <div className="d-flex justify-content-between align-items-center">
+            <div className="d-flex justify-content-between align-items-center">
+              <div className="profile-pic-container">
+                <div className="profile-pic-wrapper">
+                  <img
+                    className="profile-pic m-3"
+                    src={`/profileimages/${props.profile_image}`}
+                    style={{
+                      height: "155px",
+                      width: "155px",
+                      borderRadius: "100%",
+                      objectFit: "cover",
+                      zIndex: "99999",
+                    }}
+                    alt="profile" />
+                </div>
+              </div>
+              <div></div>
+              <div className="profile-info">
+                <h1>{`${props.first_name} ${props.last_name}`} {props.nickname && `(${props.nickname})`}</h1>
+                <div className="friend-info">
+                  <div className="friend-count">{`${props.friends_list ? props.friends_list.length : `No friends, okay`} friends`}</div>
+                  <div className="friend-list">
+                    {props.friends_list && props.friends_list.length > 0 ? props.friends_list.slice(0, 6).map(friend => (
+                      <Link key={friend.friend.user_id} to={`/profile/${friend.friend.user_id}`}>
+                        <img
+                          className="friend-pic"
+                          src={`/profileimages/${friend.friend.profile_image}`}
+                          style={{
+                            height: "55px",
+                            width: "55px",
+                            borderRadius: "100%",
+                            objectFit: "cover",
+                            zIndex: "99999",
+                          }}
+                          alt="profile" />
+                      </Link>
+                    )) : null}
 
+                  </div>
+                </div>
               </div>
             </div>
+            <div className="profile-buttons p-5">
+              {props.friend_status && (
+                <>
+                  <button className="btn btn-primary" onClick={props.friend_status === 1 ? AddFriend : RemoveFriend}>
+                    <box-icon name="user-plus" type="solid" />
+                    {props.friend_status === 1 ? 'Add Friend' : props.friend_status === 2 ? 'Request Pending' : 'Friends'}
+                  </button>
+                  <button className="btn btn-light">
+                    <box-icon name="chat" type="solid" />
+                    Message
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+          <hr />
+          <div className="d-flex align-content-between align-items-center">
+            <Link
+              className="list-group-item p-2"
+            >
+              Posts
+            </Link>
+            <Link
+              className="list-group-item p-2"
+            >
+              About
+            </Link>
+            <Link
+              className="list-group-item p-2"
+            >
+              Friends
+            </Link>
+            <Link
+              className="list-group-item p-2"
+            >
+              Photos
+            </Link>
           </div>
         </div>
-        <div className="profile-buttons p-5">
-          {props.friend_status && (
-            <>
-              <button className="btn btn-primary" onClick={props.friend_status === 1 ? AddFriend : RemoveFriend}>
-                <box-icon name="user-plus" type="solid" />
-                {props.friend_status === 1 ? 'Add Friend' : props.friend_status === 2 ? 'Request Pending' : 'Friends'}
-              </button>
-              <button className="btn btn-light">
-                <box-icon name="chat" type="solid" />
-                Message
-              </button>
-            </>
-          )}
-        </div>
-      </div>
-      <hr />
-      <div className="d-flex align-content-between align-items-center">
-        <Link
-          className="list-group-item p-2"
-        >
-          Posts
-        </Link>
-        <Link
-          className="list-group-item p-2"
-        >
-          About
-        </Link>
-        <Link
-          className="list-group-item p-2"
-        >
-          Friends
-        </Link>
-        <Link
-          className="list-group-item p-2"
-        >
-          Photos
-        </Link>
-      </div>
-    </div>
+      )}
+    </>
   )
 }
 

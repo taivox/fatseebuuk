@@ -3,7 +3,6 @@ package main
 import (
 	"back-end/models"
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"strings"
@@ -39,11 +38,11 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 
 	defer delete(channels, conn)
 
-	ip := conn.RemoteAddr().String()
-	fmt.Println(len(channels), "connections =>", ip, "joined") //for testing purposes
+	//ip := conn.RemoteAddr().String()
+	//fmt.Println(len(channels), "connections =>", ip, "joined") //for testing purposes
 
-	defer fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
-	defer fmt.Println(len(channels), "connections =>", ip, "left")                       //for testing purposes
+	// defer fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
+	// defer fmt.Println(len(channels), "connections =>", ip, "left")                       //for testing purposes
 
 	payload := struct {
 		Cookie  string `json:"cookie"`
@@ -91,7 +90,6 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 			//Users chat
 			addConnection(userID, conn)
 			defer removeConnection(conn)
-			fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
 
 			if payload.Content != "" {
 				err = app.DB.AddMessage(userID, payload.ToID, payload.Content)
@@ -120,7 +118,7 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 			//Group chat
 			addGroupConnection(payload.GroupID, conn)
 			defer removeGroupConnection(conn)
-			fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
+			// fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
 
 			if payload.Content != "" {
 				err = app.DB.GroupAddMessage(userID, payload.GroupID, payload.Content)
@@ -141,8 +139,6 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 			_ = conn.WriteJSON("error: something went wrong")
 			return
 		}
-
-		fmt.Println("JSON data go-s", payload) //for testing purposes
 	}
 }
 

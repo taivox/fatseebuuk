@@ -19,19 +19,27 @@ This is the repository for our [social-network](https://01.kood.tech/git/root/pu
 | john@gmail.com    | asd      |
 | jane@gmail.com    | asd      |
 
-### Option 1
+### Option 1 - Recommended
 
-To run the project using docker, use `bash rundocker.sh` in the project root directory.
+To run the project using docker, use `docker-compose up --detach`
 
-To stop the docker containers and delete images, use `bash removedocker.sh` in the project root directory.
+To view running containers, use `docker ps`
 
-### Option 2
+To stop the docker containers, use `docker-compose down`
+
+To delete images and downloaded data, use `bash removedocker.sh`
+
+### Option 2 - Not recommended! Only for advanced users!
+
+Open `back-end/cmd/api/utils.go` and comment out line 180 and uncomment line 182
 
 To run back end api server use `bash runb.sh`
 
 To run front end server use `bash runf.sh`
 
-### Option 3
+### Option 3 - Not recommended! Only for advanced users!
+
+Open `back-end/cmd/api/utils.go` and comment out line 180 and uncomment line 182
 
 ```
 To run back end api server, use the following commands:

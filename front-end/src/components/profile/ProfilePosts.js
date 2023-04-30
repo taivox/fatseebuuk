@@ -75,11 +75,6 @@ function ProfilePosts({ props, cookie, updatePosts }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
-
-    console.log("checked", selectedUsers)
-
-
-
     let errors = []
 
     let payload = {}

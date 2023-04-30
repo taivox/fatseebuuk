@@ -176,9 +176,9 @@ func saveImageToFile(imageBase64 string, folderName string) (string, error) {
 
 	fileNameWithExtension := fmt.Sprintf("%s.%s", fileName, extension)
 
-	//for docker deployment
+	// for Docker deployment
 	path := fmt.Sprintf(`/app/public/%s/%s`, folderName, fileNameWithExtension)
-	//for localhost deployment
+	// for localhost deployment
 	// path := fmt.Sprintf(`../front-end/public/%s/%s`, folderName, fileNameWithExtension)
 
 	imageFile, err := os.Create(path)

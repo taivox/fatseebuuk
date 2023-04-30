@@ -22,7 +22,7 @@ function Friends() {
       .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         if (data.error) {
-          console.log("error tuli", data)
+          console.log("error:", data)
         } else {
           fetchFriendslist()
         }
@@ -83,7 +83,6 @@ function Friends() {
     )
       .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
-        console.log("friends list", data)
         setFriendList(data)
       })
   }

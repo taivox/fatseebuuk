@@ -6,7 +6,8 @@ RUN go mod download
 COPY . ./
 RUN go build -o /bin/back-end ./cmd/api
 
-FROM debian:11
+# FROM debian:11
+FROM gcr.io/distroless/base-debian11
 COPY --from=build /bin/back-end/ /back-end
 COPY database/ /database
 EXPOSE 8080

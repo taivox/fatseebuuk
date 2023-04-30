@@ -83,7 +83,6 @@ function Group() {
         if (data.error) {
           throw new Error(data.message)
         }
-        console.log(data)
         setHasAccess(data.user_is_group_member)
         setIsGroupOwner(data.user_is_group_owner)
         setHasInvite(data.user_is_invited)
@@ -137,7 +136,7 @@ function Group() {
       .then(response => response.status === 401 ? navigate('/login') : response.json())
       .then((data) => {
         if (data.error) {
-          console.log("error tuli", data)
+          console.log("error:", data)
         } else {
           fetchGroup()
         }
@@ -258,7 +257,7 @@ function Group() {
                 </button>
               </div>
 
-              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup, group  }} />
+              <Outlet context={{ groupPosts, cookie, group_id, fetchGroup, group }} />
 
             </div>
             <Chats friends={friends} cookie={cookie} />

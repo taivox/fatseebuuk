@@ -52,7 +52,6 @@ function Profile() {
         if (data.error) {
           throw new Error(data.message)
         }
-        console.log("mis pildid siin on?", data)
         setProfile(data)
       })
       .catch((error) => {
