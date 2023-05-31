@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"net/mail"
 	"net/smtp"
@@ -202,11 +203,14 @@ func sendEmail(rd *models.RegisterData) {
 
 	msg := fmt.Sprintf("Subject: Welcome to the mysterious world of Fatseebuuk! \nDear %s %s, nice to have you on board, please never leave!", rd.FirstName, rd.LastName)
 
-	smtp.SendMail(
+	err := smtp.SendMail(
 		"smtp.gmail.com:587",
 		auth,
 		"fatseebuuk@gmail.com",
 		[]string{rd.Email},
 		[]byte(msg),
 	)
+	if err != nil {
+		log.Println(err)
+	}
 }
