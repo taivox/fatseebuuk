@@ -29,8 +29,11 @@ function ChatWindow({ show, setShow, cookie, friends, selectedChat }) {
 
       newSocket.addEventListener('message', (event) => {
         const jsonData = JSON.parse(event.data)
-        setMessages(jsonData)
-        setScrollToBottom(true)
+
+        if (jsonData.messages && jsonData.messages.length > 0) {
+          setMessages(jsonData.messages)
+          setScrollToBottom(true)
+        }
       })
 
       return () => {

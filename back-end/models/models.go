@@ -143,6 +143,7 @@ type GroupRequests struct {
 type Friend struct {
 	Friend         User `json:"friend"`
 	RequestPending bool `json:"request_pending"`
+	IsOnline       bool `json:"is_online"`
 }
 
 type SearchData struct {

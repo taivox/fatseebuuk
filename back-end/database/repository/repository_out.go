@@ -797,7 +797,7 @@ func (m *SqliteDB) GetGroupInviteList(userID, groupID int) ([]models.User, error
 		friends = append(friends, friendID)
 	}
 
-	//leave out users that are already in the group
+	// leave out users that are already in the group
 	var friendsNotInGroup []int
 	for _, friend := range friends {
 		query := `SELECT user_id FROM groups_members WHERE user_id = ? AND group_id = ?`

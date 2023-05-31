@@ -9,7 +9,14 @@ import (
 
 func (app *application) enableCORS(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+		allowedOrigins := []string{"http://localhost:3000", "http://localhost:3001"}
+		origin := r.Header.Get("Origin")
+		for _, allowedOrigin := range allowedOrigins {
+			if allowedOrigin == origin {
+				w.Header().Set("Access-Control-Allow-Origin", allowedOrigin)
+				break
+			}
+		}
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
 
 		if r.Method == "OPTIONS" {
@@ -55,7 +62,6 @@ func (app *application) GetTokenFromHeaderAndVerify(w http.ResponseWriter, r *ht
 	headerParts := strings.Split(authHeader, " ")
 	if len(headerParts) != 2 {
 		return 0, errors.New("invalid auth header")
-
 	}
 
 	// check to see if we have the word Bearer

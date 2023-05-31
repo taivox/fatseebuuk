@@ -371,7 +371,7 @@ func (m *SqliteDB) AddNewGroup(group *models.Group) error {
 		return nil
 	}
 
-	//add group owner to group members
+	// add group owner to group members
 	stmt = `INSERT INTO groups_members (user_id, group_id, invitation_pending, request_pending) VALUES (?,?,?,?)`
 	_, err = m.DB.ExecContext(ctx, stmt, group.UserID, groupID, false, false)
 	if err != nil {
@@ -396,7 +396,7 @@ func (m *SqliteDB) AddNewEvent(event *models.Event) error {
 		return err
 	}
 
-	//get all group members
+	// get all group members
 	var groupMembers []int
 	query := `SELECT user_id FROM groups_members WHERE group_id = ?`
 	rows, err := m.DB.QueryContext(ctx, query, event.GroupID)
@@ -415,7 +415,7 @@ func (m *SqliteDB) AddNewEvent(event *models.Event) error {
 		groupMembers = append(groupMembers, userID)
 	}
 
-	//create notifications for all group members
+	// create notifications for all group members
 	for _, userID := range groupMembers {
 		err = m.CreateNotification(userID, event.Poster.UserID, "event_created", "calendar", fmt.Sprintf("/groups/%d/events/%d", event.GroupID, eventID))
 		if err != nil {

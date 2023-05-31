@@ -1,26 +1,29 @@
 package main
 
 import (
-	"back-end/models"
 	"encoding/json"
 	"log"
 	"net/http"
 	"strings"
 
+	"back-end/models"
+
 	"github.com/gorilla/websocket"
 )
 
 // TODO: add these to application struct so they're not global
-var channels = make(map[*websocket.Conn]chan interface{})
-var onlineUsers = make(map[int][]*websocket.Conn)
-var groupOnlineUsers = make(map[int][]*websocket.Conn)
+var (
+	channels         = make(map[*websocket.Conn]chan interface{})
+	onlineUsers      = make(map[int][]*websocket.Conn)
+	groupOnlineUsers = make(map[int][]*websocket.Conn)
+)
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
 	CheckOrigin: func(r *http.Request) bool {
 		// Replace the domain and port with your React.js application's domain and port
-		return r.Header.Get("Origin") == "http://localhost:3000"
+		return r.Header.Get("Origin") == "http://localhost:3000" || r.Header.Get("Origin") == "http://localhost:3001"
 	},
 }
 
@@ -38,11 +41,11 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 
 	defer delete(channels, conn)
 
-	//ip := conn.RemoteAddr().String()
-	//fmt.Println(len(channels), "connections =>", ip, "joined") //for testing purposes
+	// ip := conn.RemoteAddr().String()
+	//	fmt.Println(len(channels), "connections =>", ip, "joined") // for testing purposes
 
-	// defer fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
-	// defer fmt.Println(len(channels), "connections =>", ip, "left")                       //for testing purposes
+	//	defer fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) // for testing purposes
+	//	defer fmt.Println(len(channels), "connections =>", ip, "left")                       // for testing purposes
 
 	payload := struct {
 		Cookie  string `json:"cookie"`
@@ -87,9 +90,13 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 		}
 
 		if payload.GroupID == -1 {
-			//Users chat
+			// Users chat
 			addConnection(userID, conn)
+			updateFriends(app)
+
+			defer updateFriends(app)
 			defer removeConnection(conn)
+			// fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) // for testing purposes
 
 			if payload.Content != "" {
 				err = app.DB.AddMessage(userID, payload.ToID, payload.Content)
@@ -99,26 +106,90 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 				}
 			}
 
-			data, err := app.DB.GetAllMessages(userID)
+			dataToMsn := struct {
+				Messages []models.Message `json:"messages"`
+				Friends  []models.Friend  `json:"friends"`
+			}{}
+
+			dataToMsn.Messages, err = app.DB.GetAllMessages(userID)
 			if err != nil {
 				_ = conn.WriteJSON(err)
 				return
 			}
-			sendToUser(userID, data)
+			sendToUser(userID, dataToMsn)
 
 			if payload.ToID != 0 {
-				recieverData, err := app.DB.GetAllMessages(payload.ToID)
+				dataToMsn = struct {
+					Messages []models.Message `json:"messages"`
+					Friends  []models.Friend  `json:"friends"`
+				}{}
+				dataToMsn.Messages, err = app.DB.GetAllMessages(payload.ToID)
 				if err != nil {
 					_ = conn.WriteJSON(err)
 					return
 				}
-				sendToUser(payload.ToID, recieverData)
+				sendToUser(payload.ToID, dataToMsn)
+			}
+		} else if payload.GroupID == -2 {
+			// Messenger chat
+			addConnection(userID, conn)
+			updateFriends(app)
+
+			defer updateFriends(app)
+			defer removeConnection(conn)
+
+			//	fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) // for testing purposes
+
+			if payload.Content != "" {
+				err = app.DB.AddMessage(userID, payload.ToID, payload.Content)
+				if err != nil {
+					_ = conn.WriteJSON(err)
+					return
+				}
+			}
+
+			dataToMsn := struct {
+				Messages []models.Message `json:"messages"`
+				Friends  []models.Friend  `json:"friends"`
+			}{}
+
+			dataToMsn.Messages, err = app.DB.GetAllMessages(userID)
+			if err != nil {
+				_ = conn.WriteJSON(err)
+				return
+			}
+			dataToMsn.Friends, err = app.DB.GetFriendsList(userID)
+			if err != nil {
+				_ = conn.WriteJSON(err)
+				return
+			}
+
+			checkFriendOnline(&dataToMsn.Friends)
+			// fmt.Println(dataToMsn.Friends)
+
+			// for _, v := range dataToMsn.Friends {
+			// 	fmt.Println("userid:", v.Friend.UserID, v.Friend.FirstName, v.Friend.LastName, "isonline", v.IsOnline) // for testing purposes
+			// }
+
+			sendToUser(userID, dataToMsn)
+
+			if payload.ToID != 0 {
+				dataToMsn = struct {
+					Messages []models.Message `json:"messages"`
+					Friends  []models.Friend  `json:"friends"`
+				}{}
+				dataToMsn.Messages, err = app.DB.GetAllMessages(payload.ToID)
+				if err != nil {
+					_ = conn.WriteJSON(err)
+					return
+				}
+				sendToUser(payload.ToID, dataToMsn)
 			}
 		} else if payload.GroupID > 0 {
-			//Group chat
+			// Group chat
 			addGroupConnection(payload.GroupID, conn)
 			defer removeGroupConnection(conn)
-			// fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) //for testing purposes
+			// fmt.Println("onlineusers:", onlineUsers, "groupOnlineUsers", groupOnlineUsers) // for testing purposes
 
 			if payload.Content != "" {
 				err = app.DB.GroupAddMessage(userID, payload.GroupID, payload.Content)
@@ -140,6 +211,28 @@ func (app *application) WebsocketHandler(w http.ResponseWriter, r *http.Request)
 			return
 		}
 	}
+
+	/////////////
+}
+
+func updateFriends(app *application) {
+	var err error
+	dataToMsn := struct {
+		Messages []models.Message `json:"messages"`
+		Friends  []models.Friend  `json:"friends"`
+	}{}
+
+	for userID := range onlineUsers {
+		dataToMsn.Friends, err = app.DB.GetFriendsList(userID)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+
+		checkFriendOnline(&dataToMsn.Friends)
+
+		sendToUser(userID, dataToMsn)
+	}
 }
 
 // send data to all active group sockets
@@ -151,7 +244,7 @@ func sendToGroup(groupID int, data []models.Message) {
 }
 
 // send data to all active user sockets
-func sendToUser(userID int, data []models.Message) {
+func sendToUser(userID int, data interface{}) {
 	userConnections := onlineUsers[userID]
 	for _, conn := range userConnections {
 		channels[conn] <- data
@@ -186,7 +279,6 @@ func addConnection(userID int, conn *websocket.Conn) {
 	}
 	// Connection doesn't exist, add it to the slice
 	onlineUsers[userID] = append(onlineUsers[userID], conn)
-
 }
 
 // remove user websocket connection from groupOnlineUsers
@@ -217,4 +309,18 @@ func addGroupConnection(groupID int, conn *websocket.Conn) {
 	}
 	// Connection doesn't exist, add it to the slice
 	groupOnlineUsers[groupID] = append(groupOnlineUsers[groupID], conn)
+}
+
+// Check if friend is online
+func checkFriendOnline(friends *[]models.Friend) {
+	if len(*friends) == 0 {
+		return
+	}
+	for i := range *friends {
+		if _, ok := onlineUsers[(*friends)[i].Friend.UserID]; ok {
+			(*friends)[i].IsOnline = true
+		} else {
+			(*friends)[i].IsOnline = false
+		}
+	}
 }

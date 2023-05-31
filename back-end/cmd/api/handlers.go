@@ -265,7 +265,6 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 
 // Event response handler
 func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request) {
-
 	switch r.Method {
 	case "PATCH":
 		eventID, err := strconv.Atoi(regexp.MustCompile(`/groups/(\d+)/events/(\d+)/respondevent`).FindStringSubmatch(r.URL.Path)[2])
