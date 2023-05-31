@@ -43,7 +43,10 @@ func (app *application) Authorize(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), "user_id", userID)
+		type contextKey string
+		const userIDKey contextKey = "user_id"
+
+		ctx := context.WithValue(r.Context(), userIDKey, userID)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

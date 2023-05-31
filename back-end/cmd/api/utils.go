@@ -29,10 +29,13 @@ type JSONResponse struct {
 	UserID  int         `json:"user_id,omitempty"`
 }
 
-func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) error {
+func (app *application) writeJSON(w http.ResponseWriter, status int, data interface{}, headers ...http.Header) {
 	out, err := json.Marshal(data)
 	if err != nil {
-		return err
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
 
 	if len(headers) > 0 {
@@ -45,10 +48,9 @@ func (app *application) writeJSON(w http.ResponseWriter, status int, data interf
 	w.WriteHeader(status)
 	_, err = w.Write(out)
 	if err != nil {
-		return err
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-
-	return nil
 }
 
 func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data interface{}) error {
@@ -72,7 +74,7 @@ func (app *application) readJSON(w http.ResponseWriter, r *http.Request, data in
 	return nil
 }
 
-func (app *application) errorJSON(w http.ResponseWriter, err error, status ...int) error {
+func (app *application) errorJSON(w http.ResponseWriter, err error, status ...int) {
 	statusCode := http.StatusBadRequest
 
 	if len(status) > 0 {
@@ -83,7 +85,7 @@ func (app *application) errorJSON(w http.ResponseWriter, err error, status ...in
 	payload.Error = true
 	payload.Message = err.Error()
 
-	return app.writeJSON(w, statusCode, payload)
+	app.writeJSON(w, statusCode, payload)
 }
 
 func getID(str, regexStr string) (int, error) {

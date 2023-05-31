@@ -33,7 +33,7 @@ func (app *application) Home(w http.ResponseWriter, r *http.Request) {
 			Version: "1.0.0",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, payload)
+		app.writeJSON(w, http.StatusOK, payload)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -80,7 +80,7 @@ func (app *application) User(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, user)
+		app.writeJSON(w, http.StatusOK, user)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -101,7 +101,7 @@ func (app *application) CurrentUser(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, fmt.Errorf("error getting user from database"), http.StatusNotFound)
 			return
 		}
-		_ = app.writeJSON(w, http.StatusOK, currentUser)
+		app.writeJSON(w, http.StatusOK, currentUser)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -118,7 +118,7 @@ func (app *application) AllGroups(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, allGroups)
+		app.writeJSON(w, http.StatusOK, allGroups)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -177,7 +177,7 @@ func (app *application) Group(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, group)
+		app.writeJSON(w, http.StatusOK, group)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -200,7 +200,7 @@ func (app *application) GroupEvents(w http.ResponseWriter, r *http.Request) {
 			app.errorJSON(w, fmt.Errorf("error getting group events from database"), http.StatusNotFound)
 			return
 		}
-		_ = app.writeJSON(w, http.StatusOK, groupEvents)
+		app.writeJSON(w, http.StatusOK, groupEvents)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -256,7 +256,7 @@ func (app *application) GroupEvent(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, event)
+		app.writeJSON(w, http.StatusOK, event)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -302,7 +302,7 @@ func (app *application) GroupRespondEvent(w http.ResponseWriter, r *http.Request
 			Message: fmt.Sprintf("Responded %s successfully", payload.ResponseType),
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -332,7 +332,7 @@ func (app *application) GroupJoin(w http.ResponseWriter, r *http.Request) {
 			Message: "User requested join successfully",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -357,7 +357,7 @@ func (app *application) GroupGetInviteList(w http.ResponseWriter, r *http.Reques
 			return
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, users)
+		app.writeJSON(w, http.StatusOK, users)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -400,7 +400,7 @@ func (app *application) GroupCreateInvite(w http.ResponseWriter, r *http.Request
 			Message: "User invited join successfully",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -429,7 +429,7 @@ func (app *application) GroupAcceptInvite(w http.ResponseWriter, r *http.Request
 			Message: "Joined group successfully",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
 	}
@@ -554,7 +554,11 @@ func (app *application) Logout(w http.ResponseWriter, r *http.Request) {
 
 		cookie := app.GetTokenFromHeader(w, r)
 
-		app.DB.RemoveSession(cookie)
+		err := app.DB.RemoveSession(cookie)
+		if err != nil {
+			app.errorJSON(w, err)
+			return
+		}
 
 		resp := JSONResponse{
 			Error:   false,
@@ -843,7 +847,7 @@ func (app *application) FriendAdd(w http.ResponseWriter, r *http.Request) {
 			Message: "Friend added successfully",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -874,7 +878,7 @@ func (app *application) FriendAccept(w http.ResponseWriter, r *http.Request) {
 			Message: "Friend request accepted successfully",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)
@@ -905,7 +909,7 @@ func (app *application) FriendRemove(w http.ResponseWriter, r *http.Request) {
 			Message: "Friend removed successfully",
 		}
 
-		_ = app.writeJSON(w, http.StatusOK, resp)
+		app.writeJSON(w, http.StatusOK, resp)
 
 	default:
 		app.errorJSON(w, fmt.Errorf("method not suported"), http.StatusMethodNotAllowed)

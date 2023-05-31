@@ -389,6 +389,9 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			&post.Image,
 			&post.Created,
 		)
+		if err != nil {
+			return nil, err
+		}
 
 		query = `SELECT COUNT(*) FROM groups_post_likes WHERE post_id = ?`
 		row = m.DB.QueryRowContext(ctx, query, post.PostID)
