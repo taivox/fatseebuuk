@@ -109,7 +109,7 @@ func (m *SqliteDB) GetUserPosts(profileID, currentUserID int) ([]*models.Post, e
 		var post models.Post
 		var userID int
 		var selectedUsers string
-		err = rows.Scan(
+		rows.Scan(
 			&post.PostID,
 			&userID,
 			&post.Content,
@@ -118,9 +118,6 @@ func (m *SqliteDB) GetUserPosts(profileID, currentUserID int) ([]*models.Post, e
 			&post.IsAlmostPrivate,
 			&selectedUsers,
 		)
-		if err != nil {
-			return nil, err
-		}
 
 		if post.IsAlmostPrivate {
 			allowedUsersIDs := stringToIntArray(selectedUsers)
@@ -133,15 +130,12 @@ func (m *SqliteDB) GetUserPosts(profileID, currentUserID int) ([]*models.Post, e
 		var user models.User
 		query = `SELECT user_id, first_name, last_name, COALESCE(profile_image, 'default_profile_image.png') FROM users WHERE user_id = ?`
 		row := m.DB.QueryRowContext(ctx, query, userID)
-		err = row.Scan(
+		row.Scan(
 			&user.UserID,
 			&user.FirstName,
 			&user.LastName,
 			&user.ProfileImage,
 		)
-		if err != nil {
-			return nil, err
-		}
 		post.Poster = user
 
 		// Get comments for this post
@@ -153,40 +147,31 @@ func (m *SqliteDB) GetUserPosts(profileID, currentUserID int) ([]*models.Post, e
 		}
 		for cRows.Next() {
 			var comment models.Comment
-			err = cRows.Scan(
+			cRows.Scan(
 				&comment.CommentID,
 				&commentUserID,
 				&comment.PostID,
 				&comment.Content,
 				&comment.Created,
 			)
-			if err != nil {
-				return nil, err
-			}
 
 			// Get user for this comment
 			var commentUser models.User
 			query = `SELECT user_id, first_name, last_name, COALESCE(profile_image,'default_profile_image.png') FROM users WHERE user_id = ?`
 			row = m.DB.QueryRowContext(ctx, query, commentUserID)
-			err = row.Scan(
+			row.Scan(
 				&commentUser.UserID,
 				&commentUser.FirstName,
 				&commentUser.LastName,
 				&commentUser.ProfileImage,
 			)
-			if err != nil {
-				return nil, err
-			}
 
 			comment.Poster = commentUser
 
 			// Get likes for this comment
 			query = `SELECT COUNT(*) FROM comment_likes WHERE comment_id = ?`
 			row = m.DB.QueryRowContext(ctx, query, comment.CommentID)
-			err = row.Scan(&comment.Likes)
-			if err != nil {
-				return nil, err
-			}
+			row.Scan(&comment.Likes)
 
 			post.Comments = append(post.Comments, comment)
 		}
@@ -196,10 +181,7 @@ func (m *SqliteDB) GetUserPosts(profileID, currentUserID int) ([]*models.Post, e
 		// Get likes for this post
 		query = `SELECT COUNT(*) FROM post_likes WHERE post_id = ?`
 		row = m.DB.QueryRowContext(ctx, query, post.PostID)
-		err = row.Scan(&post.Likes)
-		if err != nil {
-			return nil, err
-		}
+		row.Scan(&post.Likes)
 
 		posts = append(posts, &post)
 	}
@@ -241,7 +223,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 			var post models.Post
 			var userID int
 			var selectedUsers string
-			err = rows.Scan(
+			rows.Scan(
 				&post.PostID,
 				&userID,
 				&post.Content,
@@ -250,9 +232,6 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 				&post.IsAlmostPrivate,
 				&selectedUsers,
 			)
-			if err != nil {
-				return nil, err
-			}
 
 			if post.IsAlmostPrivate {
 				allowedUsersIDs := stringToIntArray(selectedUsers)
@@ -265,15 +244,12 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 			var user models.User
 			query = `SELECT user_id, first_name, last_name, COALESCE(profile_image, 'default_profile_image.png') FROM users WHERE user_id = ?`
 			row := m.DB.QueryRowContext(ctx, query, userID)
-			err = row.Scan(
+			row.Scan(
 				&user.UserID,
 				&user.FirstName,
 				&user.LastName,
 				&user.ProfileImage,
 			)
-			if err != nil {
-				return nil, err
-			}
 			post.Poster = user
 
 			// Get comments for this post
@@ -285,40 +261,31 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 			}
 			for cRows.Next() {
 				var comment models.Comment
-				err = cRows.Scan(
+				cRows.Scan(
 					&comment.CommentID,
 					&commentUserID,
 					&comment.PostID,
 					&comment.Content,
 					&comment.Created,
 				)
-				if err != nil {
-					return nil, err
-				}
 
 				// Get user for this comment
 				var commentUser models.User
 				query = `SELECT user_id, first_name, last_name, COALESCE(profile_image,'default_profile_image.png') FROM users WHERE user_id = ?`
 				row = m.DB.QueryRowContext(ctx, query, commentUserID)
-				err = row.Scan(
+				row.Scan(
 					&commentUser.UserID,
 					&commentUser.FirstName,
 					&commentUser.LastName,
 					&commentUser.ProfileImage,
 				)
-				if err != nil {
-					return nil, err
-				}
 
 				comment.Poster = commentUser
 
 				// Get likes for this comment
 				query = `SELECT COUNT(*) FROM comment_likes WHERE comment_id = ?`
 				row = m.DB.QueryRowContext(ctx, query, comment.CommentID)
-				err = row.Scan(&comment.Likes)
-				if err != nil {
-					return nil, err
-				}
+				row.Scan(&comment.Likes)
 
 				post.Comments = append(post.Comments, comment)
 			}
@@ -328,10 +295,7 @@ func (m *SqliteDB) GetUserFeed(id int) ([]*models.Post, error) {
 			// Get likes for this post
 			query = `SELECT COUNT(*) FROM post_likes WHERE post_id = ?`
 			row = m.DB.QueryRowContext(ctx, query, post.PostID)
-			err = row.Scan(&post.Likes)
-			if err != nil {
-				return nil, err
-			}
+			row.Scan(&post.Likes)
 
 			posts = append(posts, &post)
 		}
@@ -389,16 +353,10 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 			&post.Image,
 			&post.Created,
 		)
-		if err != nil {
-			return nil, err
-		}
 
 		query = `SELECT COUNT(*) FROM groups_post_likes WHERE post_id = ?`
 		row = m.DB.QueryRowContext(ctx, query, post.PostID)
-		err = row.Scan(&post.Likes)
-		if err != nil {
-			return nil, err
-		}
+		row.Scan(&post.Likes)
 
 		if err != nil {
 			return nil, err
@@ -433,10 +391,7 @@ func (m *SqliteDB) GetGroupByID(id int) (*models.Group, error) {
 
 			query = `SELECT COUNT(*) FROM groups_comment_likes WHERE comment_id = ?`
 			row = m.DB.QueryRowContext(ctx, query, comment.CommentID)
-			err = row.Scan(&comment.Likes)
-			if err != nil {
-				return nil, err
-			}
+			row.Scan(&comment.Likes)
 
 			p, err = m.GetUserByID(userID)
 			if err != nil {
