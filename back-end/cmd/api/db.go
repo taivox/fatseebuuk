@@ -10,7 +10,7 @@ import (
 
 func openDB() (*sql.DB, error) {
 	var err error
-	dbPath := "./database/social_network.db"
+	dbPath := "./database/fatseebuuk.db"
 	exists := true
 
 	if _, err := os.Stat(dbPath); os.IsNotExist(err) {

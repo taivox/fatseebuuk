@@ -1,6 +1,6 @@
-# social-network
+# fatseebuuk
 
-This is the repository for our [social-network](https://01.kood.tech/git/root/public/src/branch/master/subjects/social-network) project.
+This project is a Facebook clone written in JavaScript, React.js and Golang.
 
 ## Instructions
 
@@ -31,7 +31,7 @@ To stop the docker containers, use `docker-compose down`
 
 To delete images and downloaded data, use `bash removedocker.sh`
 
-### Option 2 - Not recommended! Only for advanced users!
+### Option 2
 
 Open `back-end/cmd/api/utils.go` and comment out line 180 and uncomment line 182
 
@@ -39,7 +39,7 @@ To run back end api server use `bash runb.sh`
 
 To run front end server use `bash runf.sh`
 
-### Option 3 - Not recommended! Only for advanced users!
+### Option 3
 
 Open `back-end/cmd/api/utils.go` and comment out line 180 and uncomment line 182
 
